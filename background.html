@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<script>
+			function get(url, callback) {
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function (data) {
+					if (xhr.readyState == 4) {
+						if (xhr.status == 200) {
+							callback(data.srcElement.responseText);
+						} else {
+							callback(null);
+						}
+					}
+				}
+				xhr.open('GET', url, true);
+				xhr.send();
+			};
+			function onRequest(request, sender, callback) {
+				if (request.action == 'xget') {
+					get(request.url, callback);
+				}
+			};
+			chrome.extension.onRequest.addListener(onRequest);
+		</script>
+	<body>
+</html>
