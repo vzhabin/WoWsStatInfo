@@ -5,20 +5,20 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.0.3
+// @version 0.3.1.4
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
+// @include http://forum.worldofwarships.ru/index.php?/topic/*
 // @match http://worldofwarships.ru/cbt/accounts/*
+// @match http://forum.worldofwarships.ru/index.php?/topic/*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
-// @Vov_chiK
-
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.3.0.3';
-		var WoWsStatInfoLink = '#';
-		var WoWsStatInfoLinkName = '[0.3.0] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
+		var VersionWoWsStatInfo = '0.3.1.4';
+		var WoWsStatInfoLink = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
+		var WoWsStatInfoLinkName = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
 		
 		var lang = 'ru';
 		if(window.location.host.indexOf(".wargaming.net") > -1){
@@ -36,11 +36,104 @@
 		var WoWsStatInfoHref = 'http://vovchik.myjino.ru/US_WoWsStatInfo/';
 	
 		var Process = 0;
-		var MaxProcess = 3;		
+		var MaxProcess = 3;
+		
+		/* ===== Style UserScript ===== */
+		{
+			var StyleWoWsStatInfo = '' +
+				'div.div-link-block{font-size:13px; color: #fff; text-align: right; padding-top: 10px; padding-bottom: 10px;}' +
+				'span.link-block:hover{border-bottom: 1px dotted #fff; cursor: pointer;}' +
+				'span.link-block div.icon-link-block{background: url("http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/table-sorter/table-sorter_arrow_sprite.png") no-repeat 0 0; width: 10px; height: 10px; margin: -15px 100%;}' +
+				'span.hide-block div.icon-link-block{background-position: 100% -26px;}' +
+				'span.show-block div.icon-link-block{background-position: 100% -16px;}' +
+				'div#userscript-block{border-radius: 2px; background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; margin: 10px 0; line-height: 20px;}' +
+				'div.hide-block{display: none;}' +
+				'div.wowsstatinfo-stat{text-align: center; margin-top: 10px; color: white; font-size: 16px;}' +
+				'span.name-stat{color: #ffcc33;}' +
+				'' +
+			'';
+			var StyleWoWsStatInfoAdd = document.createElement("style");
+			StyleWoWsStatInfoAdd.textContent = StyleWoWsStatInfo.toString();
+			document.head.appendChild(StyleWoWsStatInfoAdd);
+		}		
 		
 		/* ===== Message UserScript ===== */
 		{
+			var message = document.createElement("div");
+			message.setAttribute("id", "message-wowsstatinfo");
+			message.setAttribute("class", "ui-dialog ui-widget ui-widget-content ui-corner-all ui-front");
+			message.setAttribute("style", "display: none; z-index:9999; left: 50%; margin-left: 0px; top: 0px;");
+			message.innerHTML = '' +
+				'<style>' +
+					'.ui-dialog{box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 25px 25px rgba(0, 0, 0, 0.3);background-color: rgba(41, 41, 41, 0.8);position: absolute;top: 0;left: 0;outline: 0;padding: 23px 31px 28px;}' +
+					'.ui-widget-content{color: #b1b2b3;}' +
+					'.ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
+					'.ui-corner-all{border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border-top-right-radius: 2px;border-top-left-radius: 2px;}' +
+					'.ui-front{z-index: 250;}' +
+					'.ui-dialog:before{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_gradient.png") repeat-x;height: 162px;width: 100%;position: absolute;top: 0;left: 0;z-index: 5;}' +
+					'.ui-dialog .ui-dialog-titlebar{border-bottom: 1px solid rgba(0, 0, 0, 0.7);box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05);padding: 0 0 14px;position: relative;z-index: 10;}' +
+					'.ui-widget-header{color: #fff;font-family: "WarHeliosCondC", Arial Narrow, Tahoma, arial, sans-serif;font-size: 25px;font-weight: normal;line-height: 30px;}' +
+					'.ui-helper-clearfix{min-height: 0;support: IE7;}' +
+					'.ui-widget-content{color: #b1b2b3;}' +
+					'.ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
+					'.ui-helper-clearfix:before, .ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
+					'.ui-helper-clearfix:after{clear: both;}' +
+					'.ui-helper-clearfix:before, .ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
+					'.ui-dialog .ui-dialog-title{float: left;margin: 0;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}' +
+					'.ui-dialog .ui-dialog-titlebar-close{margin: -16px -3px 0;height: 20px;width: 20px;position: absolute;top: 50%;right: 0;}' +
+					'.ui-widget .ui-widget{font-size: 1em;}' +
+					'button.ui-button-icon-only {width: 16px;}' +
+					'.ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
+					'.ui-button{background: none;border: 0;display: inline-block;position: relative;padding: 0;line-height: normal;cursor: pointer;vertical-align: middle;text-align: center;overflow: visible;}' +
+					'.ui-button-icon-only .ui-icon{left: 50%;margin-left: -8px;}' +
+					'.ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon{position: absolute;top: 50%;margin-top: -8px;}' +
+					'.ui-icon-closethick{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_close.png");}' +
+					'.ui-icon{width: 16px;height: 16px;}' +
+					'.ui-icon{display: block;text-indent: -99999px;overflow: hidden;background-repeat: no-repeat;}' +
+					'.ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
+					'.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text{padding: .4em;text-indent: -9999999px;}' +
+					'.ui-button .ui-button-text{display: block;line-height: normal;}' +
+					'.ui-dialog .ui-dialog-content{position: relative;border: 0;padding: 0;background: none;z-index: 10;}' +
+					'.ui-widget-content{color: #b1b2b3;}' +
+					'.popup{margin: 10px auto 0;font-size: 15px;transition: height .3s;}' +
+					'.popup_footer{margin-top: 20px;position: relative;}' +
+					'.button__align-middle{vertical-align: middle;}' +
+					'.button{-webkit-appearance: none;-moz-appearance: none;background: #735917;border-radius: 2px;border: none;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 1px 0 2px rgba(0, 0, 0, 0.3);display: inline-block;padding: 0 0 2px;overflow: hidden;color: #000;font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 17px;font-weight: normal;text-decoration: none;cursor: pointer;vertical-align: top;}' +
+					'.button_wrapper{background: #dbae30;background: linear-gradient(to bottom, #fff544 0%, #dbae30 100%);border-radius: 2px;display: block;padding: 1px 1px 0;position: relative;}' +
+					'.button_body{background: #e5ad2c;background: linear-gradient(to bottom, #e7b530 0%, #e5ad2c 100%);display: block;border-radius: 2px;padding: 10px 23px 11px;position: relative;text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);transition: all .2s;}' +
+					'.button_inner{display: block;position: relative;z-index: 10;white-space: nowrap;line-height: 20px;}' +
+					'.link__cancel{display: inline-block;font-size: 15px;margin-left: 18px;padding-top: 10px;}' +
+					'.link{border-bottom: 1px solid transparent;padding-bottom: 1px;color: #e5b12e;line-height: 18px;text-decoration: none;transition: all .2s;}' +
+				'</style>' +
+				'<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">' +
+					'<span class="ui-dialog-title">{%TITLE%}</span>' +
+					'<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" title="Close">' +
+						'<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>' +
+						'<span class="ui-button-text">Close</span>' +
+					'</button>' +
+				'</div>' +
+				'<div class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 44px; max-height: none; height: auto;">' +
+					'<div class="popup">' +
+						'<p>{%TEXT%}</p>' +
+					'</div>' +
+					'<div class="popup_footer">' +
+						'<button class="button button__align-middle">' +
+							'<span class="button_wrapper">' +
+								'<span class="button_body">' +
+									'<span class="button_inner">ОК</span>' +
+								'</span>' +
+							'</span>' +
+						'</button>' +
+						'<a class="link link__cancel" href="#">Отменить</a>' +
+					'</div>' +
+				'</div>' +
+			'';
+			document.body.appendChild(message);
 			
+			var messagebg = document.createElement("div");
+			messagebg.setAttribute("id", "userscript-message-bg");
+			messagebg.setAttribute("style", "display: none; z-index:9998; background: url('http://"+realm+".wargaming.net/clans/static/0.1.0.1/images/plugins/jquery-ui/widget_overlay-pattern.png'); position: fixed; top: 0; left: 0; width: 100%; height: 100%;");
+			document.body.appendChild(messagebg);
 		}		
 		
 		var navigatorInfo = getBrowser();
@@ -173,24 +266,6 @@
 			return navigatorInfo;
 		}
 		
-		/* ===== Style UserScript ===== */
-		{
-			var StyleWoWsStatInfo = '' +
-				'div.div-link-block{font-size:13px; color: #fff; text-align: right; padding-top: 10px; padding-bottom: 10px;}' +
-				'span.link-block:hover{border-bottom: 1px dotted #fff; cursor: pointer;}' +
-				'span.link-block div.icon-link-block{background: url("http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/table-sorter/table-sorter_arrow_sprite.png") no-repeat 0 0; width: 10px; height: 10px; margin: -15px 100%;}' +
-				'span.hide-block div.icon-link-block{background-position: 100% -26px;}' +
-				'span.show-block div.icon-link-block{background-position: 100% -16px;}' +
-				'div#userscript-block{border-radius: 2px; background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px; margin: 10px 0; line-height: 20px;}' +
-				'div.hide-block{display: none;}' +
-				'div.wowsstatinfo-stat{text-align: center; margin-top: 10px; color: white; font-size: 16px;}' +
-				'span.name-stat{color: #ffcc33;}' +
-			'';
-			var StyleWoWsStatInfoAdd = document.createElement("style");
-			StyleWoWsStatInfoAdd.textContent = StyleWoWsStatInfo.toString();
-			document.head.appendChild(StyleWoWsStatInfoAdd);
-		}
-		
 		var MembersArray = [];
 		
 		var typeStat = ["pvp", "pve"];
@@ -287,7 +362,7 @@
 			img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png'+'?'+Math.floor(Math.random()*100000001);
 			
 			jQ('#generator-userbar').click(function(){
-				GeneratorUserBar();
+				GeneratorUserBar();				
 			});
 
 			if(MembersArray[0]['clans'] != null){
@@ -332,7 +407,7 @@
 				'';
 			}			
 		}
-		function getMemberStatistic(){		
+		function getMemberStatistic(){
 			MembersArray[0] = [];
 			
 			var account_href = window.location.href.split('/')[5].split('-');
@@ -349,7 +424,7 @@
 				var type = typeStat[t];				
 				MembersArray[0][type] = [];
 				
-				var account_statistic = document.getElementById('account_statistic-'+type);
+				var account_statistic = document.getElementById(type);
 				if(account_statistic == null){return;}
 				var account_statistics = account_statistic.getElementsByClassName('account_statistics__rates-small-border');
 				if(account_statistics.length == 3){
@@ -358,19 +433,20 @@
 					MembersArray[0][type]['losses'] = htmlParseMemberStatistic(account_statistics[0].rows[3].cells[1]);
 					MembersArray[0][type]['draws'] = htmlParseMemberStatistic(account_statistics[0].rows[4].cells[1]);
 					MembersArray[0][type]['survived_battles'] = htmlParseMemberStatistic(account_statistics[0].rows[5].cells[1]);
-					MembersArray[0][type]['hits_percents'] = htmlParseMemberStatistic(account_statistics[0].rows[6].cells[1]);
-					MembersArray[0][type]['damage'] = htmlParseMemberStatistic(account_statistics[0].rows[7].cells[1]);
-					MembersArray[0][type]['frags_ships'] = htmlParseMemberStatistic(account_statistics[0].rows[8].cells[1]);
-					MembersArray[0][type]['frags_planes'] = htmlParseMemberStatistic(account_statistics[0].rows[9].cells[1]);
-					MembersArray[0][type]['capture_base'] = htmlParseMemberStatistic(account_statistics[0].rows[10].cells[1]);
-					MembersArray[0][type]['defend_base'] = htmlParseMemberStatistic(account_statistics[0].rows[11].cells[1]);
+					MembersArray[0][type]['damage'] = htmlParseMemberStatistic(account_statistics[0].rows[6].cells[1]);
+					MembersArray[0][type]['frags_ships'] = htmlParseMemberStatistic(account_statistics[0].rows[7].cells[1]);
+					MembersArray[0][type]['frags_planes'] = htmlParseMemberStatistic(account_statistics[0].rows[8].cells[1]);
+					MembersArray[0][type]['capture_base'] = htmlParseMemberStatistic(account_statistics[0].rows[9].cells[1]);
+					MembersArray[0][type]['defend_base'] = htmlParseMemberStatistic(account_statistics[0].rows[10].cells[1]);
 					
 					MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
 					MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
 					MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
 					MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
-					MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
-					MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
+					MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
+					MembersArray[0][type]['hits_percents_torpedo'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
+					MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
+					MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[8].cells[1]);
 					
 					MembersArray[0][type]['max_xp'] = htmlParseMemberStatistic(account_statistics[2].rows[1].cells[1]);
 					MembersArray[0][type]['max_damage'] = htmlParseMemberStatistic(account_statistics[2].rows[2].cells[1]);
@@ -424,7 +500,7 @@
 					MembersArray[0][type]['wr'] = wr;
 				}
 			}
-			//console.log(MembersArray[0]);
+			console.log(MembersArray[0]);
 		}
 		function doneClanInfo(url, response){
 			if(response.status && response.status == "error"){
@@ -478,6 +554,7 @@
 		
 		function htmlParseMemberStatistic(element){
 			var value = element.textContent.trim().replace(new RegExp(' ', 'g'), '');
+			value = value.replace(/[^0-9,()% ]/g, "");
 			
 			value = value.replace('%', '');
 			value = value.replace(',', '.');
@@ -740,7 +817,7 @@
 		);
 		document.head.appendChild(script);
 	}
-
+	
 	if(window.location.host.indexOf("worldofwarships") > -1){
 		addJQuery(WoWsStatInfo);
 	}
