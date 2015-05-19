@@ -346,9 +346,7 @@
 				jQ('.member_'+account_id).html(html);
 			}
 		}
-		function errorForumClanInfo(url){
-			
-		}
+		function errorForumClanInfo(url){}
 		
 		/* ===== MemberProfilePage function ===== */
 		function viewMemberProfilePage(){		
@@ -411,24 +409,7 @@
 			img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png'+'?'+Math.floor(Math.random()*100000001);
 			
 			jQ('#generator-userbar').click(function(){
-				var html = '' +
-					'<div style="width: 468px;">' +
-						'<input type="radio" name="userbar-bg" value="userbar1" checked="checked"> userbar1<br />' +
-						'<img src="'+WoWsStatInfoHref+'bg/userbar1.png" title="userbar1"/><br /><br />' +
-						'<input type="radio" name="userbar-bg" value="userbar2"> userbar2<br />' +
-						'<img src="'+WoWsStatInfoHref+'bg/userbar2.png" title="userbar2"/><br /><br />' +
-						'<input type="radio" name="userbar-bg" value="squad"> squad<br />' +
-						'<img src="'+WoWsStatInfoHref+'bg/squad.png" title="squad"/><br /><br />' +
-					'</div>' +
-				'';
-				
-				onShowMessage(
-					localization['userbar-bg'],
-					html,
-					function(){GeneratorUserBar(); onCloseMessage();},
-					localization['Ok'],
-					true
-				);
+				getJson(WoWsStatInfoHref+'bg/bg.php?'+Math.floor(Math.random()*100000001), doneUserBarBG, errorUserBarBG);
 			});
 
 			if(MembersArray[0]['clans'] != null){
@@ -637,6 +618,43 @@
 				}
 			};
 			xmlhttp.send(jsonString);
+		}
+		function doneUserBarBG(url, response){
+			var html = '';
+			
+			var data = response;
+			
+			html += '<div style="width: 468px;">';
+			for(var i = 0; i < data.length; i++){
+				var checked = ''; if(i == 0){checked = 'checked="checked"';}
+				html += '<input type="radio" name="userbar-bg" value="'+data[i]+'" '+checked+'> '+data[i]+'<br />';
+				html += '<img src="'+WoWsStatInfoHref+'bg/'+data[i]+'.png" title="'+data[i]+'"/><br /><br />';
+			}
+			html += '</div>';
+			
+			onShowMessage(
+				localization['userbar-bg'],
+				html,
+				function(){GeneratorUserBar(); onCloseMessage();},
+				localization['Ok'],
+				true
+			);			
+		}
+		function errorUserBarBG(url){
+			var html = '' +
+				'<div style="width: 468px;">' +
+					'<input type="radio" name="userbar-bg" value="userbar" checked="checked"> userbar<br />' +
+					'<img src="'+WoWsStatInfoHref+'bg/userbar.png" title="userbar"/><br /><br />' +
+				'</div>' +
+			'';
+			
+			onShowMessage(
+				localization['userbar-bg'],
+				html,
+				function(){GeneratorUserBar(); onCloseMessage();},
+				localization['Ok'],
+				true
+			);
 		}
 		
 		function htmlParseMemberStatistic(element){
