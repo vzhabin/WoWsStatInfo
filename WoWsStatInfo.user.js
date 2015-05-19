@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.1.4
+// @version 0.3.1.5
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -16,7 +16,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.3.1.4';
+		var VersionWoWsStatInfo = '0.3.1.5';
 		var WoWsStatInfoLink = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
 		var WoWsStatInfoLinkName = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
 		
@@ -107,24 +107,22 @@
 				'</style>' +
 				'<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">' +
 					'<span class="ui-dialog-title">{%TITLE%}</span>' +
-					'<button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" title="Close">' +
+					'<button id="userscript-message-close" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" title="Close">' +
 						'<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>' +
 						'<span class="ui-button-text">Close</span>' +
 					'</button>' +
 				'</div>' +
 				'<div class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 44px; max-height: none; height: auto;">' +
-					'<div class="popup">' +
-						'<p>{%TEXT%}</p>' +
-					'</div>' +
+					'<div class="popup">{%TEXT%}</div>' +
 					'<div class="popup_footer">' +
-						'<button class="button button__align-middle">' +
+						'<button id="userscript-message-ok" class="button button__align-middle">' +
 							'<span class="button_wrapper">' +
 								'<span class="button_body">' +
-									'<span class="button_inner">ОК</span>' +
+									'<span class="button_inner">'+localization['Ok']+'</span>' +
 								'</span>' +
 							'</span>' +
 						'</button>' +
-						'<a class="link link__cancel" href="#">Отменить</a>' +
+						'<a id="userscript-message-cancel" class="link link__cancel" style="display: block; cursor: pointer;" >'+localization['Cancel']+'</a>' +
 					'</div>' +
 				'</div>' +
 			'';
@@ -165,17 +163,18 @@
 					localization['ErrorSendDeveloper'];
 			
 			console.log(error);
-			alert(error);
+			//alert(error);
 			error = error.split('\n').join('<br />');
 			
-			// onShowMessage(
-				// localization['Box'],
-				// 'different_error',
-				// error,
-				// onCloseMessage,
-				// localization['Ok'],
-				// false
-			// );
+			if(window.location.host == 'forum.worldofwarships.ru' && window.location.href.indexOf("/topic/") > -1){}else{
+				onShowMessage(
+					localization['Box'],
+					error,
+					onCloseMessage,
+					localization['Ok'],
+					false
+				);
+			}
 			
 			return true;
 		}
@@ -271,23 +270,28 @@
 		var typeStat = ["pvp", "pve"];
 		
 		var color = new Array();
-		color['very_bad'] = '#FE0E00'; // очень плохо
-		color['bad'] = '#FE7903'; // плохо
-		color['normal'] = '#F8F400'; // средне
-		color['good'] = '#60FF00';  // хорошо
-		color['very_good'] = '#02C9B3'; // очень хорошо
-		color['unique'] = '#D042F3'; // уникально		
+		color['very_bad'] = '#FE0E00'; // очень плохо, хуже чем у 85%
+		color['bad'] = '#FE7903'; // плохо, хуже чем у 50%
+		color['normal'] = '#F8F400'; // средне, лучше чем у 50%
+		color['good'] = '#60FF00';  // хорошо, лучше чем у 75%
+		color['very_good'] = '#02C9B3'; // очень хорошо, лучше чем у 95%
+		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
 			MemberProfilePage();
+		}else if(window.location.host == 'forum.worldofwarships.ru' && window.location.href.indexOf("/topic/") > -1){
+			ForumTopicPage();
 		}
 		
 		jQ('.link-block').click(function(){onViewBlock(this);});
 		
 		/* ===== Pages function ===== */
 		function MemberProfilePage(){
+			var account = document.getElementsByClassName('account')[0];
+			if(account === undefined){return;}			
+		
 			getMemberStatistic();
 			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+MembersArray[0]['account_id'], doneClanInfo, errorClanInfo);
 		
@@ -299,6 +303,51 @@
 					'' +
 				'</div>' +
 			'';
+		}
+		function ForumTopicPage(){
+			var ForumTopicMembers = [];
+			var basic_info = document.getElementsByClassName('basic_info');
+			for(var i = 0; i < basic_info.length; i++){
+				var ipsUserPhotoLink = basic_info[i].getElementsByClassName('ipsUserPhotoLink')[0];
+				if(ipsUserPhotoLink.id.indexOf('anonymous_element') > -1){
+					var linkParse = ipsUserPhotoLink.href.split('/');
+					var accountParse = linkParse[5].split('-');
+					var account_id = accountParse[accountParse.length - 1];
+					if(ForumTopicMembers['member_'+account_id] === undefined){
+						ForumTopicMembers['member_'+account_id] = account_id;
+						getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+account_id, doneForumClanInfo, errorForumClanInfo);
+					}
+					basic_info[i].innerHTML += '<li class="member_'+account_id+' desc lighter"></li>';
+				}
+			}
+		}
+		
+		/* ===== ForumTopicPage function ===== */
+		function doneForumClanInfo(url, response){
+			if(response.status && response.status == "error"){
+				errorForumClanInfo();
+				return;
+			}
+
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			
+			var clansInfo = response['data'][account_id];
+			if(clansInfo != null){
+				var html = '' +
+					'<br />' +
+					'<span>' +
+						'<a align="center" href="http://ru.wargaming.net/clans/'+clansInfo['clan']['clan_id']+'/" title="'+clansInfo['clan']['tag']+'" rel="home" target="_blank">' +
+							'<img src="'+clansInfo['clan']['emblems']['x32']['portal']+'" alt="'+clansInfo['clan']['tag']+'">' +
+						'</a>' +
+						'<a align="center" href="http://ru.wargaming.net/clans/'+clansInfo['clan']['clan_id']+'/" title="'+clansInfo['clan']['tag']+'" rel="home" target="_blank">['+clansInfo['clan']['tag']+']</a>' +
+					'</span>' +
+				'';
+				jQ('.member_'+account_id).html(html);
+			}
+		}
+		function errorForumClanInfo(url){
+			
 		}
 		
 		/* ===== MemberProfilePage function ===== */
@@ -362,7 +411,24 @@
 			img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png'+'?'+Math.floor(Math.random()*100000001);
 			
 			jQ('#generator-userbar').click(function(){
-				GeneratorUserBar();				
+				var html = '' +
+					'<div style="width: 468px;">' +
+						'<input type="radio" name="userbar-bg" value="userbar1" checked="checked"> userbar1<br />' +
+						'<img src="'+WoWsStatInfoHref+'bg/userbar1.png" title="userbar1"/><br /><br />' +
+						'<input type="radio" name="userbar-bg" value="userbar2"> userbar2<br />' +
+						'<img src="'+WoWsStatInfoHref+'bg/userbar2.png" title="userbar2"/><br /><br />' +
+						'<input type="radio" name="userbar-bg" value="squad"> squad<br />' +
+						'<img src="'+WoWsStatInfoHref+'bg/squad.png" title="squad"/><br /><br />' +
+					'</div>' +
+				'';
+				
+				onShowMessage(
+					localization['userbar-bg'],
+					html,
+					function(){GeneratorUserBar(); onCloseMessage();},
+					localization['Ok'],
+					true
+				);
 			});
 
 			if(MembersArray[0]['clans'] != null){
@@ -439,14 +505,25 @@
 					MembersArray[0][type]['capture_base'] = htmlParseMemberStatistic(account_statistics[0].rows[9].cells[1]);
 					MembersArray[0][type]['defend_base'] = htmlParseMemberStatistic(account_statistics[0].rows[10].cells[1]);
 					
-					MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
-					MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
-					MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
-					MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
-					MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
-					MembersArray[0][type]['hits_percents_torpedo'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
-					MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
-					MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[8].cells[1]);
+					if(account_statistics[1].rows.length == 8){
+						MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
+						MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
+						MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
+						MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
+						MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
+						MembersArray[0][type]['hits_percents_torpedo'] = 0;
+						MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
+						MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
+					}else{
+						MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
+						MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
+						MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
+						MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
+						MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
+						MembersArray[0][type]['hits_percents_torpedo'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
+						MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
+						MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[8].cells[1]);					
+					}
 					
 					MembersArray[0][type]['max_xp'] = htmlParseMemberStatistic(account_statistics[2].rows[1].cells[1]);
 					MembersArray[0][type]['max_damage'] = htmlParseMemberStatistic(account_statistics[2].rows[2].cells[1]);
@@ -500,7 +577,7 @@
 					MembersArray[0][type]['wr'] = wr;
 				}
 			}
-			console.log(MembersArray[0]);
+			//console.log(MembersArray[0]);
 		}
 		function doneClanInfo(url, response){
 			if(response.status && response.status == "error"){
@@ -521,35 +598,45 @@
 			viewMemberProfilePage();
 		}
 		function GeneratorUserBar(){
-			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar';
+			var userbarbg = 'userbar';
 			
-				var xmlhttp;
+			var radios = document.getElementsByName('userbar-bg');
+			for(var i = 0; i < radios.length; i++){
+				if(radios[i].checked){
+					userbarbg = radios[i].value;
+					break;
+				}
+			}
+		
+			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar&userbarbg='+userbarbg;
+			
+			var xmlhttp;
+			try{
+				xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
+			}catch(e){
 				try{
-					xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
-				}catch(e){
-					try{
-						xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-					}catch(E){
-						xmlhttp = false;
+					xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+				}catch(E){
+					xmlhttp = false;
+				}
+			}
+			if(!xmlhttp && typeof XMLHttpRequest != 'undefined'){
+				xmlhttp = new XMLHttpRequest();
+			}
+			xmlhttp.open('POST', ''+WoWsStatInfoHref+'userbar.php?random='+Math.floor(Math.random()*100000001), true);
+			xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = function(){
+				if(xmlhttp.readyState == 4){
+					if(xmlhttp.status == 200){
+						var userbar_img = document.getElementById('userbar-img');
+						userbar_img.src = xmlhttp.responseText+'?'+Math.floor(Math.random()*100000001);
+						
+						var userbar_link = document.getElementById('userbar-link');
+						userbar_link.textContent = xmlhttp.responseText;
 					}
 				}
-				if(!xmlhttp && typeof XMLHttpRequest != 'undefined'){
-					xmlhttp = new XMLHttpRequest();
-				}
-				xmlhttp.open('POST', ''+WoWsStatInfoHref+'userbar.php?random='+Math.floor(Math.random()*100000001), true);
-				xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xmlhttp.onreadystatechange = function(){
-					if(xmlhttp.readyState == 4){
-						if(xmlhttp.status == 200){
-							var userbar_img = document.getElementById('userbar-img');
-							userbar_img.src = xmlhttp.responseText+'?'+Math.floor(Math.random()*100000001);
-							
-							var userbar_link = document.getElementById('userbar-link');
-							userbar_link.textContent = xmlhttp.responseText;
-						}
-					}
-				};
-				xmlhttp.send(jsonString);
+			};
+			xmlhttp.send(jsonString);
 		}
 		
 		function htmlParseMemberStatistic(element){
@@ -744,11 +831,39 @@
 			}
 			return c_value;
 		}		
-		function onShowMessage(title, icon, content, funcOk, OkText, viewCancel){
+		function onShowMessage(title, content, funcOk, OkText, viewCancel){
+			var ui_dialog_title = message.getElementsByClassName("ui-dialog-title")[0];
+			ui_dialog_title.innerHTML = title;
 			
+			var popup = message.getElementsByClassName("popup")[0];
+			popup.innerHTML = content;
+			
+			var button_inner = message.getElementsByClassName("button_inner")[0];
+			button_inner.innerHTML = OkText;
+			
+			var link__cancel = message.getElementsByClassName("link__cancel")[0];
+			if(viewCancel){
+				link__cancel.style.display = 'inline';
+			}else{
+				link__cancel.style.display = 'none';
+			}
+			
+			message.style.display = 'block';
+			messagebg.style.display = 'block';
+			
+			message.style.marginLeft = '-'+(message.offsetWidth / 2)+'px';
+			message.style.top = (window.scrollY + ((document.body.offsetHeight / 2) - (message.offsetHeight / 2)))+'px';
+			
+			jQ('#userscript-message-ok').unbind('click');
+			jQ('#userscript-message-ok').click(funcOk);
+			jQ('#userscript-message-close').unbind('click');
+			jQ('#userscript-message-close').click(function(){onCloseMessage();});
+			jQ('#userscript-message-cancel').unbind('click');
+			jQ('#userscript-message-cancel').click(function(){onCloseMessage();});
 		}
 		function onCloseMessage(){
-			
+			message.style.display = 'none';
+			messagebg.style.display = 'none';
 		}
 		// Modify JSON.stringify to allow recursive and single-level arrays
 		(function(){
@@ -791,6 +906,7 @@
 				localization['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
 				
 				localization['ru']['generator-userbar'] = 'Создать UserBar';
+				localization['ru']['userbar-bg'] = 'Выберите фон:';
 				
 				localization['ru']['wr'] = 'WR';
 			}
