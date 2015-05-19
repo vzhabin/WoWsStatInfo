@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.1.5
+// @version 0.3.1.6
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -16,7 +16,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.3.1.5';
+		var VersionWoWsStatInfo = '0.3.1.6';
 		var WoWsStatInfoLink = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
 		var WoWsStatInfoLinkName = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
 		
@@ -624,7 +624,7 @@
 			
 			var data = response;
 			
-			html += '<div style="width: 468px;">';
+			html += '<div style="width: 488px; height: 400px; overflow-y: scroll;">';
 			for(var i = 0; i < data.length; i++){
 				var checked = ''; if(i == 0){checked = 'checked="checked"';}
 				html += '<input type="radio" name="userbar-bg" value="'+data[i]+'" '+checked+'> '+data[i]+'<br />';
@@ -642,7 +642,7 @@
 		}
 		function errorUserBarBG(url){
 			var html = '' +
-				'<div style="width: 468px;">' +
+				'<div style="width: 488px;">' +
 					'<input type="radio" name="userbar-bg" value="userbar" checked="checked"> userbar<br />' +
 					'<img src="'+WoWsStatInfoHref+'bg/userbar.png" title="userbar"/><br /><br />' +
 				'</div>' +
