@@ -297,6 +297,9 @@
 			var row = content.getElementsByClassName('row')[0];
 			row.outerHTML += '' +
 				'<div id="userscript-block-list">' +
+					'<div id="userscript-forum-link" style="float:left;">' +
+						'<a target="_blank" href="http://forum.worldofwarships.ru/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">Профиль на форуме</a>' +
+					'</div>' +
 					getUserScriptDeveloperBlock() +
 					'' +
 				'</div>' +
@@ -356,7 +359,7 @@
 		function errorForumClanInfo(url){}
 		
 		/* ===== MemberProfilePage function ===== */
-		function viewMemberProfilePage(){		
+		function viewMemberProfilePage(){
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
 			
