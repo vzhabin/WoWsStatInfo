@@ -6,7 +6,9 @@
             "js":[ "WoWsStatInfo.user.js" ], 
             "matches":[	
 				"http://worldofwarships.ru/cbt/accounts/*",
+				"http://worldofwarships.eu/cbt/accounts/*",
 				"http://forum.worldofwarships.ru/index.php?/topic/*"
+				"http://forum.worldofwarships.eu/index.php?/topic/*"
 			], 
             "run_at":"document_end",
 			"all_frames": true
@@ -20,5 +22,5 @@
     "description" : "Расширенная статистика и функционал для сайте World of Warships.",
     "name" : "WoWsStatInfo", 
     "permissions" : ["http://*/*", "unlimitedStorage"],
-    "version" : "0.3.1.6"
+    "version" : "0.3.1.7"
 }

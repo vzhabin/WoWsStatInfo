@@ -5,18 +5,22 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.1.6
+// @version 0.3.1.7
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
+// @include http://worldofwarships.eu/cbt/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
+// @include http://forum.worldofwarships.eu/index.php?/topic/*
 // @match http://worldofwarships.ru/cbt/accounts/*
+// @match http://worldofwarships.eu/cbt/accounts/*
 // @match http://forum.worldofwarships.ru/index.php?/topic/*
+// @match http://forum.worldofwarships.eu/index.php?/topic/*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.3.1.6';
+		var VersionWoWsStatInfo = '0.3.1.7';
 		var WoWsStatInfoLink = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
 		var WoWsStatInfoLinkName = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
 		
@@ -140,7 +144,7 @@
 			else if(source.indexOf(".js") != -1){return false;}
 			if(message == 'Script error.' && errorObj == null){console.log('message == \'Script error.\' && errorObj == null'); return false;}
 			
-			lineno += 17;
+			lineno += 21;
 			
 			var agent = '';
 			var agentArr = navigator.userAgent.split(')');
@@ -279,7 +283,7 @@
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
 			MemberProfilePage();
-		}else if(window.location.host == 'forum.worldofwarships.ru' && window.location.href.indexOf("/topic/") > -1){
+		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/topic/") > -1){
 			ForumTopicPage();
 		}
 		
@@ -298,7 +302,7 @@
 			row.outerHTML += '' +
 				'<div id="userscript-block-list">' +
 					'<div id="userscript-forum-link" style="float:left;">' +
-						'<a target="_blank" href="http://forum.worldofwarships.ru/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">Профиль на форуме</a>' +
+						'<a target="_blank" href="http://forum.worldofwarships.ru/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">'+localization['forum-profile']+'</a>' +
 					'</div>' +
 					getUserScriptDeveloperBlock() +
 					'' +
@@ -378,9 +382,9 @@
 					var userbar = '';					
 					var my_profile_nickname = document.getElementsByClassName('js-my_profile_nickname')[0].textContent;
 					if(type == 'pvp'){
-						if(my_profile_nickname == MembersArray[0]['account_name']){
+						//if(my_profile_nickname == MembersArray[0]['account_name']){
 							userbar += '<button class="btn btn-default" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
-						}
+						//}
 						
 						userbar += '' +
 							'<br />'+
@@ -455,7 +459,7 @@
 						'<div class="b-profile-clan_photo">' +
 							'<div style="background: '+MembersArray[0]['clans']['clan']['color']+';" class="b-profile-clan_color"><!-- --></div>' +
 							'<a class="b-profile-clan_link" href="http://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clans']['clan']['clan_id']+'/" target="_blank">' +
-								'<img alt="Walkure: WEST" src="'+icon+'" width="32" height="32">' +
+								'<img alt="'+MembersArray[0]['clans']['clan']['name']+'" src="'+icon+'" width="32" height="32">' +
 							'</a>' +
 						'</div>' +
 						'<div class="b-profile-clan_text">' +
@@ -465,8 +469,8 @@
 								'</a>' +
 							'</div>' +
 							'<div class="b-statistic">' +
-								'<p class="b-statistic_item">Должность: <span class="b-statistic_value">'+MembersArray[0]['clans']['role_i18n']+'</span></p>' +
-								'<p class="b-statistic_item">Количество дней в клане: <span class="b-statistic_value">'+day+'</span></p>' +
+								'<p class="b-statistic_item">'+localization['role']+': <span class="b-statistic_value">'+MembersArray[0]['clans']['role_i18n']+'</span></p>' +
+								'<p class="b-statistic_item">'+localization['clan-day']+': <span class="b-statistic_value">'+day+'</span></p>' +
 							'</div>' +
 						'</div>' +
 					'</div>' +
@@ -1089,10 +1093,66 @@
 				localization['ru']['userscript-topic'] = 'Тема на форуме:';
 				localization['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
 				
+				localization['ru']['forum-profile'] = 'Профиль на форуме';
+				localization['ru']['role'] = 'Должность';
+				localization['ru']['clan-day'] = 'Количество дней в клане';
+				
 				localization['ru']['generator-userbar'] = 'Создать UserBar';
 				localization['ru']['userbar-bg'] = 'Выберите фон:';
 				
 				localization['ru']['wr'] = 'WR';
+			}
+			
+			{/* English */
+				localization['en'] = [];
+				
+				localization['en']['realm'] = 'eu';
+
+				localization['en']['Box'] = 'Notification';
+				localization['en']['Ok'] = 'Ok';
+				localization['en']['Cancel'] = 'Cancel';
+				
+				localization['en']['ErrorScript'] = 'An error occurred while running UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
+				
+				localization['en']['ErrorSendDeveloper'] = 'Please, inform script developer about this error.';
+				
+				localization['en']['userscript-developer'] = 'Developer - UserScript WoWsStatInfo:';
+				localization['en']['userscript-alliance'] = 'аlliance member';
+				localization['en']['userscript-topic'] = 'Forum topic:';
+				localization['en']['userscript-developer-support'] = 'Ways to support the developer:';
+				
+				localization['en']['forum-profile'] = 'Forum profile';
+				localization['en']['role'] = 'Alliance rank';
+				localization['en']['clan-day'] = 'Days in clan';
+				
+				localization['en']['generator-userbar'] = 'Create UserBar';
+				localization['en']['userbar-bg'] = 'Choose a background:';
+				
+				localization['en']['wr'] = 'WR';
+			}
+			
+			{/* Français */
+				localization['fr'] = localization['en'];
+			}
+			
+			{/* Deutsch */
+				localization['de'] = localization['en'];
+			}
+			
+			{/* Türkçe */
+				localization['tr'] = localization['en'];
+			}
+			
+			{/* Español */
+				localization['es'] = localization['en'];
+			}
+			
+			{/* Čeština */
+				localization['cs'] = localization['en'];
+			}
+			
+			{/* Polski */
+				localization['pl'] = localization['en'];
 			}
 			
 			return localization[lang];
