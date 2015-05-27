@@ -314,6 +314,7 @@
 			var basic_info = document.getElementsByClassName('basic_info');
 			for(var i = 0; i < basic_info.length; i++){
 				var ipsUserPhotoLink = basic_info[i].getElementsByClassName('ipsUserPhotoLink')[0];
+				if(undefined === ipsUserPhotoLink){continue;}
 				if(ipsUserPhotoLink.id.indexOf('anonymous_element') > -1){
 					var linkParse = ipsUserPhotoLink.href.split('/');
 					var accountParse = linkParse[5].split('-');
