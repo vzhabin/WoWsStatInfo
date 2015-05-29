@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.1.7
+// @version 0.3.1.8
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
 // @include http://worldofwarships.eu/cbt/accounts/*
@@ -21,8 +21,14 @@
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
 		var VersionWoWsStatInfo = '0.3.1.7';
-		var WoWsStatInfoLink = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
-		var WoWsStatInfoLinkName = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
+		
+		var WoWsStatInfoLinkLoc = [];
+		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
+		WoWsStatInfoLinkLoc['eu'] = 'http://forum.worldofwarships.eu/index.php?/topic/14650-';
+		
+		var WoWsStatInfoLinkNameLoc = [];
+		WoWsStatInfoLinkNameLoc['ru'] = '[0.3.1] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
+		WoWsStatInfoLinkNameLoc['eu'] = '[0.3.1][WoWsStatInfo] Extended stat-info for official WoWS profile.';
 		
 		var lang = 'ru';
 		if(window.location.host.indexOf(".wargaming.net") > -1){
@@ -35,6 +41,9 @@
 		
 		var realm = localization['realm'];
 		var application_id = getApplicationId(realm);
+		
+		var WoWsStatInfoLink = WoWsStatInfoLinkLoc[realm];
+		var WoWsStatInfoLinkName = WoWsStatInfoLinkNameLoc[realm];
 		
 		var WGAPI = 'http://api.worldoftanks.'+realm+'/';
 		var WoWsStatInfoHref = 'http://vovchik.myjino.ru/US_WoWsStatInfo/';
@@ -302,7 +311,7 @@
 			row.outerHTML += '' +
 				'<div id="userscript-block-list">' +
 					'<div id="userscript-forum-link" style="float:left;">' +
-						'<a target="_blank" href="http://forum.worldofwarships.ru/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">'+localization['forum-profile']+'</a>' +
+						'<a target="_blank" href="http://forum.worldofwarships.'+realm+'/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">'+localization['forum-profile']+'</a>' +
 					'</div>' +
 					getUserScriptDeveloperBlock() +
 					'' +
