@@ -723,7 +723,7 @@
 				}
 			}
 		
-			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar&userbarbg='+userbarbg;
+			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar&userbarbg='+userbarbg+'&lang='+lang;
 			
 			var xmlhttp;
 			try{
