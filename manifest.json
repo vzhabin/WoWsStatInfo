@@ -7,7 +7,7 @@
             "matches":[	
 				"http://worldofwarships.ru/cbt/accounts/*",
 				"http://worldofwarships.eu/cbt/accounts/*",
-				"http://forum.worldofwarships.ru/index.php?/topic/*"
+				"http://forum.worldofwarships.ru/index.php?/topic/*",
 				"http://forum.worldofwarships.eu/index.php?/topic/*"
 			], 
             "run_at":"document_end",
