@@ -835,7 +835,11 @@
 			value = value.replace(/[^0-9,()% ]/g, "");
 			
 			value = value.replace('%', '');
-			value = value.replace(',', '.');
+			if(realm == 'ru'){
+				value = value.replace(',', '.');
+			}else{
+				value = value.replace(',', '');
+			}
 			
 			if(value.indexOf('(') > -1 && value.indexOf(')') > -1){
 				value = (value.split(' '))[0];
