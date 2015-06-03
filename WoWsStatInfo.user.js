@@ -163,6 +163,7 @@
 			}
 			
 			var error = localization['ErrorScript']+"\n\n" +
+					"Lang: "+lang+"\n"+
 					"Browser name: "+navigatorInfo['browserName']+"\n"+
 					"Full version: "+navigatorInfo['fullVersion']+"\n"+
 					"Major version: "+navigatorInfo['majorVersion']+"\n"+
@@ -259,6 +260,7 @@
 			}
 			
 			console.log(''
+				+'Lang          = '+lang+'\n'
 				+'Browser name  = '+browserName+'\n'
 				+'Full version  = '+fullVersion+'\n'
 				+'Major version = '+majorVersion+'\n'
@@ -411,7 +413,7 @@
 								'<td style="vertical-align: top;">' +
 									'<div id="wowsstatinfo-'+type+'" class="wowsstatinfo-stat">' +
 										'<span class="name-stat">'+localization['wr']+':</span> ' +
-										'<font color="'+colorWalkureRating(MembersArray[0][type]['wr'])+'">'+(MembersArray[0][type]['wr']).toFixed(2)+'</font>' + 
+										'<font color="'+colorWalkureRating(MembersArray[0][type]['wr'])+'">'+valueFormat((MembersArray[0][type]['wr']).toFixed(2))+'</font>' + 
 									'</div>' +
 								'</td>'+
 								'<td style="width: 460px; text-align: center; vertical-align: top;">'+
@@ -830,24 +832,6 @@
 			);
 		}
 		
-		function htmlParseMemberStatistic(element){
-			var value = element.textContent.trim().replace(new RegExp(' ', 'g'), '');
-			value = value.replace(/[^0-9,()% ]/g, "");
-			
-			value = value.replace('%', '');
-			if(realm == 'ru'){
-				value = value.replace(',', '.');
-			}else{
-				value = value.replace(',', '');
-			}
-			
-			if(value.indexOf('(') > -1 && value.indexOf(')') > -1){
-				value = (value.split(' '))[0];
-			}
-			
-			return value;
-		}
-		
 		/* ===== Color function ===== */
 		function findColor(value, colorsBorders) {
 			if (isNaN(value) || value <= colorsBorders[0]) {
@@ -886,6 +870,40 @@
 		}		
 		
 		/* ===== UserScript function ===== */
+		function valueFormat(value){
+			var newValue = '';
+			var valueSplit = value.split('.');
+			
+			var numChar = 0;
+			for(var i = valueSplit[0].length; i > 0; i--){
+				if(numChar < 3){
+					newValue = valueSplit[0].substr(i - 1, 1)+''+newValue;
+					numChar++;
+				}else{
+					newValue = valueSplit[0].substr(i - 1, 1)+''+localization['num-separator']+''+newValue;
+					numChar = 1;
+				}
+			}
+			
+			if(valueSplit.length > 1){newValue += localization['num-fractional']+''+valueSplit[1];}
+			
+			return newValue;
+		}
+		function htmlParseMemberStatistic(element){
+			var value = element.textContent.trim().replace(new RegExp(' ', 'g'), '');
+			value = value.replace(/[^0-9,.()% ]/g, "");
+			
+			value = value.replace('%', '');
+			
+			value = value.split(localization['num-separator']).join('');
+			value = value.replace(localization['num-fractional'], '.');
+			
+			if(value.indexOf('(') > -1 && value.indexOf(')') > -1){
+				value = (value.split('('))[0];
+			}
+			
+			return value;
+		}		
 		function getJson(url, onDone, onError){
 			if(MaxProcess > Process){
 				Process++;
@@ -1112,6 +1130,8 @@
 				localization['ru'] = [];
 				
 				localization['ru']['realm'] = 'ru';
+				localization['ru']['num-separator'] = ' ';
+				localization['ru']['num-fractional'] = ',';
 				
 				localization['ru']['Box'] = 'Оповещение';
 				localization['ru']['Ok'] = 'Ok';
@@ -1139,6 +1159,8 @@
 				localization['en'] = [];
 				
 				localization['en']['realm'] = 'eu';
+				localization['en']['num-separator'] = ',';
+				localization['en']['num-fractional'] = '.';
 
 				localization['en']['Box'] = 'Notification';
 				localization['en']['Ok'] = 'Ok';
@@ -1164,27 +1186,57 @@
 			}
 			
 			{/* Français */
-				localization['fr'] = localization['en'];
+				localization['fr'] = [];
+				
+				localization['fr'] = jQ.extend([], localization['en']);
+				
+				localization['fr']['num-separator'] = ' ';
+				localization['fr']['num-fractional'] = ',';
 			}
 			
 			{/* Deutsch */
-				localization['de'] = localization['en'];
+				localization['de'] = [];
+			
+				localization['de'] = jQ.extend([], localization['en']);
+				
+				localization['de']['num-separator'] = '.';
+				localization['de']['num-fractional'] = ',';
 			}
 			
 			{/* Türkçe */
-				localization['tr'] = localization['en'];
+				localization['tr'] = [];
+			
+				localization['tr'] = jQ.extend([], localization['en']);
+				
+				localization['tr']['num-separator'] = '.';
+				localization['tr']['num-fractional'] = ',';
 			}
 			
 			{/* Español */
-				localization['es'] = localization['en'];
+				localization['es'] = [];
+			
+				localization['es'] = jQ.extend([], localization['en']);
+				
+				localization['es']['num-separator'] = '.';
+				localization['es']['num-fractional'] = ',';
 			}
 			
 			{/* Čeština */
-				localization['cs'] = localization['en'];
+				localization['cs'] = [];
+			
+				localization['cs'] = jQ.extend([], localization['en']);
+				
+				localization['cs']['num-separator'] = ' ';
+				localization['cs']['num-fractional'] = ',';
 			}
 			
 			{/* Polski */
-				localization['pl'] = localization['en'];
+				localization['pl'] = [];
+			
+				localization['pl'] = jQ.extend([], localization['en']);
+				
+				localization['pl']['num-separator'] = ' ';
+				localization['pl']['num-fractional'] = ',';
 			}
 			
 			return localization[lang];
