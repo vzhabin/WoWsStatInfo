@@ -51,6 +51,8 @@
 		var Process = 0;
 		var MaxProcess = 3;
 		
+		var colorStat = jQ.parseJSON('{"battles":["13","131","328","797","1253","10000"],"wins":["6","64","160","395","671","1000"],"losses":["7","63","146","347","536","1000"],"draws":["0","5","16","45","71","100"],"survived_battles":["3","42","116","335","559","1000"],"damage":["190053","3072756","9122251","27285879","52796971","100000000"],"frags_ships":["7","87","243","666","1290","10000"],"frags_planes":["0","176","646","2389","5133","10000"],"capture_base":["0","132","393","1448","3554","10000"],"defend_base":["61","740","2010","5731","9504","10000"],"avg_xp":["687.03","1005.58","1309.45","1839.36","2258","10000"],"avg_damage":["12020.8","22675.53","30412.39","42525.63","55654.25","100000"],"avg_frags_ships":["0.39","0.66","0.83","1.08","1.37","10"],"avg_frags_planes":["0","1.26","2.25","4.53","7.73","10"],"hits_percents_battery":["24","30","34","41","47","100"],"hits_percents_torpedo":["0","9","12","19","27","100"],"avg_capture_base":["0","0.91","1.65","3.34","5.91","10"],"avg_defend_base":["2.59","5.67","7.6","11.65","20.4","100"],"max_xp":["1815","4332","8448","13224","17608","100000"],"max_damage":["33172","99920","134679","194419","251831","1000000"],"max_frags_ships":["2","4","5","6","7","10"],"max_frags_planes":["0","18","31","57","78","100"],"avg_level_battles":["2.5","4.4","5.3","6.4","7.1","10"],"wins_percents":["39.69465648855","48.450704225352","52.380952380952","61.021505376344","83.333333333333","100"],"kill_dead":["0.5","1","1.3701492537313","2.1520467836257","3.0434782608696","10"],"wr":["653","954.85357142857","1157.2986111111","1479.4783333333","1996.6187755102","10000"]}');
+		
 		/* ===== Style UserScript ===== */
 		{
 			var StyleWoWsStatInfo = '' +
@@ -383,14 +385,14 @@
 				var account_statistics__general = document.getElementsByClassName('account_statistics__general')[t];
 				if(account_statistics__general !== undefined){
 					var stat_main_middle = account_statistics__general.getElementsByClassName('stat-main-middle')[0];
-					stat_main_middle.getElementsByClassName('value')[0].style.color = colorBattlesAvgXP(MembersArray[0][type]['avg_xp']);
+					stat_main_middle.getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_xp'], 'avg_xp');
 				
 					var stat = account_statistics__general.getElementsByClassName('stat');
 					
-					stat[0].getElementsByClassName('value')[0].style.color = colorBattles(MembersArray[0][type]['battles']);
-					stat[1].getElementsByClassName('value')[0].style.color = colorWinsPercents(MembersArray[0][type]['wins_percents']);					
-					stat[2].getElementsByClassName('value')[0].style.color = colorAvgDamage(MembersArray[0][type]['avg_damage'], MembersArray[0][type]['avg_level_battles']);
-					stat[3].getElementsByClassName('value')[0].style.color = colorKillDead(MembersArray[0][type]['kill_dead']);
+					stat[0].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['battles'], 'battles');
+					stat[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['wins_percents'], 'wins_percents');					
+					stat[2].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_damage'], 'avg_damage');
+					stat[3].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['kill_dead'], 'kill_dead');
 
 					var userbar = '';					
 					var my_profile_nickname = document.getElementsByClassName('js-my_profile_nickname')[0].textContent;
@@ -413,7 +415,7 @@
 								'<td style="vertical-align: top;">' +
 									'<div id="wowsstatinfo-'+type+'" class="wowsstatinfo-stat">' +
 										'<span class="name-stat">'+localization['wr']+':</span> ' +
-										'<font color="'+colorWalkureRating(MembersArray[0][type]['wr'])+'">'+valueFormat((MembersArray[0][type]['wr']).toFixed(2))+'</font>' + 
+										'<font color="'+findColor(MembersArray[0][type]['wr'], 'wr')+'">'+valueFormat((MembersArray[0][type]['wr']).toFixed(2))+'</font>' + 
 									'</div>' +
 								'</td>'+
 								'<td style="width: 460px; text-align: center; vertical-align: top;">'+
@@ -717,7 +719,7 @@
 					}
 				}
 			}
-			//console.log(MembersArray[0]);
+			console.log(MembersArray[0]);
 		}
 		function doneClanInfo(url, response){
 			if(response.status && response.status == "error"){
@@ -832,44 +834,24 @@
 			);
 		}
 		
-		/* ===== Color function ===== */
-		function findColor(value, colorsBorders) {
-			if (isNaN(value) || value <= colorsBorders[0]) {
+		/* ===== UserScript function ===== */
+		function findColor(value, stat_type){
+			if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
 				return color['very_bad'];
-			} else if (value <= colorsBorders[1]) {
+			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
 				return color['bad'];
-			} else if (value <= colorsBorders[2]) {
+			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][2])){
 				return color['normal'];
-			} else if (value <= colorsBorders[3]) {
+			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][3])){
 				return color['good'];
-			} else if (value <= colorsBorders[4]) {
+			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][4])){
 				return color['very_good'];
-			} else if (value <= colorsBorders[5]) {
+			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][5])){
 				return color['unique'];
-			} else {
+			}else{
 				return color['very_bad'];
 			}
-		}
-		function colorBattles(b){
-			return findColor(b / 1000, [0.5, 1.5, 4, 7.5, 10, 999]);
 		}		
-		function colorWinsPercents(wp){
-			return findColor(wp, [46, 48, 51, 56, 64, 100]);
-		}
-		function colorBattlesAvgXP(baxp) {
-			return findColor(baxp, [1000, 1150, 1375, 1600, 1825, 9999]);
-		}		
-		function colorWalkureRating(wr) {
-			return findColor(wr, [609, 849, 1144, 1474, 1774, 9999]);
-		}		
-		function colorAvgDamage(ad, alb) {
-			return findColor(ad/(alb*10), [300, 500, 700, 850, 1000, 9999]);
-		}
-		function colorKillDead(kd) {
-			return findColor(kd, [1.3, 1.7, 2.1, 2.5, 2.7, 99]);
-		}		
-		
-		/* ===== UserScript function ===== */
 		function valueFormat(value){
 			var newValue = '';
 			var valueSplit = value.split('.');
