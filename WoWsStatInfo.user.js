@@ -51,7 +51,19 @@
 		var Process = 0;
 		var MaxProcess = 3;
 		
-		var colorStat = jQ.parseJSON('{"battles":["13","131","328","797","1253","10000"],"wins":["6","64","160","395","671","1000"],"losses":["7","63","146","347","536","1000"],"draws":["0","5","16","45","71","100"],"survived_battles":["3","42","116","335","559","1000"],"damage":["190053","3072756","9122251","27285879","52796971","100000000"],"frags_ships":["7","87","243","666","1290","10000"],"frags_planes":["0","176","646","2389","5133","10000"],"capture_base":["0","132","393","1448","3554","10000"],"defend_base":["61","740","2010","5731","9504","10000"],"avg_xp":["687.03","1005.58","1309.45","1839.36","2258","10000"],"avg_damage":["12020.8","22675.53","30412.39","42525.63","55654.25","100000"],"avg_frags_ships":["0.39","0.66","0.83","1.08","1.37","10"],"avg_frags_planes":["0","1.26","2.25","4.53","7.73","10"],"hits_percents_battery":["24","30","34","41","47","100"],"hits_percents_torpedo":["0","9","12","19","27","100"],"avg_capture_base":["0","0.91","1.65","3.34","5.91","10"],"avg_defend_base":["2.59","5.67","7.6","11.65","20.4","100"],"max_xp":["1815","4332","8448","13224","17608","100000"],"max_damage":["33172","99920","134679","194419","251831","1000000"],"max_frags_ships":["2","4","5","6","7","10"],"max_frags_planes":["0","18","31","57","78","100"],"avg_level_battles":["2.5","4.4","5.3","6.4","7.1","10"],"wins_percents":["39.69465648855","48.450704225352","52.380952380952","61.021505376344","83.333333333333","100"],"kill_dead":["0.5","1","1.3701492537313","2.1520467836257","3.0434782608696","10"],"wr":["653","954.85357142857","1157.2986111111","1479.4783333333","1996.6187755102","10000"]}');
+		var MembersArray = [];
+		
+		var typeStat = ["pvp", "pve"];
+		
+		var color = new Array();
+		color['very_bad'] = '#FE0E00'; // очень плохо, хуже чем у 85%
+		color['bad'] = '#FE7903'; // плохо, хуже чем у 50%
+		color['normal'] = '#F8F400'; // средне, лучше чем у 50%
+		color['good'] = '#60FF00';  // хорошо, лучше чем у 75%
+		color['very_good'] = '#02C9B3'; // очень хорошо, лучше чем у 95%
+		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%		
+		
+		var colorStat = jQ.parseJSON('{"battles":["13","124","296","734","1152","99999"],"wins":["6","60","146","364","607","9999"],"losses":["6","59","137","328","501","9999"],"draws":["0","5","14","41","67","999"],"survived_battles":["3","39","101","293","530","9999"],"damage":["168629","2817727","8085942","25084511","48175716","999999999"],"frags_ships":["6","80","216","601","1127","99999"],"frags_planes":["0","157","564","2198","4752","99999"],"capture_base":["0","114","346","1258","2853","99999"],"defend_base":["58","674","1759","5166","8894","99999"],"avg_xp":["685.2","991.12","1272.1","1793.53","2181.84","99999"],"avg_damage":["11863.63","21875.95","29283.84","41116.14","52956.24","999999"],"avg_frags_ships":["0.39","0.65","0.81","1.07","1.37","99"],"avg_frags_planes":["0","1.17","2.18","4.37","7.52","99"],"hits_percents_battery":["24","30","34","41","47","999"],"hits_percents_torpedo":["0","9","12","19","27","999"],"avg_capture_base":["0","0.86","1.58","3.2","6.08","99"],"avg_defend_base":["2.43","5.51","7.46","11.66","20","999"],"max_xp":["1776","4032","7944","12896","17032","999999"],"max_damage":["32266","96498","130413","189453","245659","9999999"],"max_frags_ships":["2","4","5","6","7","99"],"max_frags_planes":["0","17","30","55","77","999"],"avg_level_battles":["2.5","4.3","5.2","6.2","7","99"],"wins_percents":["39.7435897","48.2849604","52.2727272","61.2903225","88.8888888","100"],"losses_percents":["53.4482758","46.4454976","42.0520231","0","0","0"],"kill_dead":["0.5","0.967741935","1.318181818","2.076586433","3","99"],"wr":["643.13517241379","946.5","1136.3315625","1466.2006818182","1977.5097222222","99999"]}');
 		
 		/* ===== Style UserScript ===== */
 		{
@@ -65,6 +77,15 @@
 				'div.hide-block{display: none;}' +
 				'div.wowsstatinfo-stat{text-align: center; margin-top: 10px; color: white; font-size: 16px;}' +
 				'span.name-stat{color: #ffcc33;}' +
+				'table.color-stat{margin-top: 10px;}' +
+				'table.color-stat td{padding: 5px; border: 1px solid #ccc; color: black; font-weight: bold;}' +
+				'.color0{background-color: #FFF;}' +
+				'.color1{background-color: '+color['unique']+';}' +
+				'.color2{background-color: '+color['very_good']+';}' +
+				'.color3{background-color: '+color['good']+';}' +
+				'.color4{background-color: '+color['normal']+';}' +
+				'.color5{background-color: '+color['bad']+';}' +
+				'.color6{background-color: '+color['very_bad']+';}' +
 				'' +
 			'';
 			var StyleWoWsStatInfoAdd = document.createElement("style");
@@ -280,18 +301,6 @@
 			return navigatorInfo;
 		}
 		
-		var MembersArray = [];
-		
-		var typeStat = ["pvp", "pve"];
-		
-		var color = new Array();
-		color['very_bad'] = '#FE0E00'; // очень плохо, хуже чем у 85%
-		color['bad'] = '#FE7903'; // плохо, хуже чем у 50%
-		color['normal'] = '#F8F400'; // средне, лучше чем у 50%
-		color['good'] = '#60FF00';  // хорошо, лучше чем у 75%
-		color['very_good'] = '#02C9B3'; // очень хорошо, лучше чем у 95%
-		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%
-		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
@@ -385,14 +394,14 @@
 				var account_statistics__general = document.getElementsByClassName('account_statistics__general')[t];
 				if(account_statistics__general !== undefined){
 					var stat_main_middle = account_statistics__general.getElementsByClassName('stat-main-middle')[0];
-					stat_main_middle.getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_xp'], 'avg_xp');
+					stat_main_middle.getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 				
 					var stat = account_statistics__general.getElementsByClassName('stat');
 					
-					stat[0].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['battles'], 'battles');
-					stat[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['wins_percents'], 'wins_percents');					
-					stat[2].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_damage'], 'avg_damage');
-					stat[3].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['kill_dead'], 'kill_dead');
+					stat[0].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
+					stat[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');					
+					stat[2].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
+					stat[3].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['kill_dead'], 'kill_dead');
 
 					var userbar = '';					
 					var my_profile_nickname = document.getElementsByClassName('js-my_profile_nickname')[0].textContent;
@@ -412,13 +421,38 @@
 						'<hr />' +
 						'<table style="width: 100%;">' +
 							'<tr>' +
+								'<td style="vertical-align: top; width: 150px; text-align: center;">' +
+									'<table class="color-stat">'+
+										'<tr>'+
+											'<td class="color0">'+localization['coloring-scheme']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color1">> 99% '+localization['players']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color2">> 95% '+localization['players']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color3">> 75% '+localization['players']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color4">> 50% '+localization['players']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color5">< 50% '+localization['players']+'</td>'+
+										'</tr>'+
+										'<tr>'+
+											'<td class="color6">< 85% '+localization['players']+'</td>'+
+										'</tr>'+
+									'</table>'+
+								'</td>'+
 								'<td style="vertical-align: top;">' +
 									'<div id="wowsstatinfo-'+type+'" class="wowsstatinfo-stat">' +
 										'<span class="name-stat">'+localization['wr']+':</span> ' +
-										'<font color="'+findColor(MembersArray[0][type]['wr'], 'wr')+'">'+valueFormat((MembersArray[0][type]['wr']).toFixed(2))+'</font>' + 
+										'<font color="'+findColorASC(MembersArray[0][type]['wr'], 'wr')+'">'+valueFormat((MembersArray[0][type]['wr']).toFixed(2))+'</font>' + 
 									'</div>' +
 								'</td>'+
-								'<td style="width: 460px; text-align: center; vertical-align: top;">'+
+								'<td style="width: 470px; text-align: center; vertical-align: top;">'+
 									userbar +
 								'</td>' +
 							'</tr>' +
@@ -529,121 +563,121 @@
 				var account_statistics = account_statistic.getElementsByClassName('account_statistics__rates-small-border');
 				if(account_statistics.length == 3){
 					MembersArray[0][type]['battles'] = htmlParseMemberStatistic(account_statistics[0].rows[1].cells[1]);
-					account_statistics[0].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['battles'], 'battles');
+					account_statistics[0].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
 					
 					MembersArray[0][type]['wins'] = htmlParseMemberStatistic(account_statistics[0].rows[2].cells[1]);
-					account_statistics[0].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['wins'], 'wins');
+					account_statistics[0].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['wins'], 'wins');
 					
 					MembersArray[0][type]['losses'] = htmlParseMemberStatistic(account_statistics[0].rows[3].cells[1]);
-					account_statistics[0].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['losses'], 'losses');
+					account_statistics[0].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['losses'], 'losses');
 					
 					MembersArray[0][type]['draws'] = htmlParseMemberStatistic(account_statistics[0].rows[4].cells[1]);
-					account_statistics[0].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['draws'], 'draws');
+					account_statistics[0].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['draws'], 'draws');
 					
 					MembersArray[0][type]['survived_battles'] = htmlParseMemberStatistic(account_statistics[0].rows[5].cells[1]);
-					account_statistics[0].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['survived_battles'], 'survived_battles');
+					account_statistics[0].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['survived_battles'], 'survived_battles');
 					
 					MembersArray[0][type]['damage'] = htmlParseMemberStatistic(account_statistics[0].rows[6].cells[1]);
-					account_statistics[0].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['damage'], 'damage');
+					account_statistics[0].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['damage'], 'damage');
 					
 					MembersArray[0][type]['frags_ships'] = htmlParseMemberStatistic(account_statistics[0].rows[7].cells[1]);
-					account_statistics[0].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['frags_ships'], 'frags_ships');
+					account_statistics[0].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['frags_ships'], 'frags_ships');
 					
 					MembersArray[0][type]['frags_planes'] = htmlParseMemberStatistic(account_statistics[0].rows[8].cells[1]);
-					account_statistics[0].rows[8].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['frags_planes'], 'frags_planes');
+					account_statistics[0].rows[8].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['frags_planes'], 'frags_planes');
 					
 					MembersArray[0][type]['capture_base'] = htmlParseMemberStatistic(account_statistics[0].rows[9].cells[1]);
-					account_statistics[0].rows[9].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['capture_base'], 'capture_base');
+					account_statistics[0].rows[9].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['capture_base'], 'capture_base');
 					
 					MembersArray[0][type]['defend_base'] = htmlParseMemberStatistic(account_statistics[0].rows[10].cells[1]);
-					account_statistics[0].rows[10].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['defend_base'], 'defend_base');
+					account_statistics[0].rows[10].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['defend_base'], 'defend_base');
 					
 					if(account_statistics[1].rows.length == 7){
 							MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
-							account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_xp'], 'avg_xp');
+							account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 							
 							MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
-							account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_damage'], 'avg_damage');
+							account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
 							
 							MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
-							account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
+							account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
 							
 							MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
-							account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
+							account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
 							
 							MembersArray[0][type]['hits_percents_battery'] = 0;
 							
 							MembersArray[0][type]['hits_percents_torpedo'] = 0;
 							
 							MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
-							account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
+							account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
 							
 							MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
-							account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
+							account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
 					}else if(account_statistics[1].rows.length == 8){
 						MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
-						account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_xp'], 'avg_xp');
+						account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 						
 						MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
-						account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_damage'], 'avg_damage');
+						account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
 						
 						MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
-						account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
+						account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
 						
 						MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
-						account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
+						account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
 						
 						MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
-						account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['hits_percents_battery'], 'hits_percents_battery');
+						account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['hits_percents_battery'], 'hits_percents_battery');
 						
 						MembersArray[0][type]['hits_percents_torpedo'] = 0;
 						
 						MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
-						account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
+						account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
 						
 						MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
-						account_statistics[1].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
+						account_statistics[1].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
 					}else{
 						MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_statistics[1].rows[1].cells[1]);
-						account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_xp'], 'avg_xp');
+						account_statistics[1].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 						
 						MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_statistics[1].rows[2].cells[1]);
-						account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_damage'], 'avg_damage');
+						account_statistics[1].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
 						
 						MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_statistics[1].rows[3].cells[1]);
-						account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
+						account_statistics[1].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
 						
 						MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_statistics[1].rows[4].cells[1]);
-						account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
+						account_statistics[1].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
 						
 						MembersArray[0][type]['hits_percents_battery'] = htmlParseMemberStatistic(account_statistics[1].rows[5].cells[1]);
-						account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['hits_percents_battery'], 'hits_percents_battery');
+						account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['hits_percents_battery'], 'hits_percents_battery');
 						
 						MembersArray[0][type]['hits_percents_torpedo'] = htmlParseMemberStatistic(account_statistics[1].rows[6].cells[1]);
-						account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['hits_percents_torpedo'], 'hits_percents_torpedo');
+						account_statistics[1].rows[6].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['hits_percents_torpedo'], 'hits_percents_torpedo');
 						
 						MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics[1].rows[7].cells[1]);
-						account_statistics[1].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
+						account_statistics[1].rows[7].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
 						
 						MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics[1].rows[8].cells[1]);
-						account_statistics[1].rows[8].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
+						account_statistics[1].rows[8].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
 					}
 					
 					MembersArray[0][type]['max_xp'] = htmlParseMemberStatistic(account_statistics[2].rows[1].cells[1]);
-					account_statistics[2].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['max_xp'], 'max_xp');
+					account_statistics[2].rows[1].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['max_xp'], 'max_xp');
 					
 					MembersArray[0][type]['max_damage'] = htmlParseMemberStatistic(account_statistics[2].rows[2].cells[1]);
-					account_statistics[2].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['max_damage'], 'max_damage');
+					account_statistics[2].rows[2].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['max_damage'], 'max_damage');
 					
 					MembersArray[0][type]['max_frags_ships'] = htmlParseMemberStatistic(account_statistics[2].rows[3].cells[1]);
-					account_statistics[2].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['max_frags_ships'], 'max_frags_ships');
+					account_statistics[2].rows[3].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['max_frags_ships'], 'max_frags_ships');
 					
 					MembersArray[0][type]['max_frags_planes'] = htmlParseMemberStatistic(account_statistics[2].rows[4].cells[1]);
-					account_statistics[2].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColor(MembersArray[0][type]['max_frags_planes'], 'max_frags_planes');
+					account_statistics[2].rows[4].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['max_frags_planes'], 'max_frags_planes');
 					
 					var ships__avg_params = account_statistic.getElementsByClassName('ships__avg-params')[0]
 					MembersArray[0][type]['avg_level_battles'] = htmlParseMemberStatistic(ships__avg_params.getElementsByClassName('_value')[0]);
-					ships__avg_params.getElementsByClassName('_value')[0].style.color = findColor(MembersArray[0][type]['avg_level_battles'], 'avg_level_battles');
+					ships__avg_params.getElementsByClassName('_value')[0].style.color = findColorASC(MembersArray[0][type]['avg_level_battles'], 'avg_level_battles');
 				}else{
 					MembersArray[0][type]['battles'] = 0;
 					MembersArray[0][type]['wins'] = 0;
@@ -758,7 +792,16 @@
 				/* ===== Calc Statistic ===== */
 				{
 					MembersArray[0][type]['wins_percents'] = (MembersArray[0][type]['wins']/MembersArray[0][type]['battles'])*100;
-					MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/(MembersArray[0][type]['battles']-MembersArray[0][type]['survived_battles']);
+					account_statistics[0].rows[2].cells[1].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');
+					
+					MembersArray[0][type]['losses_percents'] = (MembersArray[0][type]['losses']/MembersArray[0][type]['battles'])*100;
+					account_statistics[0].rows[3].cells[1].style.color = findColorDESC(MembersArray[0][type]['losses_percents'], 'losses_percents');
+					
+					if(MembersArray[0][type]['battles'] == MembersArray[0][type]['survived_battles']){
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/MembersArray[0][type]['battles'];
+					}else{
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/(MembersArray[0][type]['battles']-MembersArray[0][type]['survived_battles']);
+					}
 				
 					var avg_damage = MembersArray[0][type]['avg_damage'];
 					var avg_frags_ships = MembersArray[0][type]['avg_frags_ships'];
@@ -773,7 +816,13 @@
 					
 					for(var i = 0; i < MembersArray[0][type]['ships'].length; i++){
 						MembersArray[0][type]['ships'][i]['wins_percents'] = (MembersArray[0][type]['ships'][i]['wins']/MembersArray[0][type]['ships'][i]['battles'])*100;
-						MembersArray[0][type]['ships'][i]['kill_dead'] = MembersArray[0][type]['ships'][i]['frags_ships']/(MembersArray[0][type]['ships'][i]['battles']-MembersArray[0][type]['ships'][i]['survived_battles']);
+						MembersArray[0][type]['ships'][i]['losses_percents'] = (MembersArray[0][type]['ships'][i]['losses']/MembersArray[0][type]['ships'][i]['battles'])*100;
+						
+						if(MembersArray[0][type]['ships'][i]['battles'] == MembersArray[0][type]['ships'][i]['survived_battles']){
+							MembersArray[0][type]['ships'][i]['kill_dead'] = MembersArray[0][type]['ships'][i]['frags_ships']/MembersArray[0][type]['ships'][i]['battles'];
+						}else{
+							MembersArray[0][type]['ships'][i]['kill_dead'] = MembersArray[0][type]['ships'][i]['frags_ships']/(MembersArray[0][type]['ships'][i]['battles']-MembersArray[0][type]['ships'][i]['survived_battles']);
+						}
 						
 						var avg_damage = MembersArray[0][type]['ships'][i]['avg_damage'];
 						var avg_frags_ships = MembersArray[0][type]['ships'][i]['avg_frags_ships'];
@@ -904,7 +953,7 @@
 		}
 		
 		/* ===== UserScript function ===== */
-		function findColor(value, stat_type){
+		function findColorASC(value, stat_type){
 			if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
 				return color['very_bad'];
 			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
@@ -920,7 +969,26 @@
 			}else{
 				return color['very_bad'];
 			}
-		}		
+		}
+		function findColorDESC(value, stat_type){
+			if(isNaN(value)){
+				return color['very_bad'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][0])){
+				return color['very_bad'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][1])){
+				return color['bad'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][2])){
+				return color['normal'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][3])){
+				return color['good'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][4])){
+				return color['very_good'];
+			}else if(parseFloat(value) >= parseFloat(colorStat[stat_type][5])){
+				return color['unique'];
+			}else{
+				return color['very_bad'];
+			}
+		}
 		function valueFormat(value){
 			var newValue = '';
 			var valueSplit = value.split('.');
@@ -1017,9 +1085,9 @@
 						'<br /><br />' +
 						'<font style="font-size: 16px; color: #658C4C;">'+localization['userscript-developer-support']+'</font><br />'+
 						'<font style="color: #2CA8C7;">Web-Money WMR</font> R295712009837 <br />'+
-						'<font style="color: #2CA8C7;">Web-Money WMZ</font> Z226959724402 <br />'+						
-						'<font style="color: #2CA8C7;">Yandex Money</font> 41001290117791 <br />'+						
-						'<font style="color: #2CA8C7;">RBK Money</font> RU353257918 <br />'+						
+						'<font style="color: #2CA8C7;">Web-Money WMZ</font> Z226959724402 <br />'+
+						'<font style="color: #2CA8C7;">Yandex Money</font> 41001290117791 <br />'+
+						'<font style="color: #2CA8C7;">RBK Money</font> RU353257918 <br />'+
 					'</span>' +
 				'</div>' +
 			'';
@@ -1196,6 +1264,9 @@
 				localization['ru']['userscript-topic'] = 'Тема на форуме:';
 				localization['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
 				
+				localization['ru']['coloring-scheme'] = 'Цветовая схема';
+				localization['ru']['players'] = 'игроков';
+				
 				localization['ru']['forum-profile'] = 'Профиль на форуме';
 				localization['ru']['role'] = 'Должность';
 				localization['ru']['clan-day'] = 'Количество дней в клане';
@@ -1225,6 +1296,9 @@
 				localization['en']['userscript-alliance'] = 'аlliance member';
 				localization['en']['userscript-topic'] = 'Forum topic:';
 				localization['en']['userscript-developer-support'] = 'Ways to support the developer:';
+				
+				localization['en']['coloring-scheme'] = 'Coloring scheme';
+				localization['en']['players'] = 'players';
 				
 				localization['en']['forum-profile'] = 'Forum profile';
 				localization['en']['role'] = 'Alliance rank';
