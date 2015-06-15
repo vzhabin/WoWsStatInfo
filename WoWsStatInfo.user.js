@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.3.1.8
+// @version 0.3.2.9
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/cbt/accounts/*
 // @include http://worldofwarships.eu/cbt/accounts/*
@@ -20,7 +20,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.3.1.8';
+		var VersionWoWsStatInfo = '0.3.2.9';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -382,78 +382,81 @@
 		function viewMemberProfilePage(){
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
-			
-				var account_statistics__general = document.getElementsByClassName('account_statistics__general')[t];
-				if(account_statistics__general !== undefined){
-					var stat_main_middle = account_statistics__general.getElementsByClassName('stat-main-middle')[0];
-					stat_main_middle.getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 				
-					var stat = account_statistics__general.getElementsByClassName('stat');
+				var general = document.getElementById('general_'+type);
+				if(general !== null){
+					var account_statistics__general = general.getElementsByClassName('account_statistics__general')[0];
+					if(account_statistics__general !== undefined){
+						var stat_main_middle = account_statistics__general.getElementsByClassName('stat-main-middle')[0];
+						stat_main_middle.getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
 					
-					stat[0].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
-					stat[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');					
-					stat[2].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
-					stat[3].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['kill_dead'], 'kill_dead');
+						var stat = account_statistics__general.getElementsByClassName('stat');
+						
+						stat[0].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
+						stat[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');					
+						stat[2].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
+						stat[3].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['kill_dead'], 'kill_dead');
 
-					var userbar = '<font color="black">.</font>';					
-					var my_profile_nickname = document.getElementsByClassName('js-my_profile_nickname')[0].textContent;
-					if(type == 'pvp'){
-						if(my_profile_nickname == MembersArray[0]['account_name']){
-							userbar += '<button class="btn btn-default" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
+						var userbar = '<font color="black">.</font>';					
+						var my_profile_nickname = document.getElementsByClassName('js-my_profile_nickname')[0].textContent;
+						if(type == 'pvp'){
+							if(my_profile_nickname == MembersArray[0]['account_name']){
+								userbar += '<button class="btn btn-default" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
+							}
+							
+							userbar += '' +
+								'<br />'+
+								'<img id="userbar-img" src="'+WoWsStatInfoHref+'bg/userbar.png" />'+
+								'<div id="userbar-link" style="margin: 5px;">[img]'+WoWsStatInfoHref+'bg/userbar.png[/img]</div>'
+							'';
 						}
 						
-						userbar += '' +
-							'<br />'+
-							'<img id="userbar-img" src="'+WoWsStatInfoHref+'bg/userbar.png" />'+
-							'<div id="userbar-link" style="margin: 5px;">[img]'+WoWsStatInfoHref+'bg/userbar.png[/img]</div>'
-						'';
+						account_statistics__general.outerHTML += '' +
+							'<hr />' +
+							'<table style="width: 100%;">' +
+								'<tr>' +
+									'<td style="width: 410px; vertical-align: top;">' +
+										'<table class="account_statistics__rates-small-border">' +
+											'<thead>' +
+												'<tr>' +
+													'<th colspan="2">' +
+														'<h3 class="account_statistics__title">'+localization['additional-results']+'</h3>' +
+													'</th>' +
+												'</tr>' +
+											'</thead>' +
+											'<tbody>' +
+												'<tr>' +
+													'<td class="param">' +
+														'<span>'+localization['number-ships-x']+'</span>' +
+													'</td>' +
+													'<td class="value">' +
+														'<span class="value">'+
+															MembersArray[0][type]['ships_x_level'] + 
+														'</span>'+
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="param">' +
+														'<span>'+localization['wr']+'</span>' +
+													'</td>' +
+													'<td class="value">' +
+														'<span class="value" style="color: '+findColorASC(MembersArray[0][type]['wr'], 'wr')+';">'+
+															valueFormat((MembersArray[0][type]['wr']).toFixed(2)) + 
+														'</span>'+
+													'</td>' +
+												'</tr>' +
+											'</tbody>' +
+										'</table>' +
+									'</td>'+
+									'<td>'+
+									'</td>'+
+									'<td style="/* width: 470px; */ text-align: right; vertical-align: top;">'+
+										userbar +
+									'</td>' +
+								'</tr>' +
+							'</table>'
+						'';					
 					}
-					
-					account_statistics__general.outerHTML += '' +
-						'<hr />' +
-						'<table style="width: 100%;">' +
-							'<tr>' +
-								'<td style="width: 410px; vertical-align: top;">' +
-									'<table class="account_statistics__rates-small-border">' +
-										'<thead>' +
-											'<tr>' +
-												'<th colspan="2">' +
-													'<h3 class="account_statistics__title">'+localization['additional-results']+'</h3>' +
-												'</th>' +
-											'</tr>' +
-										'</thead>' +
-										'<tbody>' +
-											'<tr>' +
-												'<td class="param">' +
-													'<span>'+localization['number-ships-x']+'</span>' +
-												'</td>' +
-												'<td class="value">' +
-													'<span class="value">'+
-														MembersArray[0]['ships_x_level'] + 
-													'</span>'+
-												'</td>' +
-											'</tr>' +
-											'<tr>' +
-												'<td class="param">' +
-													'<span>'+localization['wr']+'</span>' +
-												'</td>' +
-												'<td class="value">' +
-													'<span class="value" style="color: '+findColorASC(MembersArray[0][type]['wr'], 'wr')+';">'+
-														valueFormat((MembersArray[0][type]['wr']).toFixed(2)) + 
-													'</span>'+
-												'</td>' +
-											'</tr>' +
-										'</tbody>' +
-									'</table>' +
-								'</td>'+
-								'<td>'+
-								'</td>'+
-								'<td style="/* width: 470px; */ text-align: right; vertical-align: top;">'+
-									userbar +
-								'</td>' +
-							'</tr>' +
-						'</table>'
-					'';
 				}
 			}
 			
@@ -657,6 +660,26 @@
 					var ships__avg_params = account_statistic.getElementsByClassName('ships__avg-params')[0]
 					MembersArray[0][type]['avg_level_battles'] = htmlParseMemberStatistic(ships__avg_params.getElementsByClassName('_value')[0]);
 					ships__avg_params.getElementsByClassName('_value')[0].style.color = findColorASC(MembersArray[0][type]['avg_level_battles'], 'avg_level_battles');
+					
+					MembersArray[0][type]['wins_percents'] = (MembersArray[0][type]['wins']/MembersArray[0][type]['battles'])*100;
+					account_statistics[0].rows[2].cells[1].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');
+					
+					MembersArray[0][type]['losses_percents'] = (MembersArray[0][type]['losses']/MembersArray[0][type]['battles'])*100;
+					account_statistics[0].rows[3].cells[1].style.color = findColorDESC(MembersArray[0][type]['losses_percents'], 'losses_percents');
+					
+					MembersArray[0][type]['draws_percents'] = (MembersArray[0][type]['draws']/MembersArray[0][type]['battles'])*100;
+					account_statistics[0].rows[4].cells[1].innerHTML += '<small>('+(MembersArray[0][type]['draws_percents']).toFixed(0)+'%)</small>';
+					account_statistics[0].rows[4].cells[1].style.color = findColorDESC(MembersArray[0][type]['draws_percents'], 'draws_percents');
+					
+					MembersArray[0][type]['survived_percents'] = (MembersArray[0][type]['survived_battles']/MembersArray[0][type]['battles'])*100;
+					account_statistics[0].rows[5].cells[1].innerHTML += '<small>('+(MembersArray[0][type]['survived_percents']).toFixed(0)+'%)</small>';
+					account_statistics[0].rows[5].cells[1].style.color = findColorASC(MembersArray[0][type]['survived_percents'], 'survived_percents');
+					
+					if(MembersArray[0][type]['battles'] == MembersArray[0][type]['survived_battles']){
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/MembersArray[0][type]['battles'];
+					}else{
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/(MembersArray[0][type]['battles']-MembersArray[0][type]['survived_battles']);
+					}					
 				}else{
 					MembersArray[0][type]['battles'] = 0;
 					MembersArray[0][type]['wins'] = 0;
@@ -684,20 +707,87 @@
 					MembersArray[0][type]['max_frags_planes'] = 0;
 					
 					MembersArray[0][type]['avg_level_battles'] = 0;
+					MembersArray[0][type]['ships_x_level'] = 0;
+					
+					MembersArray[0][type]['wins_percents'] = 0;
+					MembersArray[0][type]['losses_percents'] = 0;
+					MembersArray[0][type]['draws_percents'] = 0;
+					MembersArray[0][type]['survived_percents'] = 0;
+					MembersArray[0][type]['kill_dead'] = 0;
+					MembersArray[0][type]['wr'] = 0;					
 				}
 				
 				MembersArray[0][type]['ships'] = [];
 				var wows_account_stats = account_statistic.getElementsByClassName('wows-account-stats')[0];
 				if(wows_account_stats !== undefined){
+					var ships_x_level = 0;
+					var MemberShipsExp = [];
+					MemberShipsExp['expDamage'] = 0;
+					MemberShipsExp['expFragsShips'] = 0;
+					MemberShipsExp['expFragsPlanes'] = 0;
+					MemberShipsExp['expCapture'] = 0;
+					MemberShipsExp['expDefend'] = 0;
+					
+					var MemberShipsClassExp = [];
+					MemberShipsClassExp['damage'] = 0;
+					MemberShipsClassExp['frags_ships'] = 0;
+					MemberShipsClassExp['frags_planes'] = 0;
+					MemberShipsClassExp['capture_base'] = 0;
+					MemberShipsClassExp['defend_base'] = 0;
+					MemberShipsClassExp['expDamage'] = 0;
+					MemberShipsClassExp['expFragsShips'] = 0;
+					MemberShipsClassExp['expFragsPlanes'] = 0;
+					MemberShipsClassExp['expCapture'] = 0;
+					MemberShipsClassExp['expDefend'] = 0;
+					
 					for(var i = 0; i < wows_account_stats.rows.length; i++){
-						if(i == 0){continue;}
-						
 						var row = wows_account_stats.rows[i];
+					
+						if(i == 0){
+							var th = document.createElement('th');
+							th.innerHTML = '<span>'+localization['wr']+'</span>';
+							row.appendChild(th);
+							continue;						
+						}
 						
 						if(row.getAttribute('class').indexOf('ship-class-section') > -1){
+							var battles = htmlParseMemberStatistic(row.cells[1]);
+							if(battles > 0){
+								var wins = htmlParseMemberStatistic(row.cells[2]);
+								var avg_xp = htmlParseMemberStatistic(row.cells[3]);
+								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+								
+								row.cells[2].setAttribute('style', 'white-space: nowrap;');
+								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								
+								row.cells[3].setAttribute('style', 'white-space: nowrap;');
+								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+							}
+						
+							var row_id = row.getAttribute('id');
+							var ship_class = row_id.split('_')[1];
+							
+							MemberShipsClassExp['damage'] = 0;
+							MemberShipsClassExp['frags_ships'] = 0;
+							MemberShipsClassExp['frags_planes'] = 0;
+							MemberShipsClassExp['capture_base'] = 0;
+							MemberShipsClassExp['defend_base'] = 0;
+							MemberShipsClassExp['expDamage'] = 0;
+							MemberShipsClassExp['expFragsShips'] = 0;
+							MemberShipsClassExp['expFragsPlanes'] = 0;
+							MemberShipsClassExp['expCapture'] = 0;
+							MemberShipsClassExp['expDefend'] = 0;
+						
+							var td = document.createElement('td');
+							td.setAttribute('id', 'wr-'+type+'-'+ship_class);
+							td.innerHTML = '<span>0</span>';
+							row.appendChild(td);					
+						
 							continue;
 						}else if(row.getAttribute('class') == 'ship-entry-statistic'){
 							var index = MembersArray[0][type]['ships'].length - 1;
+							
+							row.cells[0].setAttribute('colspan', '5');
 							
 							var account_statistics__rates = row.cells[0].getElementsByClassName('account_statistics__rates');
 							
@@ -720,7 +810,7 @@
 								MembersArray[0][type]['ships'][index]['hits_percents_battery'] = 0;
 								MembersArray[0][type]['ships'][index]['hits_percents_torpedo'] = 0;
 								MembersArray[0][type]['ships'][index]['avg_capture_base'] = htmlParseMemberStatistic(account_statistics__rates[1].rows[5].cells[1]);
-								MembersArray[0][type]['ships'][index]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics__rates[1].rows[6].cells[1]);
+								MembersArray[0][type]['ships'][index]['avg_defend_base'] = htmlParseMemberStatistic(account_statistics__rates[1].rows[6].cells[1]);account_statistics[1].rows[5].cells[1].getElementsByClassName('value')[0].style.color = findColorASC(MembersArray[0][type]['ships'][index]['avg_defend_base'], 'avg_defend_base');
 							}else if(account_statistics__rates[1].rows.length == 8){
 								MembersArray[0][type]['ships'][index]['avg_xp'] = htmlParseMemberStatistic(account_statistics__rates[1].rows[1].cells[1]);
 								MembersArray[0][type]['ships'][index]['avg_damage'] = htmlParseMemberStatistic(account_statistics__rates[1].rows[2].cells[1]);
@@ -746,6 +836,65 @@
 							MembersArray[0][type]['ships'][index]['max_frags_ships'] = htmlParseMemberStatistic(account_statistics__rates[2].rows[3].cells[1]);
 							MembersArray[0][type]['ships'][index]['max_frags_planes'] = htmlParseMemberStatistic(account_statistics__rates[2].rows[4].cells[1]);
 							
+							MembersArray[0][type]['ships'][index]['wins_percents'] = (MembersArray[0][type]['ships'][index]['wins']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							MembersArray[0][type]['ships'][index]['losses_percents'] = (MembersArray[0][type]['ships'][index]['losses']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							MembersArray[0][type]['ships'][index]['draws_percents'] = (MembersArray[0][type]['ships'][index]['draws']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							MembersArray[0][type]['ships'][index]['survived_percents'] = (MembersArray[0][type]['ships'][index]['survived_battles']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							
+							if(MembersArray[0][type]['ships'][index]['battles'] == MembersArray[0][type]['ships'][index]['survived_battles']){
+								MembersArray[0][type]['ships'][index]['kill_dead'] = MembersArray[0][type]['ships'][index]['frags_ships']/MembersArray[0][type]['ships'][index]['battles'];
+							}else{
+								MembersArray[0][type]['ships'][index]['kill_dead'] = MembersArray[0][type]['ships'][index]['frags_ships']/(MembersArray[0][type]['ships'][index]['battles']-MembersArray[0][type]['ships'][index]['survived_battles']);
+							}
+							
+							var ship_name = MembersArray[0][type]['ships'][index]['ship_name'];
+							var ship_battles = MembersArray[0][type]['ships'][index]['battles'];
+							if(ExpShips[ship_name] !== undefined){
+								var exp = [];
+								exp['expDamage'] = ship_battles * ExpShips[ship_name]['avg_damage'];
+								exp['expFragsShips'] = ship_battles * ExpShips[ship_name]['avg_frags_ships'];
+								exp['expFragsPlanes'] = ship_battles * ExpShips[ship_name]['avg_frags_planes'];
+								exp['expCapture'] = ship_battles * ExpShips[ship_name]['avg_capture_base'];
+								exp['expDefend'] = ship_battles * ExpShips[ship_name]['avg_defend_base'];
+								
+								MembersArray[0][type]['ships'][index]['wr'] = calcWR(MembersArray[0][type]['ships'][index], exp);
+								
+								var wr_cell = document.getElementById('wr-'+type+'-'+ship_name);
+								wr_cell.setAttribute('style', 'white-space: nowrap;');
+								wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0][type]['ships'][index]['wr'], 'wr')+';">'+valueFormat((MembersArray[0][type]['ships'][index]['wr']).toFixed(0))+'</span>';								
+								
+								MemberShipsClassExp['damage'] += parseInt(MembersArray[0][type]['ships'][index]['damage']);
+								MemberShipsClassExp['frags_ships'] += parseInt(MembersArray[0][type]['ships'][index]['frags_ships']);
+								MemberShipsClassExp['frags_planes'] += parseInt(MembersArray[0][type]['ships'][index]['frags_planes']);
+								MemberShipsClassExp['capture_base'] += parseInt(MembersArray[0][type]['ships'][index]['capture_base']);
+								MemberShipsClassExp['defend_base'] += parseInt(MembersArray[0][type]['ships'][index]['defend_base']);
+								MemberShipsClassExp['expDamage'] += ship_battles * ExpShips[ship_name]['avg_damage'];
+								MemberShipsClassExp['expFragsShips'] += ship_battles * ExpShips[ship_name]['avg_frags_ships'];
+								MemberShipsClassExp['expFragsPlanes'] += ship_battles * ExpShips[ship_name]['avg_frags_planes'];
+								MemberShipsClassExp['expCapture'] += ship_battles * ExpShips[ship_name]['avg_capture_base'];
+								MemberShipsClassExp['expDefend'] += ship_battles * ExpShips[ship_name]['avg_defend_base'];
+								
+								var wr_class = calcWR(MemberShipsClassExp, MemberShipsClassExp);
+								var ship_class = MembersArray[0][type]['ships'][index]['ship_class'];
+								var wr_class_cell = document.getElementById('wr-'+type+'-'+ship_class);
+								wr_class_cell.setAttribute('style', 'white-space: nowrap;');
+								wr_class_cell.innerHTML = '<span style="color:'+findColorASC(wr_class, 'wr')+';">'+valueFormat((wr_class).toFixed(0))+'</span>';								
+								
+								MemberShipsExp['expDamage'] += ship_battles * ExpShips[ship_name]['avg_damage'];
+								MemberShipsExp['expFragsShips'] += ship_battles * ExpShips[ship_name]['avg_frags_ships'];
+								MemberShipsExp['expFragsPlanes'] += ship_battles * ExpShips[ship_name]['avg_frags_planes'];
+								MemberShipsExp['expCapture'] += ship_battles * ExpShips[ship_name]['avg_capture_base'];
+								MemberShipsExp['expDefend'] += ship_battles * ExpShips[ship_name]['avg_defend_base'];
+								// console.log('===== '+ship_name+' =====');
+								// console.log(MemberShipsExp['expDamage']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_damage']);
+								// console.log(MemberShipsExp['expFragsShips']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_frags_ships']);
+								// console.log(MemberShipsExp['expFragsPlanes']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_frags_planes']);
+								// console.log(MemberShipsExp['expCapture']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_capture_base']);
+								// console.log(MemberShipsExp['expDefend']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_defend_base']);
+							}else{
+								console.log('***** '+ship_name+' undefined');
+							}
+							
 							continue;
 						}else if(row.getAttribute('class').indexOf('ship-entry') > -1){
 							var index = MembersArray[0][type]['ships'].length;
@@ -763,113 +912,57 @@
 							MembersArray[0][type]['ships'][index]['ship_level'] = row.cells[0].textContent.trim().split("\n")[0].trim();
 							MembersArray[0][type]['ships'][index]['ship_name'] = row.cells[0].textContent.trim().split("\n")[1].trim();
 							
+							if(MembersArray[0][type]['ships'][index]['ship_level'] == 'X'){
+								ships_x_level++;
+							}
+							
+							var battles = htmlParseMemberStatistic(row.cells[1]);
+							var wins = htmlParseMemberStatistic(row.cells[2]);
+							var avg_xp = htmlParseMemberStatistic(row.cells[3]);
+							var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+							
+							row.cells[2].setAttribute('style', 'white-space: nowrap;');
+							row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+							
+							row.cells[3].setAttribute('style', 'white-space: nowrap;');
+							row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+							
+							var ship_name = MembersArray[0][type]['ships'][index]['ship_name'];
+							var td = document.createElement('td');
+							td.setAttribute('id', 'wr-'+type+'-'+ship_name);
+							td.innerHTML = '<span>0</span>';
+							row.appendChild(td);
+							
 							continue;
 						}
 					}
+					
+					MembersArray[0][type]['wr'] = calcWR(MembersArray[0][type], MemberShipsExp);					
+					
+					MembersArray[0][type]['ships_x_level'] = ships_x_level;
 				}
 				
-				/* ===== Calc Statistic ===== */
-				if(wows_account_stats !== undefined){
-					MembersArray[0][type]['wins_percents'] = (MembersArray[0][type]['wins']/MembersArray[0][type]['battles'])*100;
-					account_statistics[0].rows[2].cells[1].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');
-					
-					MembersArray[0][type]['losses_percents'] = (MembersArray[0][type]['losses']/MembersArray[0][type]['battles'])*100;
-					account_statistics[0].rows[3].cells[1].style.color = findColorDESC(MembersArray[0][type]['losses_percents'], 'losses_percents');
-					
-					MembersArray[0][type]['draws_percents'] = (MembersArray[0][type]['draws']/MembersArray[0][type]['battles'])*100;
-					account_statistics[0].rows[4].cells[1].innerHTML += '<small>('+(MembersArray[0][type]['draws_percents']).toFixed(0)+'%)</small>';
-					account_statistics[0].rows[4].cells[1].style.color = findColorDESC(MembersArray[0][type]['draws_percents'], 'draws_percents');
-					
-					MembersArray[0][type]['survived_percents'] = (MembersArray[0][type]['survived_battles']/MembersArray[0][type]['battles'])*100;
-					account_statistics[0].rows[5].cells[1].innerHTML += '<small>('+(MembersArray[0][type]['survived_percents']).toFixed(0)+'%)</small>';
-					account_statistics[0].rows[5].cells[1].style.color = findColorASC(MembersArray[0][type]['survived_percents'], 'survived_percents');
-					
-					if(MembersArray[0][type]['battles'] == MembersArray[0][type]['survived_battles']){
-						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/MembersArray[0][type]['battles'];
-					}else{
-						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/(MembersArray[0][type]['battles']-MembersArray[0][type]['survived_battles']);
-					}
-					
-					var ships_x_level = 0;
-					var MemberShipsExp = [];
-					MemberShipsExp['expDamage'] = 0;
-					MemberShipsExp['expFragsShips'] = 0;
-					MemberShipsExp['expFragsPlanes'] = 0;
-					MemberShipsExp['expCapture'] = 0;
-					MemberShipsExp['expDefend'] = 0;
-					
-					for(var i = 0; i < MembersArray[0][type]['ships'].length; i++){
-						MembersArray[0][type]['ships'][i]['wins_percents'] = (MembersArray[0][type]['ships'][i]['wins']/MembersArray[0][type]['ships'][i]['battles'])*100;
-						MembersArray[0][type]['ships'][i]['losses_percents'] = (MembersArray[0][type]['ships'][i]['losses']/MembersArray[0][type]['ships'][i]['battles'])*100;
-						MembersArray[0][type]['ships'][i]['draws_percents'] = (MembersArray[0][type]['ships'][i]['draws']/MembersArray[0][type]['ships'][i]['battles'])*100;
-						MembersArray[0][type]['ships'][i]['survived_percents'] = (MembersArray[0][type]['ships'][i]['survived_battles']/MembersArray[0][type]['ships'][i]['battles'])*100;
-						
-						if(MembersArray[0][type]['ships'][i]['battles'] == MembersArray[0][type]['ships'][i]['survived_battles']){
-							MembersArray[0][type]['ships'][i]['kill_dead'] = MembersArray[0][type]['ships'][i]['frags_ships']/MembersArray[0][type]['ships'][i]['battles'];
-						}else{
-							MembersArray[0][type]['ships'][i]['kill_dead'] = MembersArray[0][type]['ships'][i]['frags_ships']/(MembersArray[0][type]['ships'][i]['battles']-MembersArray[0][type]['ships'][i]['survived_battles']);
-						}
-						
-						if(type == 'pvp' && MembersArray[0][type]['ships'][i]['ship_level'] == 'X'){
-							ships_x_level++;
-						}
-						
-						var ship_name = MembersArray[0][type]['ships'][i]['ship_name'];
-						var ship_battles = MembersArray[0][type]['ships'][i]['battles'];
-						if(ExpShips[ship_name] !== undefined){
-							MemberShipsExp['expDamage'] += ship_battles * ExpShips[ship_name]['avg_damage'];
-							MemberShipsExp['expFragsShips'] += ship_battles * ExpShips[ship_name]['avg_frags_ships'];
-							MemberShipsExp['expFragsPlanes'] += ship_battles * ExpShips[ship_name]['avg_frags_planes'];
-							MemberShipsExp['expCapture'] += ship_battles * ExpShips[ship_name]['avg_capture_base'];
-							MemberShipsExp['expDefend'] += ship_battles * ExpShips[ship_name]['avg_defend_base'];
-							// console.log(MemberShipsExp['expDamage']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_damage']);
-							// console.log(MemberShipsExp['expFragsShips']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_frags_ships']);
-							// console.log(MemberShipsExp['expFragsPlanes']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_frags_planes']);
-							// console.log(MemberShipsExp['expCapture']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_capture_base']);
-							// console.log(MemberShipsExp['expDefend']+' += '+ship_battles+' * '+ExpShips[ship_name]['avg_defend_base']);
-						}
-					}
-					
-					if(type == 'pvp'){MembersArray[0]['ships_x_level'] = ships_x_level;}
-					
-					// var avg_damage = MembersArray[0][type]['avg_damage'];
-					// var avg_frags_ships = MembersArray[0][type]['avg_frags_ships'];
-					// var avg_frags_planes = MembersArray[0][type]['avg_frags_planes'];
-					// var avg_capture_base = MembersArray[0][type]['avg_capture_base'];
-					// var avg_defend_base = MembersArray[0][type]['avg_defend_base'];
-					// var avg_level_battles = MembersArray[0][type]['avg_level_battles'];
-					
-					// var wr = avg_damage/(avg_level_battles*10) + avg_frags_ships*200 + (avg_frags_planes/6)*120 + avg_capture_base*35 + avg_defend_base*35;
-					// if(isNaN(wr)){wr = 0;}
-					// MembersArray[0][type]['wr'] = wr;
-
-					var rDamage = MembersArray[0][type]['damage'] / MemberShipsExp['expDamage']; if(isNaN(rDamage)){rDamage = 0;}
-					var rFragsShips = MembersArray[0][type]['frags_ships'] / MemberShipsExp['expFragsShips']; if(isNaN(rFragsShips)){rFragsShips = 0;}
-					var rFragsPlanes = MembersArray[0][type]['frags_planes'] / MemberShipsExp['expFragsPlanes']; if(isNaN(rFragsPlanes)){rFragsPlanes = 0;}
-					var rCapture = MembersArray[0][type]['capture_base'] / MemberShipsExp['expCapture']; if(isNaN(rCapture)){rCapture = 0;}
-					var rDefend = MembersArray[0][type]['defend_base'] / MemberShipsExp['expDefend']; if(isNaN(rDefend)){rDefend = 0;}
-					
-					var rDamagec = Math.max(0, (rDamage - 0.25) / (1 - 0.25));
-					var rFragsShipsc = Math.max(0, Math.min(rDamagec + 0.2, (rFragsShips - 0.12) / (1 - 0.12)));
-					var rFragsPlanesc = Math.max(0, Math.min(rDamagec + 0.1, (rFragsPlanes - 0.15) / (1 - 0.15)));
-					var rCapturec = Math.max(0, Math.min(rDamagec + 0.1, (rCapture - 0.10) / (1 - 0.10)));
-					var rDefendc = Math.max(0, Math.min(rDamagec + 0.1, (rDefend - 0.10) / (1 - 0.10)));
-
-					var wr = 650 * rDamagec + 150 * rFragsShipsc * rDamagec + 50 * rFragsShipsc * rCapturec + 50 * rFragsShipsc * rDefendc + 80 * rFragsPlanesc;
-					if(isNaN(wr)){wr = 0;}
-					MembersArray[0][type]['wr'] = wr;
-				}else{
-					MembersArray[0][type]['wins_percents'] = 0;
-					MembersArray[0][type]['losses_percents'] = 0;
-					MembersArray[0][type]['draws_percents'] = 0;
-					MembersArray[0][type]['survived_percents'] = 0;
-					MembersArray[0][type]['kill_dead'] = 0;
-					MembersArray[0][type]['wr'] = 0;
-					MembersArray[0][type]['wr2'] = 0;					
-				}
 			}
 			
-			console.log(MembersArray[0]);
+			// console.log(MembersArray[0]);
+		}
+		function calcWR(Stat, MemberShipsExp){
+			var rDamage = Stat['damage'] / MemberShipsExp['expDamage']; if(isNaN(rDamage)){rDamage = 0;}
+			var rFragsShips = Stat['frags_ships'] / MemberShipsExp['expFragsShips']; if(isNaN(rFragsShips)){rFragsShips = 0;}
+			var rFragsPlanes = Stat['frags_planes'] / MemberShipsExp['expFragsPlanes']; if(isNaN(rFragsPlanes)){rFragsPlanes = 0;}
+			var rCapture = Stat['capture_base'] / MemberShipsExp['expCapture']; if(isNaN(rCapture)){rCapture = 0;}
+			var rDefend = Stat['defend_base'] / MemberShipsExp['expDefend']; if(isNaN(rDefend)){rDefend = 0;}
+			
+			var rDamagec = Math.max(0, (rDamage - 0.25) / (1 - 0.25));
+			var rFragsShipsc = Math.max(0, Math.min(rDamagec + 0.2, (rFragsShips - 0.12) / (1 - 0.12)));
+			var rFragsPlanesc = Math.max(0, Math.min(rDamagec + 0.1, (rFragsPlanes - 0.15) / (1 - 0.15)));
+			var rCapturec = Math.max(0, Math.min(rDamagec + 0.1, (rCapture - 0.10) / (1 - 0.10)));
+			var rDefendc = Math.max(0, Math.min(rDamagec + 0.1, (rDefend - 0.10) / (1 - 0.10)));
+			
+			var wr = 650 * rDamagec + 150 * rFragsShipsc * rDamagec + 50 * rFragsShipsc * rCapturec + 50 * rFragsShipsc * rDefendc + 80 * rFragsPlanesc;
+			if(isNaN(wr)){wr = 0;}
+			
+			return wr;
 		}
 		function doneClanInfo(url, response){
 			if(response.status && response.status == "error"){
