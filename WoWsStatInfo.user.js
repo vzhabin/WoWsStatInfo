@@ -11,13 +11,17 @@
 // @include http://worldofwarships.eu/cbt/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
 // @include http://forum.worldofwarships.eu/index.php?/topic/*
+// @include http://ru.wargaming.net/clans/*
+// @include http://eu.wargaming.net/clans/*
 // @match http://worldofwarships.ru/cbt/accounts/*
 // @match http://worldofwarships.eu/cbt/accounts/*
 // @match http://forum.worldofwarships.ru/index.php?/topic/*
 // @match http://forum.worldofwarships.eu/index.php?/topic/*
+// @match http://ru.wargaming.net/clans/*
+// @match http://eu.wargaming.net/clans/*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
-(function(window){
+(function(window){//http://eu.wargaming.net/clans/500015661/
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
 		var VersionWoWsStatInfo = '0.3.2.9';
@@ -63,8 +67,8 @@
 		color['very_good'] = '#02C9B3'; // очень хорошо, лучше чем у 95%
 		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%		
 		
-		var colorStat = jQ.parseJSON('{"battles":[136,259,435,875,1288,99999],"avg_xp":[861.04,1123.1,1403.05,1846.99,2162.7,99999],"avg_damage":[18985.81,26071.91,31952.29,42859.29,55367.24,999999],"avg_frags_ships":[0.52,0.7,0.84,1.08,1.27,99],"avg_frags_planes":[0.81,1.73,2.56,4.73,7.76,99],"hits_percents_battery":[25,29,32,37,41,999],"hits_percents_torpedo":[6,10,13,18,22,999],"avg_capture_base":[0.46,1.11,1.66,2.87,4.12,99],"avg_defend_base":[3.93,5.86,7.35,10.03,12.24,999],"max_xp":[3324,6798,9772,14004,17656,999999],"max_damage":[88117,120553,146576,201275,256972,9999999],"max_frags_ships":[4,5,5,7,8,99],"max_frags_planes":[15,26,37,63,81,999],"avg_level_battles":[4,4.9,5.5,6.4,7.1,99],"wins_percents":[44.44,48.67,51.82,56.81,61.42,100],"losses_percents":[100,57.25,53.75,49.3,46.46,41.76],"draws_percents":[100,8.71,7.29,5.77,4.76,3.14],"survived_percents":[23.09,34.21,42.06,54.29,63.33,100],"kill_dead":[0.71,1.08,1.42,2.15,2.95,99],"wr":[630.57,933.84,1180.11,1589.3,1955.82,99999]}');
-		var ExpShips = jQ.parseJSON('{"Albany":{"avg_damage":14824.55,"avg_frags_ships":0.87,"avg_frags_planes":0,"avg_capture_base":2.41,"avg_defend_base":13.71},"Amagi":{"avg_damage":56126.03,"avg_frags_ships":0.9,"avg_frags_planes":4.64,"avg_capture_base":1.36,"avg_defend_base":7.47},"Aoba":{"avg_damage":26515.4,"avg_frags_ships":0.67,"avg_frags_planes":1.88,"avg_capture_base":1.33,"avg_defend_base":7.08},"Atlanta":{"avg_damage":25828.22,"avg_frags_ships":0.73,"avg_frags_planes":2.59,"avg_capture_base":1.28,"avg_defend_base":7.48},"Baltimore":{"avg_damage":38922.6,"avg_frags_ships":0.81,"avg_frags_planes":4.65,"avg_capture_base":1.6,"avg_defend_base":11.26},"Benson":{"avg_damage":26991.68,"avg_frags_ships":0.8,"avg_frags_planes":0.25,"avg_capture_base":3.36,"avg_defend_base":7.52},"Bogue":{"avg_damage":23464.39,"avg_frags_ships":0.41,"avg_frags_planes":9.5,"avg_capture_base":0.39,"avg_defend_base":3.5},"Chester":{"avg_damage":12023.41,"avg_frags_ships":0.59,"avg_frags_planes":0,"avg_capture_base":0.98,"avg_defend_base":10.64},"Chikuma":{"avg_damage":14140.01,"avg_frags_ships":0.69,"avg_frags_planes":0,"avg_capture_base":1.27,"avg_defend_base":10.35},"Clemson":{"avg_damage":21545.52,"avg_frags_ships":0.83,"avg_frags_planes":0.02,"avg_capture_base":1.65,"avg_defend_base":4.38},"Cleveland":{"avg_damage":32648.2,"avg_frags_ships":0.89,"avg_frags_planes":2.51,"avg_capture_base":1.57,"avg_defend_base":9.19},"Colorado":{"avg_damage":35715.79,"avg_frags_ships":0.61,"avg_frags_planes":2.94,"avg_capture_base":1.39,"avg_defend_base":7.05},"Des Moines":{"avg_damage":59430.14,"avg_frags_ships":1.1,"avg_frags_planes":4.58,"avg_capture_base":1.36,"avg_defend_base":9.53},"Enterpriсe":{"avg_damage":51998.36,"avg_frags_ships":0.56,"avg_frags_planes":9.64,"avg_capture_base":0,"avg_defend_base":3.01},"Erie":{"avg_damage":13631.66,"avg_frags_ships":0.86,"avg_frags_planes":0,"avg_capture_base":1.37,"avg_defend_base":11.34},"Essex":{"avg_damage":77895.15,"avg_frags_ships":1.09,"avg_frags_planes":17.02,"avg_capture_base":0.97,"avg_defend_base":7.55},"Farragut":{"avg_damage":22455.72,"avg_frags_ships":0.77,"avg_frags_planes":0.47,"avg_capture_base":2.12,"avg_defend_base":5.96},"Fletcher":{"avg_damage":37414.09,"avg_frags_ships":1.05,"avg_frags_planes":0.63,"avg_capture_base":4.49,"avg_defend_base":9.22},"Flyfire":{"avg_damage":38491.88,"avg_frags_ships":0.62,"avg_frags_planes":1.08,"avg_capture_base":0,"avg_defend_base":5.63},"Fubuki":{"avg_damage":27446.86,"avg_frags_ships":0.64,"avg_frags_planes":0.46,"avg_capture_base":2.71,"avg_defend_base":5.48},"Furutaka":{"avg_damage":19795.07,"avg_frags_ships":0.55,"avg_frags_planes":0.18,"avg_capture_base":1.08,"avg_defend_base":5.66},"Fuso":{"avg_damage":42642.62,"avg_frags_ships":0.82,"avg_frags_planes":2.81,"avg_capture_base":1.22,"avg_defend_base":5.83},"Galaxy":{"avg_damage":57495.46,"avg_frags_ships":0.86,"avg_frags_planes":3.43,"avg_capture_base":0,"avg_defend_base":5.74},"Gearing":{"avg_damage":44242.37,"avg_frags_ships":1.04,"avg_frags_planes":0.75,"avg_capture_base":6.61,"avg_defend_base":10.74},"Hakuryu":{"avg_damage":131070.22,"avg_frags_ships":1.99,"avg_frags_planes":3.34,"avg_capture_base":0.08,"avg_defend_base":5.33},"Hatsuharu":{"avg_damage":22871.24,"avg_frags_ships":0.59,"avg_frags_planes":0.59,"avg_capture_base":2.53,"avg_defend_base":4.4},"Hiryu":{"avg_damage":64235.16,"avg_frags_ships":1.08,"avg_frags_planes":9.46,"avg_capture_base":0.68,"avg_defend_base":7.18},"Hosho":{"avg_damage":26017.1,"avg_frags_ships":0.54,"avg_frags_planes":6.2,"avg_capture_base":0.8,"avg_defend_base":2.45},"Ibuki":{"avg_damage":47468.45,"avg_frags_ships":0.99,"avg_frags_planes":2.78,"avg_capture_base":1.39,"avg_defend_base":11.35},"Independence":{"avg_damage":33750.64,"avg_frags_ships":0.55,"avg_frags_planes":10.33,"avg_capture_base":0.72,"avg_defend_base":4.88},"Iowa":{"avg_damage":66154.61,"avg_frags_ships":1.08,"avg_frags_planes":9.09,"avg_capture_base":1.73,"avg_defend_base":8.6},"Ishizuchi":{"avg_damage":22697.74,"avg_frags_ships":0.58,"avg_frags_planes":0.13,"avg_capture_base":2.2,"avg_defend_base":5.96},"Isokaze":{"avg_damage":23282.08,"avg_frags_ships":0.82,"avg_frags_planes":0.1,"avg_capture_base":1.65,"avg_defend_base":2.47},"Iwaki Alpha":{"avg_damage":24736.05,"avg_frags_ships":0.85,"avg_frags_planes":1.23,"avg_capture_base":1.31,"avg_defend_base":6.69},"Izumo":{"avg_damage":46292.64,"avg_frags_ships":0.74,"avg_frags_planes":2.97,"avg_capture_base":0.85,"avg_defend_base":7.07},"Kagero":{"avg_damage":39146.57,"avg_frags_ships":0.87,"avg_frags_planes":0.37,"avg_capture_base":3.81,"avg_defend_base":7.02},"Katori":{"avg_damage":13613.92,"avg_frags_ships":0.86,"avg_frags_planes":0,"avg_capture_base":1.18,"avg_defend_base":11.59},"Kawachi":{"avg_damage":19638.39,"avg_frags_ships":0.69,"avg_frags_planes":0.12,"avg_capture_base":1.7,"avg_defend_base":6.04},"Kitakami":{"avg_damage":18020.96,"avg_frags_ships":0.4,"avg_frags_planes":0.55,"avg_capture_base":0.3,"avg_defend_base":3.05},"Kongo":{"avg_damage":33043.32,"avg_frags_ships":0.77,"avg_frags_planes":2.06,"avg_capture_base":1.2,"avg_defend_base":5.78},"Kuma":{"avg_damage":20458.57,"avg_frags_ships":0.65,"avg_frags_planes":0.18,"avg_capture_base":0.91,"avg_defend_base":6.2},"Langley":{"avg_damage":21992.57,"avg_frags_ships":0.43,"avg_frags_planes":6.77,"avg_capture_base":0.17,"avg_defend_base":2.02},"Lexington":{"avg_damage":51836.68,"avg_frags_ships":0.68,"avg_frags_planes":19.9,"avg_capture_base":0.52,"avg_defend_base":4.51},"Mahan":{"avg_damage":24252.27,"avg_frags_ships":0.77,"avg_frags_planes":0.38,"avg_capture_base":2.5,"avg_defend_base":6.14},"Minekaze":{"avg_damage":27243.89,"avg_frags_ships":0.89,"avg_frags_planes":0.13,"avg_capture_base":1.7,"avg_defend_base":2.93},"Mogami":{"avg_damage":40793.99,"avg_frags_ships":0.9,"avg_frags_planes":1.96,"avg_capture_base":1.27,"avg_defend_base":10.02},"Montana":{"avg_damage":71539.04,"avg_frags_ships":0.98,"avg_frags_planes":6.42,"avg_capture_base":1.63,"avg_defend_base":5.83},"Mutsuki":{"avg_damage":19802.39,"avg_frags_ships":0.55,"avg_frags_planes":0.6,"avg_capture_base":1.98,"avg_defend_base":2.68},"Myogi":{"avg_damage":22567.56,"avg_frags_ships":0.58,"avg_frags_planes":0,"avg_capture_base":1.43,"avg_defend_base":4.86},"Myoko":{"avg_damage":37196.67,"avg_frags_ships":0.87,"avg_frags_planes":2.07,"avg_capture_base":1.37,"avg_defend_base":9.09},"Nagato":{"avg_damage":41751.63,"avg_frags_ships":0.72,"avg_frags_planes":2.04,"avg_capture_base":1.07,"avg_defend_base":5.95},"New Mexico":{"avg_damage":40094.06,"avg_frags_ships":0.83,"avg_frags_planes":1.47,"avg_capture_base":1.78,"avg_defend_base":7.38},"New Orleans":{"avg_damage":35257.71,"avg_frags_ships":0.74,"avg_frags_planes":3.84,"avg_capture_base":1.6,"avg_defend_base":10.33},"New York":{"avg_damage":31764.56,"avg_frags_ships":0.76,"avg_frags_planes":1.38,"avg_capture_base":1.56,"avg_defend_base":7.58},"Nicholas":{"avg_damage":23710.06,"avg_frags_ships":0.86,"avg_frags_planes":0.36,"avg_capture_base":1.37,"avg_defend_base":5.06},"North Carolina":{"avg_damage":52183.14,"avg_frags_ships":0.88,"avg_frags_planes":6.78,"avg_capture_base":1.48,"avg_defend_base":6.93},"Omaha":{"avg_damage":26510.63,"avg_frags_ships":0.8,"avg_frags_planes":1.07,"avg_capture_base":1.16,"avg_defend_base":7.95},"Pensacola":{"avg_damage":29647.99,"avg_frags_ships":0.68,"avg_frags_planes":2.56,"avg_capture_base":1.25,"avg_defend_base":8.57},"Phoenix":{"avg_damage":18268.66,"avg_frags_ships":0.54,"avg_frags_planes":0.19,"avg_capture_base":0.9,"avg_defend_base":6.38},"Ranger":{"avg_damage":39966.28,"avg_frags_ships":0.55,"avg_frags_planes":14.23,"avg_capture_base":0.27,"avg_defend_base":5.52},"Ryujo":{"avg_damage":55876.42,"avg_frags_ships":0.96,"avg_frags_planes":4.25,"avg_capture_base":0.77,"avg_defend_base":7},"Sampson":{"avg_damage":13354.14,"avg_frags_ships":0.88,"avg_frags_planes":0,"avg_capture_base":1.25,"avg_defend_base":5.48},"Shimakaze":{"avg_damage":53096.69,"avg_frags_ships":1.02,"avg_frags_planes":0.35,"avg_capture_base":3.04,"avg_defend_base":8.42},"Shokaku":{"avg_damage":81020.89,"avg_frags_ships":1.31,"avg_frags_planes":10.13,"avg_capture_base":0.79,"avg_defend_base":7.38},"Sims":{"avg_damage":17166.53,"avg_frags_ships":0.52,"avg_frags_planes":0.16,"avg_capture_base":1.51,"avg_defend_base":4.95},"South Carolina":{"avg_damage":21911.33,"avg_frags_ships":0.76,"avg_frags_planes":0.05,"avg_capture_base":1.8,"avg_defend_base":7.95},"St. Louis":{"avg_damage":20208.89,"avg_frags_ships":0.75,"avg_frags_planes":0.01,"avg_capture_base":1.62,"avg_defend_base":8.79},"Taiho":{"avg_damage":104883.37,"avg_frags_ships":1.8,"avg_frags_planes":6.68,"avg_capture_base":0.44,"avg_defend_base":11.68},"Tenryu":{"avg_damage":16447.07,"avg_frags_ships":0.61,"avg_frags_planes":0.09,"avg_capture_base":0.9,"avg_defend_base":5.72},"Umikaze":{"avg_damage":13343.09,"avg_frags_ships":0.83,"avg_frags_planes":0,"avg_capture_base":1.39,"avg_defend_base":3.34},"Wakatake":{"avg_damage":17385.29,"avg_frags_ships":0.92,"avg_frags_planes":0.02,"avg_capture_base":1.35,"avg_defend_base":2.71},"Warspite":{"avg_damage":33478.33,"avg_frags_ships":0.73,"avg_frags_planes":1.95,"avg_capture_base":1.15,"avg_defend_base":5.35},"Wickes":{"avg_damage":14402.79,"avg_frags_ships":0.62,"avg_frags_planes":0.02,"avg_capture_base":0.97,"avg_defend_base":3.53},"Wyoming":{"avg_damage":29271.24,"avg_frags_ships":0.78,"avg_frags_planes":0.8,"avg_capture_base":1.41,"avg_defend_base":7.91},"Yamato":{"avg_damage":69546.52,"avg_frags_ships":0.81,"avg_frags_planes":4.87,"avg_capture_base":1,"avg_defend_base":6.71},"Yamato Cosmo":{"avg_damage":44260.87,"avg_frags_ships":0.57,"avg_frags_planes":6.13,"avg_capture_base":0,"avg_defend_base":3.6},"Yubari":{"avg_damage":17822.86,"avg_frags_ships":0.6,"avg_frags_planes":2.46,"avg_capture_base":0.82,"avg_defend_base":6.35},"Zao":{"avg_damage":66537,"avg_frags_ships":1.12,"avg_frags_planes":2.76,"avg_capture_base":1.13,"avg_defend_base":11.2},"Zaya":{"avg_damage":45855.55,"avg_frags_ships":0.69,"avg_frags_planes":3.02,"avg_capture_base":0,"avg_defend_base":5.38},"Zuiho":{"avg_damage":41590.7,"avg_frags_ships":0.83,"avg_frags_planes":6.62,"avg_capture_base":0.75,"avg_defend_base":5},"Аврора":{"avg_damage":17808.93,"avg_frags_ships":0.64,"avg_frags_planes":0.01,"avg_capture_base":1.26,"avg_defend_base":7.86},"Гремящий":{"avg_damage":21790.52,"avg_frags_ships":0.76,"avg_frags_planes":0.36,"avg_capture_base":1.74,"avg_defend_base":5.27},"Мурманск":{"avg_damage":28439.44,"avg_frags_ships":0.88,"avg_frags_planes":1.43,"avg_capture_base":1.49,"avg_defend_base":8.36}}');
+		var colorStat = jQ.parseJSON('{"battles":[133,255,430,887,1333,99999],"avg_xp":[849.08,1101.97,1377.2,1817.19,2158.04,99999],"avg_damage":[18175.82,25231.66,31025.38,42083.86,54210.72,999999],"avg_frags_ships":[0.5,0.69,0.83,1.06,1.26,99],"avg_frags_planes":[0.74,1.63,2.45,4.57,7.54,99],"hits_percents_battery":[25,29,32,37,41,999],"hits_percents_torpedo":[6,10,13,18,22,999],"avg_capture_base":[0.42,1.06,1.62,2.81,4.1,99],"avg_defend_base":[3.84,5.72,7.22,9.94,12.24,999],"max_xp":[3321,6654,9660,13956,17752,999999],"max_damage":[86462,118317,144148,198213,254013,9999999],"max_frags_ships":[3,4,5,6,7,99],"max_frags_planes":[14,25,36,62,80,999],"avg_level_battles":[4,4.8,5.5,6.4,7.1,99],"wins_percents":[44.24,48.47,51.49,56.52,61.05,100],"losses_percents":[100,57.34,53.94,49.6,46.75,42.02],"draws_percents":[100,8.64,7.23,5.74,4.7,3.03],"survived_percents":[22.47,32.98,40.81,53.19,62.42,100],"kill_dead":[0.69,1.04,1.36,2.08,2.88,99],"wr":[677.8,937.93,1115.53,1417.42,1686.95,99999]}');
+		var ExpShips = jQ.parseJSON('{"Albany":{"avg_damage":14672.24,"avg_frags_ships":0.84,"avg_frags_planes":0.01,"avg_capture_base":2.31,"avg_defend_base":13.69},"Amagi":{"avg_damage":55191.38,"avg_frags_ships":0.89,"avg_frags_planes":4.56,"avg_capture_base":1.33,"avg_defend_base":7.41},"Aoba":{"avg_damage":26129.38,"avg_frags_ships":0.67,"avg_frags_planes":1.85,"avg_capture_base":1.34,"avg_defend_base":7.07},"Atlanta":{"avg_damage":26832.49,"avg_frags_ships":0.76,"avg_frags_planes":2.6,"avg_capture_base":1.37,"avg_defend_base":8},"Aurora":{"avg_damage":22889.1,"avg_frags_ships":0.87,"avg_frags_planes":0.01,"avg_capture_base":1.34,"avg_defend_base":10.07},"Baltimore":{"avg_damage":38622.34,"avg_frags_ships":0.81,"avg_frags_planes":4.55,"avg_capture_base":1.45,"avg_defend_base":11.02},"Benson":{"avg_damage":26807.29,"avg_frags_ships":0.79,"avg_frags_planes":0.26,"avg_capture_base":3.13,"avg_defend_base":7.4},"Bogue":{"avg_damage":23150.27,"avg_frags_ships":0.41,"avg_frags_planes":9.34,"avg_capture_base":0.38,"avg_defend_base":3.46},"Chester":{"avg_damage":11690.33,"avg_frags_ships":0.58,"avg_frags_planes":0.01,"avg_capture_base":0.92,"avg_defend_base":10.36},"Chikuma":{"avg_damage":13833.32,"avg_frags_ships":0.68,"avg_frags_planes":0.01,"avg_capture_base":1.2,"avg_defend_base":9.84},"Clemson":{"avg_damage":20936.85,"avg_frags_ships":0.81,"avg_frags_planes":0.03,"avg_capture_base":1.63,"avg_defend_base":4.4},"Cleveland":{"avg_damage":32001.42,"avg_frags_ships":0.89,"avg_frags_planes":2.48,"avg_capture_base":1.55,"avg_defend_base":9.15},"Colorado":{"avg_damage":35111.26,"avg_frags_ships":0.62,"avg_frags_planes":2.89,"avg_capture_base":1.37,"avg_defend_base":6.67},"Des Moines":{"avg_damage":60027.96,"avg_frags_ships":1.17,"avg_frags_planes":4.6,"avg_capture_base":1.11,"avg_defend_base":10.25},"Enterpriсe":{"avg_damage":50500.47,"avg_frags_ships":0.57,"avg_frags_planes":8.96,"avg_capture_base":0.01,"avg_defend_base":2.96},"Erie":{"avg_damage":13267.28,"avg_frags_ships":0.83,"avg_frags_planes":0.01,"avg_capture_base":1.3,"avg_defend_base":11.08},"Essex":{"avg_damage":76395.77,"avg_frags_ships":1.09,"avg_frags_planes":17.8,"avg_capture_base":0.95,"avg_defend_base":7.33},"Farragut":{"avg_damage":21853.99,"avg_frags_ships":0.76,"avg_frags_planes":0.47,"avg_capture_base":2.02,"avg_defend_base":5.98},"Fletcher":{"avg_damage":37984.63,"avg_frags_ships":1.06,"avg_frags_planes":0.61,"avg_capture_base":4.26,"avg_defend_base":9.51},"Flyfire":{"avg_damage":37365.69,"avg_frags_ships":0.61,"avg_frags_planes":1.08,"avg_capture_base":0.01,"avg_defend_base":5.55},"Fubuki":{"avg_damage":26946.37,"avg_frags_ships":0.66,"avg_frags_planes":0.47,"avg_capture_base":2.72,"avg_defend_base":5.52},"Furutaka":{"avg_damage":19482.84,"avg_frags_ships":0.55,"avg_frags_planes":0.19,"avg_capture_base":1.12,"avg_defend_base":5.59},"Fuso":{"avg_damage":41335.01,"avg_frags_ships":0.81,"avg_frags_planes":2.71,"avg_capture_base":1.23,"avg_defend_base":5.7},"Galaxy":{"avg_damage":55651.08,"avg_frags_ships":0.84,"avg_frags_planes":3.38,"avg_capture_base":0.01,"avg_defend_base":6.03},"Gearing":{"avg_damage":45693.01,"avg_frags_ships":1.07,"avg_frags_planes":0.77,"avg_capture_base":5.39,"avg_defend_base":10.26},"Gremyashchy":{"avg_damage":27313.46,"avg_frags_ships":0.83,"avg_frags_planes":0.37,"avg_capture_base":1.38,"avg_defend_base":5.62},"Griemiaszczij":{"avg_damage":21210.16,"avg_frags_ships":0.76,"avg_frags_planes":0.41,"avg_capture_base":3.66,"avg_defend_base":3.59},"Hakuryu":{"avg_damage":132107.67,"avg_frags_ships":1.95,"avg_frags_planes":5.14,"avg_capture_base":0.07,"avg_defend_base":6.13},"Hatsuharu":{"avg_damage":22522.24,"avg_frags_ships":0.6,"avg_frags_planes":0.59,"avg_capture_base":2.41,"avg_defend_base":4.39},"Hiryu":{"avg_damage":62860,"avg_frags_ships":1.07,"avg_frags_planes":8.57,"avg_capture_base":0.65,"avg_defend_base":6.96},"Hosho":{"avg_damage":25804.17,"avg_frags_ships":0.58,"avg_frags_planes":5.87,"avg_capture_base":0.76,"avg_defend_base":2.38},"Ibuki":{"avg_damage":46173.83,"avg_frags_ships":0.96,"avg_frags_planes":2.68,"avg_capture_base":1.33,"avg_defend_base":11.36},"Independence":{"avg_damage":32930.55,"avg_frags_ships":0.55,"avg_frags_planes":10.07,"avg_capture_base":0.63,"avg_defend_base":4.9},"Iowa":{"avg_damage":67008.65,"avg_frags_ships":1.08,"avg_frags_planes":9.04,"avg_capture_base":1.49,"avg_defend_base":7.84},"Ishizuchi":{"avg_damage":22373.6,"avg_frags_ships":0.59,"avg_frags_planes":0.12,"avg_capture_base":1.85,"avg_defend_base":5.25},"Isokaze":{"avg_damage":22743.96,"avg_frags_ships":0.81,"avg_frags_planes":0.11,"avg_capture_base":1.59,"avg_defend_base":2.43},"Iwaki Alpha":{"avg_damage":24462.08,"avg_frags_ships":0.86,"avg_frags_planes":1.21,"avg_capture_base":1.39,"avg_defend_base":6.7},"Izumo":{"avg_damage":47976.56,"avg_frags_ships":0.76,"avg_frags_planes":3.19,"avg_capture_base":0.94,"avg_defend_base":7.11},"Kagero":{"avg_damage":39609.43,"avg_frags_ships":0.86,"avg_frags_planes":0.37,"avg_capture_base":3.7,"avg_defend_base":6.95},"Katori":{"avg_damage":13176.33,"avg_frags_ships":0.84,"avg_frags_planes":0.01,"avg_capture_base":1.17,"avg_defend_base":11.3},"Kawachi":{"avg_damage":18954.02,"avg_frags_ships":0.67,"avg_frags_planes":0.13,"avg_capture_base":1.66,"avg_defend_base":5.82},"Kitakami":{"avg_damage":18956.39,"avg_frags_ships":0.43,"avg_frags_planes":0.64,"avg_capture_base":0.68,"avg_defend_base":2.92},"Kongo":{"avg_damage":32063.84,"avg_frags_ships":0.76,"avg_frags_planes":2.03,"avg_capture_base":1.16,"avg_defend_base":5.64},"Kuma":{"avg_damage":20066.57,"avg_frags_ships":0.65,"avg_frags_planes":0.19,"avg_capture_base":0.89,"avg_defend_base":6.08},"Langley":{"avg_damage":21346.82,"avg_frags_ships":0.44,"avg_frags_planes":6.52,"avg_capture_base":0.17,"avg_defend_base":1.99},"Lexington":{"avg_damage":50121.27,"avg_frags_ships":0.67,"avg_frags_planes":19.67,"avg_capture_base":0.48,"avg_defend_base":4.38},"Mahan":{"avg_damage":23936.86,"avg_frags_ships":0.77,"avg_frags_planes":0.39,"avg_capture_base":2.39,"avg_defend_base":6.28},"Minekaze":{"avg_damage":26620.82,"avg_frags_ships":0.88,"avg_frags_planes":0.14,"avg_capture_base":1.63,"avg_defend_base":2.91},"Mogami":{"avg_damage":40444.26,"avg_frags_ships":0.89,"avg_frags_planes":1.96,"avg_capture_base":1.27,"avg_defend_base":9.95},"Montana":{"avg_damage":76443.28,"avg_frags_ships":1.04,"avg_frags_planes":6.76,"avg_capture_base":1.56,"avg_defend_base":8.2},"Murmansk":{"avg_damage":31141.11,"avg_frags_ships":0.82,"avg_frags_planes":1.28,"avg_capture_base":0.32,"avg_defend_base":7.81},"Mutsuki":{"avg_damage":19556.09,"avg_frags_ships":0.55,"avg_frags_planes":0.6,"avg_capture_base":1.96,"avg_defend_base":2.62},"Myogi":{"avg_damage":21839.91,"avg_frags_ships":0.57,"avg_frags_planes":0.01,"avg_capture_base":1.37,"avg_defend_base":4.69},"Myoko":{"avg_damage":36622.51,"avg_frags_ships":0.86,"avg_frags_planes":2.05,"avg_capture_base":1.32,"avg_defend_base":9.04},"Nagato":{"avg_damage":40862.28,"avg_frags_ships":0.71,"avg_frags_planes":2.01,"avg_capture_base":1.05,"avg_defend_base":5.89},"New Mexico":{"avg_damage":38946.64,"avg_frags_ships":0.82,"avg_frags_planes":1.45,"avg_capture_base":1.62,"avg_defend_base":7.17},"New Orleans":{"avg_damage":34723.01,"avg_frags_ships":0.74,"avg_frags_planes":3.75,"avg_capture_base":1.53,"avg_defend_base":10.28},"New York":{"avg_damage":30806.75,"avg_frags_ships":0.75,"avg_frags_planes":1.38,"avg_capture_base":1.5,"avg_defend_base":7.45},"Nicholas":{"avg_damage":23072.96,"avg_frags_ships":0.85,"avg_frags_planes":0.36,"avg_capture_base":1.38,"avg_defend_base":5},"North Carolina":{"avg_damage":52411.94,"avg_frags_ships":0.89,"avg_frags_planes":6.62,"avg_capture_base":1.62,"avg_defend_base":6.9},"Omaha":{"avg_damage":25676.51,"avg_frags_ships":0.79,"avg_frags_planes":1.06,"avg_capture_base":1.1,"avg_defend_base":7.77},"Pensacola":{"avg_damage":29286.79,"avg_frags_ships":0.67,"avg_frags_planes":2.53,"avg_capture_base":1.24,"avg_defend_base":8.46},"Phoenix":{"avg_damage":17684.42,"avg_frags_ships":0.53,"avg_frags_planes":0.19,"avg_capture_base":0.87,"avg_defend_base":6.2},"Ranger":{"avg_damage":39269.83,"avg_frags_ships":0.56,"avg_frags_planes":13.91,"avg_capture_base":0.29,"avg_defend_base":5.51},"Ryujo":{"avg_damage":54838.01,"avg_frags_ships":0.96,"avg_frags_planes":4.15,"avg_capture_base":0.68,"avg_defend_base":6.94},"Sampson":{"avg_damage":12830.89,"avg_frags_ships":0.85,"avg_frags_planes":0.01,"avg_capture_base":1.24,"avg_defend_base":5.36},"Shimakaze":{"avg_damage":54007.02,"avg_frags_ships":1.09,"avg_frags_planes":0.37,"avg_capture_base":2.86,"avg_defend_base":8.86},"Shokaku":{"avg_damage":79289,"avg_frags_ships":1.29,"avg_frags_planes":8.37,"avg_capture_base":0.61,"avg_defend_base":8.04},"Sims":{"avg_damage":16650.7,"avg_frags_ships":0.5,"avg_frags_planes":0.17,"avg_capture_base":1.45,"avg_defend_base":4.68},"South Carolina":{"avg_damage":20891.19,"avg_frags_ships":0.73,"avg_frags_planes":0.06,"avg_capture_base":1.77,"avg_defend_base":7.87},"St. Louis":{"avg_damage":19663.88,"avg_frags_ships":0.74,"avg_frags_planes":0.02,"avg_capture_base":1.58,"avg_defend_base":8.61},"Taiho":{"avg_damage":107407.75,"avg_frags_ships":1.84,"avg_frags_planes":7.63,"avg_capture_base":0.43,"avg_defend_base":10.64},"Tenryu":{"avg_damage":16039.69,"avg_frags_ships":0.6,"avg_frags_planes":0.1,"avg_capture_base":0.83,"avg_defend_base":5.55},"Umikaze":{"avg_damage":12999.86,"avg_frags_ships":0.81,"avg_frags_planes":0.01,"avg_capture_base":1.34,"avg_defend_base":3.48},"Wakatake":{"avg_damage":16912.67,"avg_frags_ships":0.89,"avg_frags_planes":0.03,"avg_capture_base":1.26,"avg_defend_base":2.83},"Warspite":{"avg_damage":33187.75,"avg_frags_ships":0.73,"avg_frags_planes":2.03,"avg_capture_base":1.3,"avg_defend_base":5.15},"Wickes":{"avg_damage":13806.87,"avg_frags_ships":0.6,"avg_frags_planes":0.03,"avg_capture_base":0.89,"avg_defend_base":3.6},"Wyoming":{"avg_damage":28427.16,"avg_frags_ships":0.77,"avg_frags_planes":0.81,"avg_capture_base":1.4,"avg_defend_base":7.82},"Yamato":{"avg_damage":70201.07,"avg_frags_ships":0.81,"avg_frags_planes":4.95,"avg_capture_base":0.99,"avg_defend_base":6.68},"Yamato Cosmo":{"avg_damage":43291.3,"avg_frags_ships":0.57,"avg_frags_planes":6.21,"avg_capture_base":0.01,"avg_defend_base":3.75},"Yubari":{"avg_damage":17114.08,"avg_frags_ships":0.6,"avg_frags_planes":2.37,"avg_capture_base":0.92,"avg_defend_base":6.14},"Zao":{"avg_damage":65629.06,"avg_frags_ships":1.17,"avg_frags_planes":2.58,"avg_capture_base":0.97,"avg_defend_base":10.83},"Zaya":{"avg_damage":44997.82,"avg_frags_ships":0.66,"avg_frags_planes":2.98,"avg_capture_base":0.01,"avg_defend_base":5.01},"Zuiho":{"avg_damage":41769.6,"avg_frags_ships":0.88,"avg_frags_planes":6.36,"avg_capture_base":0.69,"avg_defend_base":4.95},"Аврора":{"avg_damage":17715.46,"avg_frags_ships":0.65,"avg_frags_planes":0.02,"avg_capture_base":1.26,"avg_defend_base":7.72},"Гремящий":{"avg_damage":20870.52,"avg_frags_ships":0.74,"avg_frags_planes":0.36,"avg_capture_base":1.68,"avg_defend_base":5.12},"Мурманск":{"avg_damage":27610.02,"avg_frags_ships":0.86,"avg_frags_planes":1.44,"avg_capture_base":1.55,"avg_defend_base":8.53}}');
 		
 		/* ===== Style UserScript ===== */
 		{
@@ -292,13 +296,16 @@
 			
 			return navigatorInfo;
 		}
-		
+		console.log(window.location.href.split('/').length);
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
 			MemberProfilePage();
 		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/topic/") > -1){
 			ForumTopicPage();
+		}else if(window.location.href.indexOf("clans") > -1 && window.location.href.split('/').length == 6 && window.location.href.split('/')[4].match(/[0-9]+/) != null){
+			var ClanId = window.location.href.split('/')[4].match(/[0-9]+/);
+			ClanPage();
 		}
 		
 		jQ('.link-block').click(function(){onViewBlock(this);});
@@ -341,6 +348,28 @@
 					basic_info[i].innerHTML += '<li class="member_'+account_id+' desc lighter"></li>';
 				}
 			}
+		}
+		function ClanPage(){
+			var view_block_history = getLocalStorage('clan-member-history', false);
+			if(view_block_history == null){view_block_history = 'hide';}
+			
+			var member_management = document.getElementsByClassName("composite-heading")[0];
+			member_management.outerHTML += '' +
+				'<div style="padding-bottom: 20px;">' +
+					getUserScriptDeveloperBlock() + 
+					'<div class="div-link-block">' +
+						'<span id="clan-member-history" class="link-block '+view_block_history+'-block">' +
+							localization['block-link-clan-member-history'] +
+							'<div class="icon-link-block"></div>'+
+						'</span>' +
+					'</div>' +
+					'<div id="userscript-block" class="clan-member-history '+view_block_history+'-block" style="text-align: center;">' +
+						'<img src="/clans/static/0.1.0.1/images/processing/loader.gif" />' +
+					'</div>' +
+				'</div>' +
+			'';
+
+			getClanMembersList();
 		}
 		
 		/* ===== ForumTopicPage function ===== */
@@ -1077,6 +1106,197 @@
 			);
 		}
 		
+		/* ===== ClanPage function ===== */
+		function getClanMembersList(){
+			var table = document.getElementsByClassName("table-default_body")[0];
+			
+			if(table.rows.length <= 1){
+				setTimeout(function(){getClanMembersList();}, 1000);
+				return;
+			}
+			
+			for(var i = 1; i < table.rows.length; i++){
+				var row = table.rows[i];
+				
+				var index = MembersArray.length;
+				MembersArray[index] = [];
+				
+				var c = 0;
+				for(j = 0; j < row.cells.length; j++){
+					var cell = row.cells[j];
+					
+					if(c == 0){
+						var account_link = cell.getElementsByTagName('A')[0];
+						if(account_link !== undefined){
+							c++;
+
+							var regexp = /[0-9]+/i;
+							var account_id = regexp.exec(account_link.getAttribute('class'))[0];
+							MembersArray[index]['account_id'] = account_id;
+							
+							var account_name = account_link.innerHTML.trim();
+							MembersArray[index]['account_name'] = account_name;
+						}
+					}else if(c == 1){
+						c++;
+						
+						var image = cell.getElementsByClassName('svg-icon')[1];
+						var srcArr = image.getAttribute('src').split("/");
+						MembersArray[index]['role'] = srcArr[srcArr.length - 1].split(".")[0];
+						MembersArray[index]['role_i18n'] = getRoleText(srcArr[srcArr.length - 1].split(".")[0]);
+						MembersArray[index]['role_sort_num'] = getRoleSortNum(srcArr[srcArr.length - 1].split(".")[0]);
+					}else if(c == 2){
+						c++;
+						
+						MembersArray[index]['clan_days'] = cell.innerHTML.trim();
+					}
+				}
+			}
+			
+			if(MembersArray.length > 0){
+				viewClanMemberHistory();
+			}		
+		}
+		function viewClanMemberHistory(){
+			var oldClanMemberSave = getLocalStorage('ClanMemberSave', true);
+			
+			var oldClanChangeSave = getLocalStorage('ClanChangeSave', true);
+			if(oldClanChangeSave == null){oldClanChangeSave = '';}
+			
+			var stringJSON = '';
+			for(var i = 0; i < MembersArray.length; i++){
+				stringJSON += '"'+MembersArray[i]['account_id']+'":{"account_id":'+MembersArray[i]['account_id']+',"account_name":"'+MembersArray[i]['account_name']+'","role":"'+MembersArray[i]['role']+'"},';
+			}
+			stringJSON = stringJSON.substring(stringJSON.length - 1, 0);
+			var newClanMemberSave = '{"members": {'+stringJSON+'}}';
+			
+			var newClanChangeSave = '';
+			
+			if(oldClanMemberSave != null){
+				var oldClanMemberArr = jQ.parseJSON(oldClanMemberSave);
+				var newClanMemberArr = jQ.parseJSON(newClanMemberSave);
+				
+				for(id in oldClanMemberArr['members']){
+					if(newClanMemberArr['members'][id] === undefined){
+						oldClanChangeSave += '1:'+oldClanMemberArr['members'][id]['account_id']+':'+oldClanMemberArr['members'][id]['account_name']+':null:null;';
+					}else{
+						if(newClanMemberArr['members'][id]['role'] != oldClanMemberArr['members'][id]['role']){
+							oldClanChangeSave += '3:'+oldClanMemberArr['members'][id]['account_id']+':'+oldClanMemberArr['members'][id]['account_name']+':'+oldClanMemberArr['members'][id]['role']+':'+newClanMemberArr['members'][id]['role']+';';
+						}
+						if(newClanMemberArr['members'][id]['account_name'] != oldClanMemberArr['members'][id]['account_name']){
+							oldClanChangeSave += '4:'+oldClanMemberArr['members'][id]['account_id']+':'+oldClanMemberArr['members'][id]['account_name']+':'+oldClanMemberArr['members'][id]['account_name']+':'+newClanMemberArr['members'][id]['account_name']+';';
+						}
+					}
+				}
+				
+				for(id in newClanMemberArr['members']){
+					if(oldClanMemberArr['members'][id] === undefined){
+						oldClanChangeSave += '2:'+newClanMemberArr['members'][id]['account_id']+':'+newClanMemberArr['members'][id]['account_name']+':null:null;';
+						if(newClanMemberArr['members'][id]['role'] != 'recruit'){
+							oldClanChangeSave += '3:'+newClanMemberArr['members'][id]['account_id']+':'+newClanMemberArr['members'][id]['account_name']+':recruit:'+newClanMemberArr['members'][id]['role']+';';
+						}
+					}
+				}
+			}
+			
+			var html = '<div style="overflow: auto; height: 150px;"><table style="border-collapse: separate; font-size: 13px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);" cellspacing="0" cellpadding="0"><tbody>';
+			var clan_member_history = document.getElementsByClassName("clan-member-history")[0];
+			
+			if(oldClanChangeSave != ''){
+				var arrOldChangeClan = oldClanChangeSave.split(';');
+				if(arrOldChangeClan.length > 50){
+					var deleteCountLine = arrOldChangeClan.length - 50;
+					for(var i = 0; i < deleteCountLine; i++){
+						arrOldChangeClan.splice(0, 1);
+					}
+					for(var i = 0; i < arrOldChangeClan.length; i++){
+						if(arrOldChangeClan[i] == ''){continue;}
+						newClanChangeSave += arrOldChangeClan[i]+';';
+					}
+				}else{
+					newClanChangeSave = oldClanChangeSave;
+				}
+				
+				var arrNewChangeClan = newClanChangeSave.split(';');
+				for(var i = (arrNewChangeClan.length - 1); i >= 0; i--){
+					var arrChange = arrNewChangeClan[i].split(':');
+					var type = arrChange[0];
+					var mId = arrChange[1];
+					var mName = arrChange[2];
+					var mOld = arrChange[3];
+					var mNew = arrChange[4];
+					
+					if(type == '1'){
+						var text = localization['member-history-leave'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');
+						html +=  '<tr>'+				
+							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
+								' <font color="red">'+text+'</font>'+
+							'</td>'+
+						'</tr>';						
+					}else if(type == '2'){
+						var text = localization['member-history-join'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						html +=  '<tr>'+				
+							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
+								' <font color="green">'+text+'</font>'+
+							'</td>'+
+						'</tr>';						
+					}else if(type == '3'){
+						var text = localization['member-history-rerole'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						text = text.replace('%OLDROLE%',getRoleText(mOld));					
+						text = text.replace('%NEWROLE%',getRoleText(mNew));					
+						html +=  '<tr>'+				
+							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
+								text+
+							'</td>'+
+						'</tr>';					
+					}else if(type == '4'){
+						var text = localization['member-history-rename'];
+						text = text.replace('%OLDNAME%',mOld);						
+						text = text.replace('%NEWNAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mNew+'</a>');						
+						html +=  '<tr>'+				
+							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
+								text+
+							'</td>'+
+						'</tr>';					
+					}
+				}
+			}else{
+				html += '' +
+					'<tr>' +
+						'<td class="table-default_cell" style="padding: 0px;">' +
+							localization['member-history-notchange'] +
+						'</td>' +
+					'</tr>' +
+				'';
+			}
+			
+			html += '</tbody></table></div>';
+			html += '' +
+				'<div align="right" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">' +
+					'<br />' +
+					'<button id="run-history-clear" class="button" style="display: block;">' +
+						'<span class="button_wrapper">' +
+							'<span style="padding: 5px;" class="button_body">' +
+								'<span class="button_inner">'+localization['member-history-clear']+'</span>' +
+							'</span>' +
+						'</span>' +
+					'</button>' +
+				'</div>' +
+			'';
+			clan_member_history.innerHTML = html;
+			
+			jQ('#run-history-clear').click(function(){
+				setLocalStorage('ClanChangeSave', '', true);
+				viewClanMemberHistory();
+			});
+			
+			setLocalStorage('ClanMemberSave', newClanMemberSave, true);
+			setLocalStorage('ClanChangeSave', newClanChangeSave, true);
+		}		
+		
 		/* ===== UserScript function ===== */
 		function findColorASC(value, stat_type){
 			if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
@@ -1375,6 +1595,25 @@
 				return oldJSONStringify(convArrToObj(input));
 			};
 		})();
+		function getRoleText(role){
+			var roleText = role;
+			if(localization[role] !== undefined){roleText = localization[role];}
+			return roleText;
+		}		
+		function getRoleSortNum(role){
+			if (role == 'commander') return 0;
+			else if (role == 'executive_officer') return 1;
+			else if (role == 'personnel_officer') return 2;
+			else if (role == 'combat_officer') return 3;
+			else if (role == 'intelligence_officer') return 4;
+			else if (role == 'quartermaster') return 5;	
+			else if (role == 'recruitment_officer') return 6;
+			else if (role == 'junior_officer') return 7;
+			else if (role == 'private') return 8;
+			else if (role == 'recruit') return 9;
+			else if (role == 'reservist') return 10;
+			else return 11;
+		}		
 		function getLocalization(lang){
 			var localization = [];
 			
@@ -1410,6 +1649,28 @@
 				localization['ru']['additional-results'] = 'Дополнительные результаты';
 				localization['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
 				localization['ru']['wr'] = 'WR';
+				
+				localization['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
+				localization['ru']['link-clan-member-history'] = 'Изменения в составе клана';
+				localization['ru']['member-history-clear'] = 'Очистить историю';
+				localization['ru']['member-history-join'] = 'Вступил в клан %NAME%';
+				localization['ru']['member-history-leave'] = 'Покинул клан %NAME%';
+				localization['ru']['member-history-rename'] = '%OLDNAME% сменил ник на %NEWNAME%';
+				localization['ru']['member-history-rerole'] = '%NAME% сменил должность %OLDROLE% &rArr; %NEWROLE%';
+				localization['ru']['member-history-notchange'] = 'С момента установки скрипта WoWsStatInfo и последнего захода на страницу, изменений в составе клана не производились.';
+				
+				localization['ru']['banned'] = 'Забанен';
+				localization['ru']['commander'] = 'Командующий';
+				localization['ru']['executive_officer'] = 'Заместитель командующего';
+				localization['ru']['personnel_officer'] = 'Офицер штаба';
+				localization['ru']['intelligence_officer'] = 'Офицер разведки';
+				localization['ru']['quartermaster'] = 'Офицер снабжения';
+				localization['ru']['recruitment_officer'] = 'Офицер по кадрам';
+				localization['ru']['junior_officer'] = 'Младший офицер';
+				localization['ru']['combat_officer'] = 'Командир подразделения';
+				localization['ru']['private'] = 'Боец';
+				localization['ru']['recruit'] = 'Новобранец';
+				localization['ru']['reservist'] = 'Резервист';					
 			}
 			
 			{/* English */
@@ -1445,6 +1706,28 @@
 				localization['en']['additional-results'] = 'Additional Results';
 				localization['en']['number-ships-x'] = 'Number of X Tier ships';
 				localization['en']['wr'] = 'WR';
+				
+				localization['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
+				localization['en']['link-clan-member-history'] = 'Changes in clan members';
+				localization['en']['member-history-clear'] = 'Clear history';
+				localization['en']['member-history-join'] = 'Entered %NAME% clan';
+				localization['en']['member-history-leave'] = 'Left %NAME% clan';
+				localization['en']['member-history-rename'] = '%OLDNAME% has changed his nickname to %NEWNAME%';
+				localization['en']['member-history-rerole'] = '%NAME% has changed his position in clan rank: %OLDROLE% &rArr; %NEWROLE%';
+				localization['en']['member-history-notchange'] = 'Since installing WoWsStatInfo script and last entering on this page no changes in clan members were made.';
+				
+				localization['en']['banned'] = 'Banned';
+				localization['en']['commander'] = 'Commander';
+				localization['en']['executive_officer'] = 'Executive Officer';
+				localization['en']['personnel_officer'] = 'Personnel Officer';
+				localization['en']['intelligence_officer'] = 'Intelligence Officer';
+				localization['en']['quartermaster'] = 'Quartermaster';
+				localization['en']['recruitment_officer'] = 'Recruitment Officer';
+				localization['en']['junior_officer'] = 'Junior Officer';
+				localization['en']['combat_officer'] = 'Combat Officer';
+				localization['en']['private'] = 'Private';
+				localization['en']['recruit'] = 'Recruit';
+				localization['en']['reservist'] = 'Reservist';				
 			}
 			
 			{/* Français */
@@ -1524,7 +1807,7 @@
 		document.head.appendChild(script);
 	}
 	
-	if(window.location.host.indexOf("worldofwarships") > -1){
+	if(window.location.host.indexOf("worldofwarships") > -1 || window.location.host.indexOf(".wargaming.net") > -1){
 		addJQuery(WoWsStatInfo);
 	}
 })(window);

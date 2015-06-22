@@ -9,6 +9,8 @@
 				"http://worldofwarships.eu/cbt/accounts/*",
 				"http://forum.worldofwarships.ru/index.php?/topic/*",
 				"http://forum.worldofwarships.eu/index.php?/topic/*"
+				"http://ru.wargaming.net/clans/*",
+				"http://eu.wargaming.net/clans/*"
 			], 
             "run_at":"document_end",
 			"all_frames": true
@@ -19,8 +21,8 @@
         "48": "icon48.png",
         "128": "icon128.png" 
 	},	
-    "description" : "Расширенная статистика и функционал для сайте World of Warships.",
+    "description" : "Расширенная статистика и функционал на сайте World of Warships.",
     "name" : "WoWsStatInfo", 
     "permissions" : ["http://*/*", "unlimitedStorage"],
-    "version" : "0.3.1.8"
+    "version" : "0.3.2.9"
 }
