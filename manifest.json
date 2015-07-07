@@ -8,7 +8,9 @@
 				"http://worldofwarships.ru/community/accounts/*",
 				"http://worldofwarships.eu/community/accounts/*",
 				"http://forum.worldofwarships.ru/index.php?/topic/*",
+				"http://forum.worldofwarships.ru/index.php?/user/*",
 				"http://forum.worldofwarships.eu/index.php?/topic/*",
+				"http://forum.worldofwarships.eu/index.php?/user/*",
 				"http://ru.wargaming.net/clans/*",
 				"http://eu.wargaming.net/clans/*"
 			], 

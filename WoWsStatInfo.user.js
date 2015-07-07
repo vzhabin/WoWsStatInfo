@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name WoWsStatInfo
 // @author Vov_chiK
-// @description Расширенная статистика и функционал.
+// @description Расширенная статистика на оф. сайте.
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
@@ -10,18 +10,22 @@
 // @include http://worldofwarships.ru/community/accounts/*
 // @include http://worldofwarships.eu/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
+// @include http://forum.worldofwarships.ru/index.php?/user/*
 // @include http://forum.worldofwarships.eu/index.php?/topic/*
+// @include http://forum.worldofwarships.eu/index.php?/user/*
 // @include http://ru.wargaming.net/clans/*
 // @include http://eu.wargaming.net/clans/*
 // @match http://worldofwarships.ru/community/accounts/*
 // @match http://worldofwarships.eu/community/accounts/*
 // @match http://forum.worldofwarships.ru/index.php?/topic/*
+// @match http://forum.worldofwarships.ru/index.php?/user/*
 // @match http://forum.worldofwarships.eu/index.php?/topic/*
+// @match http://forum.worldofwarships.eu/index.php?/user/*
 // @match http://ru.wargaming.net/clans/*
 // @match http://eu.wargaming.net/clans/*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
-(function(window){//http://eu.wargaming.net/clans/500015661/
+(function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
 		var VersionWoWsStatInfo = '0.4.0.10';
@@ -299,16 +303,36 @@
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
+			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
 			MemberProfilePage();
+		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/user/") > -1){
+			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
+			ForumUserPage();
 		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/topic/") > -1){
+			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			ForumTopicPage();
 		}else if(window.location.href.indexOf("clans") > -1 && window.location.href.split('/').length == 6 && window.location.href.split('/')[4].match(/[0-9]+/) != null){
+			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var ClanId = window.location.href.split('/')[4].match(/[0-9]+/);
 			ClanPage();
 		}
 		
 		jQ('.link-block').click(function(){onViewBlock(this);});
+		
+		function doneLastVersion(url, response){
+			var data = response;
+			if(VersionWoWsStatInfo != data['version']){
+				onShowMessage(
+					localization['Box'],
+					localization['NewVersion']+' WoWsStatInfo '+data['version']+'<br />'+localization['NewUpdate']+'.', 
+					onCloseMessage,
+					localization['Ok'],
+					false
+				);
+			}
+		}
+		function errorLastVersion(url){}
 		
 		/* ===== Pages function ===== */
 		function MemberProfilePage(){
@@ -330,6 +354,23 @@
 					'' +
 				'</div>' +
 			'';
+		}
+		function ForumUserPage(){
+			var nickname = document.getElementsByClassName('nickname')[0];
+			var user_id = document.getElementById('common_menu_loader').getAttribute('data-user_id');
+			var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
+			ipsList_data.innerHTML += '' +
+				'<li class="clear clearfix">' +
+					'<span class="row_title">'+localization['profile-wows']+':</span>' +
+					'<span class="row_data"><a href="http://worldofwarships.'+realm+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
+				'</li>' +
+				'<li class="clear clearfix">' +
+					'<span class="row_title">'+localization['profile-clan']+':</span>' +
+					'<span class="row_data member_'+user_id+'"></span>' +
+				'</li>' +				
+			'';
+			
+			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
 		}
 		function ForumTopicPage(){
 			var ForumTopicMembers = [];
@@ -392,9 +433,14 @@
 						}
 					}					
 				}
+				
+				var br_line = '';
+				if(window.location.href.indexOf("/topic/") > -1){
+					br_line = '<br />';
+				}
 			
 				var html = '' +
-					'<br />' +
+					br_line +
 					'<span>' +
 						'<a align="center" href="http://'+realm+'.wargaming.net/clans/'+clansInfo['clan']['clan_id']+'/" title="'+clansInfo['clan']['tag']+'" rel="home" target="_blank">' +
 							'<img src="'+icon+'" alt="'+clansInfo['clan']['tag']+'">' +
@@ -1039,10 +1085,9 @@
 			
 			var data = response;
 			
+			var check = true;
 			html += '<div style="width: 488px; height: 429px; overflow-y: scroll;">';
-			for(var i = 0; i < data.length; i++){
-				var checked = ''; if(i == 0){checked = 'checked="checked"';}
-				
+			for(var i = 0; i < data.length; i++){				
 				var imgbgview = false;
 				var img = data[i].split('_');
 				if(img.length > 1){
@@ -1057,6 +1102,7 @@
 				}
 				
 				if(imgbgview){
+					var checked = ''; if(check){checked = 'checked="checked"'; check = false;}
 					html += '<input type="radio" name="userbar-bg" value="'+data[i]+'" '+checked+'> '+data[i]+'<br />';
 					html += '<img src="'+WoWsStatInfoHref+'bg/'+data[i]+'.png" title="'+data[i]+'"/><br /><br />';
 				}
@@ -1393,7 +1439,7 @@
 		function getApplicationId(realm){
 			var applicationId = [];
 			
-			applicationId['ru'] = '465b433458404851342a8ad750e67820'; // .ru
+			applicationId['ru'] = '7149a13b5f5fb7109c5b2400d31b7d42'; // .ru
 			applicationId['eu'] = '953df86f6bca01a7af80c3bdedd9c1d9'; // .eu
 			
 			return applicationId[realm].split("").reverse().join("");
@@ -1628,6 +1674,9 @@
 				localization['ru']['Ok'] = 'Ok';
 				localization['ru']['Cancel'] = 'Отмена';
 				
+				localization['ru']['NewVersion'] = 'Вышла новая версия скрипта';
+				localization['ru']['NewUpdate'] = 'Пожалуйста, обновите скрипт';
+				
 				localization['ru']['ErrorScript'] = 'Во время работы UserScript WoWsStatInfo '+VersionWoWsStatInfo+', возникла ошибка:';
 				localization['ru']['ErrorSendDeveloper'] = 'Сообщите об ошибке разработчику скрипта.';
 				
@@ -1639,6 +1688,8 @@
 				localization['ru']['coloring-scheme'] = 'Цветовая схема';
 				localization['ru']['players'] = 'игроков';
 				
+				localization['ru']['profile-wows'] = 'Профиль в World of Warships';
+				localization['ru']['profile-clan'] = 'Клан';
 				localization['ru']['forum-profile'] = 'Профиль на форуме';
 				localization['ru']['role'] = 'Должность';
 				localization['ru']['clan-day'] = 'Количество дней в клане';
@@ -1684,6 +1735,9 @@
 				localization['en']['Ok'] = 'Ok';
 				localization['en']['Cancel'] = 'Cancel';
 				
+				localization['en']['NewVersion'] = 'Вышла новая версия скрипта';
+				localization['en']['NewUpdate'] = 'Пожалуйста, обновите скрипт';
+				
 				localization['en']['ErrorScript'] = 'An error occurred while running UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
 				
 				localization['en']['ErrorSendDeveloper'] = 'Please, inform script developer about this error.';
@@ -1696,6 +1750,8 @@
 				localization['en']['coloring-scheme'] = 'Coloring scheme';
 				localization['en']['players'] = 'players';
 				
+				localization['en']['profile-wows'] = 'World of Warships profile';
+				localization['en']['profile-clan'] = 'Clan';
 				localization['en']['forum-profile'] = 'Forum profile';
 				localization['en']['role'] = 'Alliance rank';
 				localization['en']['clan-day'] = 'Days in clan';
