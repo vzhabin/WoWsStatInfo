@@ -1735,8 +1735,8 @@
 				localization['en']['Ok'] = 'Ok';
 				localization['en']['Cancel'] = 'Cancel';
 				
-				localization['en']['NewVersion'] = 'Вышла новая версия скрипта';
-				localization['en']['NewUpdate'] = 'Пожалуйста, обновите скрипт';
+				localization['en']['NewVersion'] = 'New version was released';
+				localization['en']['NewUpdate'] = 'Please, update the extension';
 				
 				localization['en']['ErrorScript'] = 'An error occurred while running UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
 				
