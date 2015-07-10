@@ -11,8 +11,8 @@
 				"http://forum.worldofwarships.ru/index.php?/user/*",
 				"http://forum.worldofwarships.eu/index.php?/topic/*",
 				"http://forum.worldofwarships.eu/index.php?/user/*",
-				"http://ru.wargaming.net/clans/*",
-				"http://eu.wargaming.net/clans/*"
+				"http://ru.wargaming.net/clans/*/players*",
+				"http://eu.wargaming.net/clans/*/players*"
 			], 
             "run_at":"document_end",
 			"all_frames": true
