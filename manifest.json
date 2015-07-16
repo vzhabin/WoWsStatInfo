@@ -5,7 +5,7 @@
         {
             "js":[ "WoWsStatInfo.user.js" ], 
             "matches":[	
-				"http://worldofwarships.ru/community/accounts/*",
+				"http://worldofwarships.ru/ru/community/accounts/*",
 				"http://worldofwarships.eu/community/accounts/*",
 				"http://forum.worldofwarships.ru/index.php?/topic/*",
 				"http://forum.worldofwarships.ru/index.php?/user/*",

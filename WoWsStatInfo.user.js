@@ -5,9 +5,9 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.0.10
+// @version 0.4.0.11
 // @creator Vov_chiK
-// @include http://worldofwarships.ru/community/accounts/*
+// @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://worldofwarships.eu/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
 // @include http://forum.worldofwarships.ru/index.php?/user/*
@@ -15,7 +15,7 @@
 // @include http://forum.worldofwarships.eu/index.php?/user/*
 // @include http://ru.wargaming.net/clans/*/players*
 // @include http://eu.wargaming.net/clans/*/players*
-// @match http://worldofwarships.ru/community/accounts/*
+// @match http://worldofwarships.ru/ru/community/accounts/*
 // @match http://worldofwarships.eu/community/accounts/*
 // @match http://forum.worldofwarships.ru/index.php?/topic/*
 // @match http://forum.worldofwarships.ru/index.php?/user/*
@@ -28,7 +28,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.4.0.10';
+		var VersionWoWsStatInfo = '0.4.0.11';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -285,13 +285,15 @@
 			var url = window.location.href;
 			
 			console.log(''
-				+'Lang          = '+lang+'\n'
-				+'URL          = '+url+'\n'
-				+'Browser name  = '+browserName+'\n'
-				+'Full version  = '+fullVersion+'\n'
-				+'Major version = '+majorVersion+'\n'
-				+'navigator.appName = '+navigator.appName+'\n'
-				+'navigator.userAgent = '+navigator.userAgent+'\n'
+				+'----------------------- WoWsStatInfo '+VersionWoWsStatInfo+' -----------------------\n'
+				+'| Lang                = '+lang+'\n'
+				+'| URL                 = '+url+'\n'
+				+'| Browser name        = '+browserName+'\n'
+				+'| Full version        = '+fullVersion+'\n'
+				+'| Major version       = '+majorVersion+'\n'
+				+'| navigator.appName   = '+navigator.appName+'\n'
+				+'| navigator.userAgent = '+navigator.userAgent+'\n'
+				+'---------------------------------------------------------------------\n'
 			);			
 			
 			var navigatorInfo = [];
@@ -308,6 +310,10 @@
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 7 && window.location.href.split('/')[5].match(/[0-9]+/) != null){
 			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var account_id = window.location.href.split('/')[5].match(/[0-9]+/);
+			MemberProfilePageEU();
+		}else if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 9 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
+			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
+			var account_id = window.location.href.split('/')[6].match(/[0-9]+/);
 			MemberProfilePage();
 		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/user/") > -1){
 			getJson(WoWsStatInfoHref+'/version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
@@ -341,17 +347,64 @@
 		
 		/* ===== Pages function ===== */
 		function MemberProfilePage(){
-			var account = document.getElementsByClassName('account')[0];
-			if(account === undefined){return;}			
-		
+			var account_profile = document.getElementsByClassName('account-profile')[0];
+			if(account_profile === undefined){return;}
+			
+			MembersArray[0] = [];
+			
+			var row = document.getElementsByClassName('row')[0];
+			row.outerHTML += '' +
+				'<div id="userscript-block-list">' +
+					'<div id="userscript-forum-link">' +
+						'<a target="_blank" href="http://forum.worldofwarships.'+realm+'/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">'+localization['forum-profile']+'</a>' +
+					'</div>' +
+					'<style>' +
+						'.b-profile-clan{max-width: 400px; padding-right: 100px;margin-bottom: 14px;padding-top: 5px;position: relative;}' +
+						'.b-profile-clan_photo{float: left;width: 61px;position: relative;min-height: 70px;top: 5px;}' +
+						'.b-profile-clan_color{width: 15px;height: 15px;position: absolute;left: 38px;top: 2px;}' +
+						'.b-profile-clan_link{background-image: url("data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkI4NTIxMEI3ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkI4NTIxMEI4ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6Qjg1MjEwQjU4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6Qjg1MjEwQjY4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7V+fopAAAMmElEQVR42sxazY7jxhEmKc2IzaZmRrObwEGQi53kklcI4JzzPL7kkFtOQeAn2FfJYYG9OCcfYsd2YsObALGzQLwzErub0khkurqruqop7QgOYMNacHtIUeyuv6++qmZZxE95YqS/v/PPixcv2vl8XvlPOB+GodjtdoNzbnj16tX+yy+/HJ49e7Z/+fLl9Kfjm8a5EKASRynG7/zz/PnzxUcff/L1V//+CgQqDod9sd8fwng4HPzf+2KxUMXbb/88/A3X6AAlwDGOY3re3d031XwiFJxf+GOGx/ci3Icffqjv7jfFRx//9Vv9rvQWnvljXrKz7bbbMM6FdeZ/+eCDdz/79LNdZzfz3vXVdretvDuM4zCMh+EwPjwchr7fetUMIxgdtOS1OhwOg79lX2y3u6C2h/3DMKtmXvvbEdzLa3mA633fj4P/jf8vTA4W8c8YL+ZVDQvSTVN88cXn/7ci3/rJT5PZpMUu/vH53x9+9957f3bOFLXSRZ9GWzSNLpztigVdr/25H+G6tTC2fuwKFe4zflz6+/z9eN6o1o+b8D3dD89r9LKw5oOixvOf/fitEZ4L93X+vhavX+K8CuYxm6LWbbH139f+Pu+Mf/j6P69+DyGGcVpWAihm6/V6Bj9u6CEKhambYt2tw8ONjcJaIRQswsBkSSh/3ay9EprC+es6CL32QrQoFAjTBeHhdzA6FNaAcui+MF9UDiitxnkWIKwxSYnL61WQBsJsKhiMM2dttVCkYS8caBQe4oVY6mXUMCwShTIWhTNxMQ4tBtfpvNFXuHi/6G6Dllrj4uN1GEko3UahwSI9Wg6E0hqvN2ApeC4rdbO+S+5IyFoJeK88IlUgxCUu7tK7jzEdTircoI4PBQ12KBRMusD7wdJhDPevWWhYnAXLLsNzolAmsxxZPjxPuC1cb1DYGuej+66uV0mw2WyWCRaE2213ZXA/EzUfNKZj7IBlehEbKsVUXBxM5lwXJo+x1yYN224TRxsXb8MiURjvrmHR7RUKLdwMldMZMZ9iD4nKbYvN/euR0thsxq6YPvOLC78oi7EQf9yjUPCQ4KZ+0dEtYuxQTDlh2RALyUJxDN+DMHaDgBHHoAS47mMYYs+hG5I7djAPhoHC+YLyMFxAmUthsbI8tpiH636AgA+L8pN0m3VyRxAKNAojTJY0plGDaCFVRyE1ui2gISyaFqtUdKvovvF5PVke3S25KT3HiudTTCuNnuSFX9+Nj7kiZPBx5yI09xjIwWKgIdQcQDhNUit2l4haACw4EtDgc6J75RqH8x4tTBYxXSeAp8X5NAMXzSNie3nzeIz5RPow1Ohui4YfTosz+HCYTMZajzGVUFTGoJaL2CRAqDGVALoZikUQtoX7TPpdDfkPf28QRXsbLR7duy3Wd6+HFE7zE4LtHh5GS5qaAETQsJ+kQ8iOEMwQ704I3WhelOuim23x/mjRJbsx5qm42OhuWufKaTDfxbyHMQ2oeM5iDw9gsZhvyJfJxyFJbwk4hDtpigkd81DQMCkDheoNWWKqtE1yW3LLpIyG7yfhHQkvlI4x9rhgwOEcWqKnRaOl+gnNCpOkfOVjD1GxF2ga0JDQVCw25DGL6Cc9JFjKJCEUpoomCcVCp3MLeexWJOjT4DE07TJphpIwLTYt0kZ0c8jdgrDorkR3auGm5J4pLwrUy/KdIeEEUGi2THJvFIosv77/RlisOhbMs+2xtyZpog7JM3erhGqO6RYBDiyKaJDDwO9FMg0pIxNauJkhQtwlUhCUhha0E2Byht34ZvX0jZQqxpgv4i59LFFGh2StCZqR20mfD5pXnFfAUg1aLionElaiR0RwSYgspjClqAkaN0IJWWxR0leBeRQ/8lWBdMV5brHDuO2ZNRO7j+4ThQv0h9wtcbhl0nCH6NdLqG8kzaLfs8YbaSEBPE3ikrmFp0I/fevtceVr5svLy2SxTLC9R0WlpFCcT5oglEnuR8JrokUiBdBijMnzWW+6RMcUMhpNBFqiKNExYcFcKFZSYEgeFV/+81+/8CKs/WGOY2wYMDZ0ZPG+orUZ9HKx6VLpwPeTMIyajGI9jmDhQNMcax5o2VYwGqgSiDgz+m5EqaORfl2FWL+6uT2ququ85zMynQE6hYR4Gug95a1MaImmcfEJ+lOJEoXdOiLQiG6GYjqPKQIyqsd6Q0mdqoSIzjKPnRRsvz8MoCli47WoqwgNKXBtFx9K7tEFS+j0/ZZix+DzKEXYmMcAWCRqslLw3EkmssxSQoPMgywomcdJwYbh4N1iiZxOQLrhSSRq9b2ZAAQwlWUGHLHuQveynMQX2BOpdU7bUl5TOQNRDfVMItGWKWJ9f8Zi0EXaui5BtVKcJF1iFAKllEzeUagpQ6BkK5kCJVeiX5KGSdSrkxDRvaPlYykUz6Oyr29uHxcMGpALhZytWQqopbYAFpHoFjBeIl3Swf0Ma3iaf5AAE0OpKQbFyEAT3X6bqgaDecugG1NMR0Jsu/Xj4HExv+CKWDCIYBmkO84Yhlw/7pzJ67OM9aNF8HwhKu6UAiTdapgMBEAhjqkpb0Z6VqOSAzlweT122mIQYyI5U53lkk9H2kQ9ELIkcUZiFgYtYCXLV2gBLXoWhjlmTfkvVeRE03jeXlpads02ZywGnV1gHuRmi1qnUsQ47gopkaStYQsTnWrUCW4n6jCmVcRsNNZrOlnGJo9hMlBjQ4mKzRpRt72+OQf3+6Ku29QOiBpmN+nRTbY+v1HPQaX6CTWs2JKZcBPa1LQMHEy0DXfHFAvDHhSTOXkIxdx5i/nDUkeXNEeTiZIFGj52QkxTJU35x3FzdUqLCCgCULlu0h7vshjvLT9PFqORc+pgufbqvMXGRliAaVQUauuExhvu1LreMLqlVEAVtU6MQ0I/Jetp74RKIyWBA4tdaggZJNrcvdo8brFZVZXOiocT92u0aNgYbpIq9Pk6Ln6h8gpXU5dJHwvhHKNrLZkHoWsCDtHO1loUqYyiV2dj7HAoZfs4NWgQWo3h3RTq2Sc3IRqkJ31AxXmJkrPFIja5neHGT5OStxZ1HaNpapY2goj764/DvXdFJype6utR/pDdJCva39x+brP+H3/Pi+/xfOtMxjUT0yALCuXWatKUJXTF86vr1Vm4LykpUr9voXI6pESS7bE9HdBP0CPZLFXZ1hAl69gbMeKciG3TYmy13BbgfNllYZKev7k/R6mGqu8tN1YEtyN2TRCc2sxmkwOA2HqaWpCIbYP1WdOIVCH6kIR6jIYcFhxzHLPXqyePW6wsixH6h7L5qVvZbjYCktESGMhHvQnRkw+QriYxdpQCyL2iBxChVopZvVRqUh6UTGctNgxlIp4uarjrjjcEiNak3ZbEGI4bL7w4TvKN6G1spZuqNrUNrDOCSC85P6bic5O6aMtzeQwaplTsMctn5mEkajXUe8AkjoygFl2q1DEOewF6ksSPm6C9BByV138Z+6eK2trYCT7HPODDLTRGpQWhomb3S0kcLRaEVoL7WWlhZuVH9Zeo55SA/FOWlx5BqQeEvLk9E2P7w77iDYM2QXxv8sDPW2VaFJ9MhNU0GYvnccxMFo8AlZUw010dLSrtVLSeYR6l/8eMQFS4otEi8xZpsEltcJ3ciLeUjGiqcsxI5SyyGJQbD/kGRHpOI4iwDTua5bl6rExN0imHE1yvnxBb2niXFpVlfYJq1x2x/loo5ThfntjKEi05uXFxNkFbkWQzTUlLyZdJ5PdaNFqstJBgJtNNQ9HAUcJd7ckY06kSl72X1e2T6jHBRkBFSVjticCVTUxejGwPiDb4NF8JxlBnuym80UGeIffBZP4LKcKJVh2yfWiy4QHV11iJUmyoqmqQjENCez/trafvOWnX8jUilwvNaGmy38sdzNhO4CqiFm2H7FUMle+c4nseBxKKLDaipIfZrHpIW0PE5SaWm7bGgua6XOjeiZ4H1WOpfY37ZWLfS27XqsxSvDGS72Rushjr1mvYYtkL4dLrRvAq3+Vv3v31b//2yae/aper+Wb9uvSaGDfru/H6ZlWs719Dj3zc3IUxvIKwvL4p4fur69vB05rq2n9///q/I+QVf/94s4LxLvT97uD66hYCvbr2IyRV0DS0p1dPnpbw6oWfpwS38veXQJN87JR4fwnKWz15Uq3v/Hw3N6Xx98M6wCPeeeeXw/vv/+mP0BqFtzpAyFK8q3iBRw1C4k7M7Pt80/Rbfga0EFhqhwLtyHJz4Zd78fdOCFX9AIUaxXHA4wHHQe6PDRJExJul5Q/UYuNEwGGCikcvOZ960fmH6opvetE5/P0/AQYARWny6bv+xcUAAAAASUVORK5CYII=");display: block;height: 54px;position: absolute;left: 2px;padding: 11px 0 0 11px;width: 54px;}' +
+						'.b-profile-clan_text{margin-left: 61px;}' +
+						'.b-profile-clan_text-wrpr{font-size: 13px;margin: 5px 0 0;overflow: hidden;padding-right: 0;padding: 0 0 7px;text-overflow: ellipsis;white-space: nowrap;}' +
+						'.b-link-clan{color: #f9d088;font-weight: bold;text-decoration: none;}' +
+						'.b-link-clan_tag{color: #babcbf;}' +
+						'.b-statistic{overflow: hidden;margin: 0 0 16px;line-height: 14px;}' +
+						'.b-statistic_item{color: #606061;font-size: 11px;margin: 0;padding: 0;line-height: 125%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;word-wrap: normal;}' +
+						'.b-statistic_value{color: #babcbf;}' +
+					'</style>' +
+					'<div id="wowsstatinfo-profile-clan">' +
+						'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
+							'<img src="http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' + 
+						'</div>' +
+					'</div>' +
+					getUserScriptDeveloperBlock() +
+					'' +
+				'</div>' +
+			'';			
+			
+			var account_href = window.location.href.split('/')[6].split('-');
+			var account_id = account_href[0];
+			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+account_id, doneClanInfo, errorClanInfo);
+			
 			getMemberStatistic();
-			viewMemberProfilePage();
-			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+MembersArray[0]['account_id'], doneClanInfo, errorClanInfo);
+			
+			jQ('.account-pvp-pve').click(function(){
+				setTimeout(function(){getMemberStatistic();}, 1000);
+			});
+			jQ('.account-tabs').click(function(){
+				setTimeout(function(){getMemberStatistic();}, 1000);
+			});
+		}
+		function MemberProfilePageEU(){
+			var account = document.getElementsByClassName('account')[0];
+			if(account === undefined){return;}		
+		
+			getMemberStatisticEU();
+			viewMemberProfilePageEU();
+			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+lang+'&account_id='+MembersArray[0]['account_id'], doneClanInfoEU, errorClanInfoEU);
 		
 			var content = document.getElementsByClassName('content')[0];
 			var row = content.getElementsByClassName('row')[0];
 			row.outerHTML += '' +
-				'<div id="userscript-block-list">' +
 					'<div id="userscript-forum-link" style="float:left;">' +
 						'<a target="_blank" href="http://forum.worldofwarships.'+realm+'/index.php?/user/dn-'+MembersArray[0]['account_name']+'-/">'+localization['forum-profile']+'</a>' +
 					'</div>' +
@@ -460,7 +513,541 @@
 		function errorForumClanInfo(url){}
 		
 		/* ===== MemberProfilePage function ===== */
-		function viewMemberProfilePage(){
+		function doneClanInfo(url, response){
+			if(response.status && response.status == "error"){
+				errorClanInfo();
+				return;
+			}
+			
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			
+			MembersArray[0]['clans'] = response['data'][account_id];
+			
+			viewMemberClan();
+		}
+		function errorClanInfo(url){
+			MembersArray[0]['clans'] = null;
+			
+			viewMemberClan();
+		}
+		function viewMemberClan(){
+			var wowsstatinfo_profile_clan = document.getElementById('wowsstatinfo-profile-clan');
+		
+			if(MembersArray[0]['clans'] != null){
+				var day = dateDiffInDays(MembersArray[0]['clans']['joined_at'] * 1000, new Date().getTime());
+				
+				var icon = MembersArray[0]['clans']['clan']['emblems']['x32']['portal'];
+				if(icon === undefined){
+					for(var key in MembersArray[0]['clans']['clan']['emblems']['x32']){
+						if(key != 'wot'){
+							icon = MembersArray[0]['clans']['clan']['emblems']['x32'][key];
+						}
+					}					
+				}
+				
+				wowsstatinfo_profile_clan.innerHTML = '' +
+					'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
+						'<div class="b-profile-clan_photo">' +
+							'<div style="background: '+MembersArray[0]['clans']['clan']['color']+';" class="b-profile-clan_color"><!-- --></div>' +
+							'<a class="b-profile-clan_link" href="http://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clans']['clan']['clan_id']+'/" target="_blank">' +
+								'<img alt="'+MembersArray[0]['clans']['clan']['name']+'" src="'+icon+'" width="32" height="32">' +
+							'</a>' +
+						'</div>' +
+						'<div class="b-profile-clan_text">' +
+							'<div class="b-profile-clan_text-wrpr">' +
+								'<a class="b-link-clan" href="http://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clans']['clan']['clan_id']+'/" target="_blank">' +
+									'<span class="b-link-clan_tag">['+MembersArray[0]['clans']['clan']['tag']+']</span>&nbsp;'+MembersArray[0]['clans']['clan']['name']+'' +
+								'</a>' +
+							'</div>' +
+							'<div class="b-statistic">' +
+								'<p class="b-statistic_item">'+localization['role']+': <span class="b-statistic_value">'+MembersArray[0]['clans']['role_i18n']+'</span></p>' +
+								'<p class="b-statistic_item">'+localization['clan-day']+': <span class="b-statistic_value">'+day+'</span></p>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+				'';
+			}else{
+				wowsstatinfo_profile_clan.innerHTML = '';
+			}			
+		}
+		function getMemberStatistic(){			
+			var account_href = window.location.href.split('/')[6].split('-');
+			var account_id = account_href[0];
+			var account_name = account_href[1];
+			
+			var _nick = document.getElementsByClassName('_nick')[0];
+			account_name = _nick.textContent;
+			
+			MembersArray[0]['account_id'] = account_id;
+			MembersArray[0]['account_name'] = account_name;
+			
+			var count_stat = 0;
+			for(var t = 0; t < typeStat.length; t++){
+				var type = typeStat[t];
+				MembersArray[0][type] = [];
+				
+				var tabContainer = null;
+				var tab_container = document.getElementsByClassName('tab-container');
+				for(var tc = 0; tc < tab_container.length; tc++){
+					if(tab_container[tc].getAttribute('js-tab-cont-id') != type){continue;}
+					tabContainer = tab_container[tc];
+				}
+				
+				if(tabContainer == null){continue;}
+				
+				var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
+				if(account_battle_stats != null){
+					var account_table = account_battle_stats.getElementsByClassName('account-table');
+					
+					//Общие результаты
+					MembersArray[0][type]['battles'] = htmlParseMemberStatistic(account_table[0].rows[1].cells[1]);
+					MembersArray[0][type]['wins'] = htmlParseMemberStatistic(account_table[0].rows[2].cells[1]);
+					MembersArray[0][type]['survived'] = htmlParseMemberStatistic(account_table[0].rows[3].cells[1]);
+					MembersArray[0][type]['hits_percents'] = htmlParseMemberStatistic(account_table[0].rows[4].cells[1]);
+					MembersArray[0][type]['damage'] = htmlParseMemberStatistic(account_table[0].rows[5].cells[1]);
+					MembersArray[0][type]['frags_ships'] = htmlParseMemberStatistic(account_table[0].rows[6].cells[1]);
+					MembersArray[0][type]['frags_planes'] = htmlParseMemberStatistic(account_table[0].rows[7].cells[1]);
+					MembersArray[0][type]['capture_base'] = htmlParseMemberStatistic(account_table[0].rows[8].cells[1]);
+					MembersArray[0][type]['defend_base'] = htmlParseMemberStatistic(account_table[0].rows[9].cells[1]);
+					
+					//Средние показатели за бой
+					MembersArray[0][type]['avg_xp'] = htmlParseMemberStatistic(account_table[1].rows[1].cells[1]);
+					MembersArray[0][type]['avg_damage'] = htmlParseMemberStatistic(account_table[1].rows[2].cells[1]);
+					MembersArray[0][type]['avg_frags_ships'] = htmlParseMemberStatistic(account_table[1].rows[3].cells[1]);
+					MembersArray[0][type]['avg_frags_planes'] = htmlParseMemberStatistic(account_table[1].rows[4].cells[1]);
+					MembersArray[0][type]['avg_capture_base'] = htmlParseMemberStatistic(account_table[1].rows[5].cells[1]);
+					MembersArray[0][type]['avg_defend_base'] = htmlParseMemberStatistic(account_table[1].rows[6].cells[1]);
+					
+					//Рекордные показатели
+					MembersArray[0][type]['max_xp'] = htmlParseMemberStatistic(account_table[2].rows[1].cells[1]);
+					MembersArray[0][type]['max_damage'] = htmlParseMemberStatistic(account_table[2].rows[2].cells[1]);
+					MembersArray[0][type]['max_frags_ships'] = htmlParseMemberStatistic(account_table[2].rows[3].cells[1]);
+					MembersArray[0][type]['max_frags_planes'] = htmlParseMemberStatistic(account_table[2].rows[4].cells[1]);
+					
+					//Расчет
+					MembersArray[0][type]['wins_percents'] = (MembersArray[0][type]['wins']/MembersArray[0][type]['battles'])*100;
+					MembersArray[0][type]['survived_percents'] = (MembersArray[0][type]['survived']/MembersArray[0][type]['battles'])*100;
+					if(MembersArray[0][type]['battles'] == MembersArray[0][type]['survived_battles']){
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/MembersArray[0][type]['battles'];
+					}else{
+						MembersArray[0][type]['kill_dead'] = MembersArray[0][type]['frags_ships']/(MembersArray[0][type]['battles']-MembersArray[0][type]['survived']);
+					}
+					
+					//Общие результаты
+					account_table[0].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
+					
+					//Средние показатели за бой
+					account_table[1].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
+					account_table[1].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
+					account_table[1].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_ships'], 'avg_frags_ships');
+					account_table[1].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_frags_planes'], 'avg_frags_planes');
+					account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_capture_base'], 'avg_capture_base');
+					account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['avg_defend_base'], 'avg_defend_base');
+					
+					//Рекордные показатели
+					account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['max_xp'], 'max_xp');
+					account_table[2].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['max_damage'], 'max_damage');
+					account_table[2].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['max_frags_ships'], 'max_frags_ships');
+					account_table[2].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0][type]['max_frags_planes'], 'max_frags_planes');
+					
+					//Дополнительно
+					account_table[0].rows[2].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');
+					if(account_table[0].rows[3].cells[1].getElementsByClassName('small-survived_percents')[0] == null){
+						account_table[0].rows[3].cells[1].innerHTML += '<small class="small-survived_percents">('+valueFormat((MembersArray[0][type]['survived_percents']).toFixed(2))+'%)</small>';
+						account_table[0].rows[3].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0][type]['survived_percents'], 'survived_percents');
+					}
+				
+					var account_main_stats = tabContainer.getElementsByClassName('account-main-stats')[0];
+					var _values = tabContainer.getElementsByClassName('_values')[0];
+					var main_stat = _values.getElementsByTagName('div');
+					main_stat[0].style.color = findColorASC(MembersArray[0][type]['battles'], 'battles');
+					main_stat[1].style.color = findColorASC(MembersArray[0][type]['wins_percents'], 'wins_percents');
+					main_stat[2].style.color = findColorASC(MembersArray[0][type]['avg_xp'], 'avg_xp');
+					main_stat[3].style.color = findColorASC(MembersArray[0][type]['avg_damage'], 'avg_damage');
+					main_stat[4].style.color = findColorASC(MembersArray[0][type]['kill_dead'], 'kill_dead');
+					
+					count_stat++;
+				}else{
+					MembersArray[0][type]['battles'] = 0;
+					MembersArray[0][type]['wins'] = 0;
+					MembersArray[0][type]['survived'] = 0;
+					MembersArray[0][type]['hits_percents'] = 0;
+					MembersArray[0][type]['damage'] = 0;
+					MembersArray[0][type]['frags_ships'] = 0;
+					MembersArray[0][type]['frags_planes'] = 0;
+					MembersArray[0][type]['capture_base'] = 0;
+					MembersArray[0][type]['defend_base'] = 0;
+					MembersArray[0][type]['avg_xp'] = 0;
+					MembersArray[0][type]['avg_damage'] = 0;
+					MembersArray[0][type]['avg_frags_ships'] = 0;
+					MembersArray[0][type]['avg_frags_planes'] = 0;
+					MembersArray[0][type]['avg_capture_base'] = 0;
+					MembersArray[0][type]['avg_defend_base'] = 0;
+					MembersArray[0][type]['max_xp'] = 0;
+					MembersArray[0][type]['max_damage'] = 0;
+					MembersArray[0][type]['max_frags_ships'] = 0;
+					MembersArray[0][type]['max_frags_planes'] = 0;
+					MembersArray[0][type]['wins_percents'] = 0;
+					MembersArray[0][type]['survived_percents'] = 0;
+					MembersArray[0][type]['kill_dead'] = 0;
+				}
+				
+				var ship_class = '';
+				var ships_detail_stats = tabContainer.getElementsByClassName('ships-detail-stats')[0];
+				if(ships_detail_stats != null){
+					var ships_x_level = 0;
+					var StatShips = [];
+					StatShips['damage'] = 0;
+					StatShips['frags_ships'] = 0;
+					StatShips['frags_planes'] = 0;
+					StatShips['capture_base'] = 0;
+					StatShips['defend_base'] = 0;
+					StatShips['expDamage'] = 0;
+					StatShips['expFragsShips'] = 0;
+					StatShips['expFragsPlanes'] = 0;
+					StatShips['expCapture'] = 0;
+					StatShips['expDefend'] = 0;
+					
+					var StatShipsClass = [];
+					StatShipsClass['damage'] = 0;
+					StatShipsClass['frags_ships'] = 0;
+					StatShipsClass['frags_planes'] = 0;
+					StatShipsClass['capture_base'] = 0;
+					StatShipsClass['defend_base'] = 0;
+					StatShipsClass['expDamage'] = 0;
+					StatShipsClass['expFragsShips'] = 0;
+					StatShipsClass['expFragsPlanes'] = 0;
+					StatShipsClass['expCapture'] = 0;
+					StatShipsClass['expDefend'] = 0;
+					
+					MembersArray[0][type]['ships'] = [];
+				
+					for(var i = 0; i < ships_detail_stats.rows.length; i++){
+						var row = ships_detail_stats.rows[i];
+						
+						if(i == 0 && row.cells.length < 6){
+							var th = document.createElement('th');
+							th.setAttribute('class', '_value');
+							th.innerHTML = '<span>'+localization['wr']+'</span>';
+							row.appendChild(th);
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class') == null){
+							var _icon = row.getElementsByClassName('_icon')[0];
+							var div_icon = _icon.getElementsByTagName('div')[0];
+							ship_class = div_icon.getAttribute('class').split('-')[1];
+							
+							if(row.cells.length < 6){
+								var td = document.createElement('td');
+								td.setAttribute('id', 'wr-'+type+'-'+ship_class);
+								td.innerHTML = '<span>0</span>';
+								row.appendChild(td);
+							}
+							
+							var battles = htmlParseMemberStatistic(row.cells[2]);
+							if(battles > 0){
+								var wins = htmlParseMemberStatistic(row.cells[3]);
+								var avg_xp = htmlParseMemberStatistic(row.cells[4]);
+								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+								
+								row.cells[3].setAttribute('style', 'white-space: nowrap;');
+								row.cells[3].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								
+								row.cells[4].setAttribute('style', 'white-space: nowrap;');
+								row.cells[4].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+							}
+							
+							StatShipsClass['damage'] = 0;
+							StatShipsClass['frags_ships'] = 0;
+							StatShipsClass['frags_planes'] = 0;
+							StatShipsClass['capture_base'] = 0;
+							StatShipsClass['defend_base'] = 0;
+							StatShipsClass['expDamage'] = 0;
+							StatShipsClass['expFragsShips'] = 0;
+							StatShipsClass['expFragsPlanes'] = 0;
+							StatShipsClass['expCapture'] = 0;
+							StatShipsClass['expDefend'] = 0;
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class').indexOf('_expandable') > -1){
+							var index = MembersArray[0][type]['ships'].length;
+							MembersArray[0][type]['ships'][index] = [];
+							
+							MembersArray[0][type]['ships'][index]['ship_class'] = ship_class;
+							MembersArray[0][type]['ships'][index]['ship_name'] = row.getAttribute('js-has-extension').split('-')[0];
+							MembersArray[0][type]['ships'][index]['ship_lvl'] = row.getAttribute('js-has-extension').split('-')[1];
+							MembersArray[0][type]['ships'][index]['ship_nation'] = row.cells[0].getElementsByTagName('div')[0].getAttribute('class').split('-')[2];
+							MembersArray[0][type]['ships'][index]['ship_lvl_text'] = row.cells[0].getElementsByClassName('_lvl')[0].innerHTML;
+							MembersArray[0][type]['ships'][index]['ship_name_text'] = row.cells[0].getElementsByClassName('_text')[0].innerHTML;
+							MembersArray[0][type]['ships'][index]['ship_code'] = row.cells[0].getElementsByClassName('_icon-ships')[0].getAttribute('src').split('/')[5].split('.')[0];
+							
+							if(row.cells.length < 5){
+								var td = document.createElement('td');
+								td.setAttribute('id', 'wr-'+type+'-'+MembersArray[0][type]['ships'][index]['ship_name_text']);
+								td.innerHTML = '<span>0</span>';
+								row.appendChild(td);
+							}
+
+							var battles = htmlParseMemberStatistic(row.cells[1]);
+							if(battles > 0){
+								var wins = htmlParseMemberStatistic(row.cells[2]);
+								var avg_xp = htmlParseMemberStatistic(row.cells[3]);
+								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+								
+								row.cells[2].setAttribute('style', 'white-space: nowrap;');
+								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								
+								row.cells[3].setAttribute('style', 'white-space: nowrap;');
+								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+							}
+							
+							if(MembersArray[0][type]['ships'][index]['ship_lvl_text'] == 'X'){
+								ships_x_level++;
+							}
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class').indexOf('_ship-entry-stat') > -1){
+							row.cells[0].setAttribute('colspan', '6');
+							
+							var index = MembersArray[0][type]['ships'].length - 1;
+							
+							var account_table = row.cells[0].getElementsByClassName('account-table');
+							
+							//Общие результаты
+							MembersArray[0][type]['ships'][index]['battles'] = htmlParseMemberStatistic(account_table[0].rows[1].cells[1]);
+							MembersArray[0][type]['ships'][index]['wins'] = htmlParseMemberStatistic(account_table[0].rows[2].cells[1]);
+							MembersArray[0][type]['ships'][index]['survived'] = htmlParseMemberStatistic(account_table[0].rows[3].cells[1]);
+							MembersArray[0][type]['ships'][index]['damage'] = htmlParseMemberStatistic(account_table[0].rows[4].cells[1]);
+							MembersArray[0][type]['ships'][index]['frags_ships'] = htmlParseMemberStatistic(account_table[0].rows[5].cells[1]);
+							MembersArray[0][type]['ships'][index]['frags_planes'] = htmlParseMemberStatistic(account_table[0].rows[6].cells[1]);
+							MembersArray[0][type]['ships'][index]['capture_base'] = htmlParseMemberStatistic(account_table[0].rows[7].cells[1]);
+							MembersArray[0][type]['ships'][index]['defend_base'] = htmlParseMemberStatistic(account_table[0].rows[8].cells[1]);
+							
+							//Средние показатели за бой
+							MembersArray[0][type]['ships'][index]['avg_xp'] = htmlParseMemberStatistic(account_table[1].rows[1].cells[1]);
+							MembersArray[0][type]['ships'][index]['avg_damage'] = htmlParseMemberStatistic(account_table[1].rows[2].cells[1]);
+							MembersArray[0][type]['ships'][index]['avg_frags_ships'] = htmlParseMemberStatistic(account_table[1].rows[3].cells[1]);
+							MembersArray[0][type]['ships'][index]['avg_frags_planes'] = htmlParseMemberStatistic(account_table[1].rows[4].cells[1]);
+							MembersArray[0][type]['ships'][index]['avg_capture_base'] = htmlParseMemberStatistic(account_table[1].rows[5].cells[1]);
+							MembersArray[0][type]['ships'][index]['avg_defend_base'] = htmlParseMemberStatistic(account_table[1].rows[6].cells[1]);
+							
+							//Рекордные показатели
+							MembersArray[0][type]['ships'][index]['max_xp'] = htmlParseMemberStatistic(account_table[2].rows[1].cells[1]);
+							MembersArray[0][type]['ships'][index]['max_damage'] = htmlParseMemberStatistic(account_table[2].rows[2].cells[1]);
+							MembersArray[0][type]['ships'][index]['max_frags_ships'] = htmlParseMemberStatistic(account_table[2].rows[3].cells[1]);
+							MembersArray[0][type]['ships'][index]['max_frags_planes'] = htmlParseMemberStatistic(account_table[2].rows[4].cells[1]);
+							
+							//Расчет
+							MembersArray[0][type]['ships'][index]['wins_percents'] = (MembersArray[0][type]['ships'][index]['wins']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							MembersArray[0][type]['ships'][index]['survived_percents'] = (MembersArray[0][type]['ships'][index]['survived']/MembersArray[0][type]['ships'][index]['battles'])*100;
+							if(MembersArray[0][type]['ships'][index]['battles'] == MembersArray[0][type]['ships'][index]['survived_battles']){
+								MembersArray[0][type]['ships'][index]['kill_dead'] = MembersArray[0][type]['ships'][index]['frags_ships']/MembersArray[0][type]['ships'][index]['battles'];
+							}else{
+								MembersArray[0][type]['ships'][index]['kill_dead'] = MembersArray[0][type]['ships'][index]['frags_ships']/(MembersArray[0][type]['ships'][index]['battles']-MembersArray[0][type]['ships'][index]['survived']);
+							}
+							
+							var ship_name_text = MembersArray[0][type]['ships'][index]['ship_name_text'];
+							if(ExpShips[ship_name_text] !== undefined){
+								var ship_battles = parseInt(MembersArray[0][type]['ships'][index]['battles']); if(isNaN(ship_battles)){ship_battles = 0;}
+								var ship_damage = parseInt(MembersArray[0][type]['ships'][index]['damage']); if(isNaN(ship_damage)){ship_damage = 0;}
+								var ship_frags_ships = parseInt(MembersArray[0][type]['ships'][index]['frags_ships']); if(isNaN(ship_frags_ships)){ship_frags_ships = 0;}
+								var ship_frags_planes = parseInt(MembersArray[0][type]['ships'][index]['frags_planes']); if(isNaN(ship_frags_planes)){ship_frags_planes = 0;}
+								var ship_capture_base = parseInt(MembersArray[0][type]['ships'][index]['capture_base']); if(isNaN(ship_capture_base)){ship_capture_base = 0;}
+								var ship_defend_base = parseInt(MembersArray[0][type]['ships'][index]['defend_base']); if(isNaN(ship_defend_base)){ship_defend_base = 0;}
+								
+								var StatShip = [];
+								StatShip['damage'] = ship_damage;
+								StatShip['frags_ships'] = ship_frags_ships;
+								StatShip['frags_planes'] = ship_frags_planes;
+								StatShip['capture_base'] = ship_capture_base;
+								StatShip['defend_base'] = ship_defend_base;
+								StatShip['expDamage'] = ship_battles * ExpShips[ship_name_text]['avg_damage'];
+								StatShip['expFragsShips'] = ship_battles * ExpShips[ship_name_text]['avg_frags_ships'];
+								StatShip['expFragsPlanes'] = ship_battles * ExpShips[ship_name_text]['avg_frags_planes'];
+								StatShip['expCapture'] = ship_battles * ExpShips[ship_name_text]['avg_capture_base'];
+								StatShip['expDefend'] = ship_battles * ExpShips[ship_name_text]['avg_defend_base'];
+								
+								MembersArray[0][type]['ships'][index]['wr'] = calcWR(StatShip);
+								
+								var wr_cell = document.getElementById('wr-'+type+'-'+ship_name_text);
+								wr_cell.setAttribute('style', 'white-space: nowrap;');
+								wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0][type]['ships'][index]['wr'], 'wr')+';">'+valueFormat((MembersArray[0][type]['ships'][index]['wr']).toFixed(0))+'</span>';								
+								
+								StatShipsClass['damage'] += ship_damage;
+								StatShipsClass['frags_ships'] += ship_frags_ships;
+								StatShipsClass['frags_planes'] += ship_frags_planes;
+								StatShipsClass['capture_base'] += ship_capture_base;
+								StatShipsClass['defend_base'] += ship_defend_base;
+								StatShipsClass['expDamage'] += ship_battles * ExpShips[ship_name_text]['avg_damage'];
+								StatShipsClass['expFragsShips'] += ship_battles * ExpShips[ship_name_text]['avg_frags_ships'];
+								StatShipsClass['expFragsPlanes'] += ship_battles * ExpShips[ship_name_text]['avg_frags_planes'];
+								StatShipsClass['expCapture'] += ship_battles * ExpShips[ship_name_text]['avg_capture_base'];
+								StatShipsClass['expDefend'] += ship_battles * ExpShips[ship_name_text]['avg_defend_base'];
+								
+								var wr_class = calcWR(StatShipsClass);
+								var ship_class = MembersArray[0][type]['ships'][index]['ship_class'];
+								var wr_class_cell = document.getElementById('wr-'+type+'-'+ship_class);
+								wr_class_cell.setAttribute('style', 'white-space: nowrap;');
+								wr_class_cell.innerHTML = '<span style="color:'+findColorASC(wr_class, 'wr')+';">'+valueFormat((wr_class).toFixed(0))+'</span>';								
+								
+								StatShips['damage'] += ship_damage;
+								StatShips['frags_ships'] += ship_frags_ships;
+								StatShips['frags_planes'] += ship_frags_planes;
+								StatShips['capture_base'] += ship_capture_base;
+								StatShips['defend_base'] += ship_defend_base;
+								StatShips['expDamage'] += ship_battles * ExpShips[ship_name_text]['avg_damage'];
+								StatShips['expFragsShips'] += ship_battles * ExpShips[ship_name_text]['avg_frags_ships'];
+								StatShips['expFragsPlanes'] += ship_battles * ExpShips[ship_name_text]['avg_frags_planes'];
+								StatShips['expCapture'] += ship_battles * ExpShips[ship_name_text]['avg_capture_base'];
+								StatShips['expDefend'] += ship_battles * ExpShips[ship_name_text]['avg_defend_base'];
+							}else{
+								console.log('***** '+ship_name_text+' undefined');
+							}
+							
+							continue;
+						}
+					}
+					
+					MembersArray[0][type]['ships_x_level'] = ships_x_level;
+					MembersArray[0][type]['wr'] = calcWR(StatShips);
+					
+					count_stat++;
+				}else{
+					MembersArray[0][type]['wr'] = 0;
+				}
+				
+			}
+			
+			if(count_stat == 0){
+				console.log('NO LOAD STAT, START REFRESH 1 SEC');
+				setTimeout(function(){getMemberStatistic();}, 1000);
+				return;
+			}
+			
+			//console.log(MembersArray[0]);
+			
+			var main_page_script_block = document.getElementById('main-page-script-block');
+			if(main_page_script_block == null){viewMainMemberPage();}
+			
+			var ship_page_script_block = document.getElementById('ship-page-script-block');
+			if(ship_page_script_block == null){viewShipMemberPage();}			
+		}
+		function viewMainMemberPage(){
+			var tabContainer = null;
+			var tab_container = document.getElementsByClassName('tab-container');
+			for(var tc = 0; tc < tab_container.length; tc++){
+				if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
+				tabContainer = tab_container[tc];
+			}
+			
+			if(tabContainer != null){
+				var cm_parent_link_cutted_text = document.getElementsByClassName('cm-parent-link_cutted-text')[0].textContent;
+				var account_main_stats_mobile = tabContainer.getElementsByClassName('account-main-stats-mobile')[0];
+				if(account_main_stats_mobile == null){return;}
+				
+				var userbar = '';
+				if(cm_parent_link_cutted_text == MembersArray[0]['account_name']){
+					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
+				}
+				userbar += '' +
+					'<br />'+
+					'<img id="userbar-img" src="'+WoWsStatInfoHref+'bg/userbar.png" />'+
+					'<div id="userbar-link" style="margin: 5px; font-size: 14px;">[img]'+WoWsStatInfoHref+'bg/userbar.png[/img]</div>'
+				'';
+				
+				account_main_stats_mobile.outerHTML += '' +
+					'<hr />' +
+					'<table id="main-page-script-block" style="width: 100%;">' +
+						'<tr>' +
+							'<td style="width: 410px; vertical-align: top;">' +
+								''+
+							'</td>'+
+							'<td>'+
+							'</td>'+
+							'<td style="/* width: 470px; */ text-align: right; vertical-align: top;">'+
+								userbar +
+							'</td>' +
+						'</tr>' +
+					'</table>'
+				'';
+			}
+			
+			var img = new Image();
+			img.onload = function(){
+				var userbar_img = document.getElementById('userbar-img');
+				if(userbar_img != null){
+					userbar_img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png'+'?'+Math.floor(Math.random()*100000001);
+					
+					var userbar_link = document.getElementById('userbar-link');
+					userbar_link.textContent = '[img]'+WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png[/img]';
+				}
+			}
+			img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['account_name']+'.png'+'?'+Math.floor(Math.random()*100000001);
+			
+			jQ('#generator-userbar').click(function(){
+				getJson(WoWsStatInfoHref+'bg/bg.php?'+Math.floor(Math.random()*100000001), doneUserBarBG, errorUserBarBG);
+			});			
+		}
+		function viewShipMemberPage(){
+			var tabContainer = null;
+			var tab_container = document.getElementsByClassName('tab-container');
+			for(var tc = 0; tc < tab_container.length; tc++){
+				if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
+				tabContainer = tab_container[tc];
+			}
+			
+			if(tabContainer != null){
+				var account_tab_ships = tabContainer.getElementsByClassName('account-tab-ships')[0];
+				if(account_tab_ships == null){return;}
+				var account_title = account_tab_ships.getElementsByClassName('account-title')[2];
+				if(account_title == null){return;}
+				
+				var div = document.createElement('div');
+				div.setAttribute('id', 'ship-page-script-block');
+				div.setAttribute('style', '  padding-bottom: 40px;');
+				div.innerHTML = '' +
+					'<table class="account-table">' +
+						'<thead>' +
+							'<tr>' +
+								'<th colspan="2">' +
+									'<h3 class="_title">'+localization['additional-results']+'</h3>' +
+								'</th>' +
+							'</tr>' +
+						'</thead>' +
+						'<tbody>' +
+							'<tr>' +
+								'<td class="_name">' +
+									'<span>'+localization['number-ships-x']+'</span>' +
+								'</td>' +
+								'<td class="_value">' +
+									'<span>'+MembersArray[0]['pvp']['ships_x_level']+'</span>'+
+								'</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td class="_name">' +
+									'<span>'+localization['wr']+'</span>' +
+								'</td>' +
+								'<td class="_value">' +
+									'<span style="color: '+findColorASC(MembersArray[0]['pvp']['wr'], 'wr')+';">'+
+										valueFormat((MembersArray[0]['pvp']['wr']).toFixed(2)) + 
+									'</span>'+
+								'</td>' +
+							'</tr>' +
+						'</tbody>' +
+					'</table>' +
+				'';
+				
+				account_title.insertBefore(div, account_title.firstChild);
+			}
+		}
+		function viewMemberProfilePageEU(){
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
 				
@@ -581,7 +1168,7 @@
 				'</div>' +
 			'';	
 		}
-		function viewMemberClan(){
+		function viewMemberClanEU(){
 			var wowsstatinfo_profile_clan = document.getElementById('wowsstatinfo-profile-clan');
 		
 			if(MembersArray[0]['clans'] != null){
@@ -621,7 +1208,7 @@
 				wowsstatinfo_profile_clan.innerHTML = '';
 			}
 		}
-		function getMemberStatistic(){
+		function getMemberStatisticEU(){
 			MembersArray[0] = [];
 			
 			var account_href = window.location.href.split('/')[5].split('-');
@@ -1042,9 +1629,9 @@
 			
 			//console.log(MembersArray[0]);
 		}
-		function doneClanInfo(url, response){
+		function doneClanInfoEU(url, response){
 			if(response.status && response.status == "error"){
-				errorClanInfo();
+				errorClanInfoEU();
 				return;
 			}
 			
@@ -1053,12 +1640,12 @@
 			
 			MembersArray[0]['clans'] = response['data'][account_id];
 			
-			viewMemberClan();
+			viewMemberClanEU();
 		}
-		function errorClanInfo(url){
+		function errorClanInfoEU(url){
 			MembersArray[0]['clans'] = null;
 			
-			viewMemberClan();
+			viewMemberClanEU();
 		}
 		function GeneratorUserBar(){
 			var userbarbg = 'userbar';
