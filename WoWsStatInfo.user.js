@@ -948,12 +948,13 @@
 			}
 			
 			if(tabContainer != null){
-				var cm_parent_link_cutted_text = document.getElementsByClassName('cm-parent-link_cutted-text')[0].textContent;
+				var cm_parent_link_cutted_text = document.getElementsByClassName('cm-parent-link_cutted-text')[0];
+				var login_name = null; if(cm_parent_link_cutted_text != null){login_name = cm_parent_link_cutted_text.textContent;}
 				var account_main_stats_mobile = tabContainer.getElementsByClassName('account-main-stats-mobile')[0];
 				if(account_main_stats_mobile == null){return;}
 				
 				var userbar = '';
-				if(cm_parent_link_cutted_text == MembersArray[0]['account_name']){
+				if(login_name == MembersArray[0]['account_name']){
 					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
 				}
 				userbar += '' +
