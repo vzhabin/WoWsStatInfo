@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.0.12
+// @version 0.4.0.13
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://worldofwarships.eu/*/community/accounts/*
@@ -44,7 +44,7 @@
 		}else if(window.location.host.indexOf("worldofwarships") > -1){
 			lang = getCookie('hllang');
 		}
-
+		console.log(lang);
 		var localization = getLocalization(lang);
 		
 		var realm = localization['realm'];
