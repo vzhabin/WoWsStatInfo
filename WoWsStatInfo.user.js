@@ -63,14 +63,12 @@
 		var realm = 'ru';
 		var realm_host = 'ru';
 		if(window.location.host.indexOf(".wargaming.net") > -1){
-			lang = getCookie('wgccfe_language');
+			lang = getCookie('wgccfe_language'); if(lang == 'zh-tw'){lang = 'zh-cn';}
 			realm = window.location.host.split('.')[0];
 			realm_host = realm; if(realm == 'na'){realm_host = 'com';}
 		}else if(window.location.host.indexOf("worldofwarships") > -1){
-			lang = getCookie('hllang');
-			var host_split = window.location.host.split('.');
-			realm = host_split[host_split.length - 1];
-			if(realm == 'com'){realm = 'na';}
+			lang = getCookie('hllang'); if(lang == 'zh-tw'){lang = 'zh-cn';}
+			var host_split = window.location.host.split('.'); realm = host_split[host_split.length - 1]; if(realm == 'com'){realm = 'na';}
 			realm_host = realm; if(realm == 'na'){realm_host = 'com';}
 		}
 		
@@ -338,7 +336,7 @@
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 9 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
-			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/);
+			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-cn';}
 			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var account_id = window.location.href.split('/')[6].match(/[0-9]+/);
@@ -1882,12 +1880,12 @@
 			}
 			
 			{/* 繁體中文 */
-				localizationText['zh-tw'] = [];
+				localizationText['zh-cn'] = [];
 			
-				localizationText['zh-tw'] = jQ.extend([], localizationText['en']);
+				localizationText['zh-cn'] = jQ.extend([], localizationText['en']);
 				
-				localizationText['zh-tw']['num-separator'] = '';
-				localizationText['zh-tw']['num-fractional'] = '.';
+				localizationText['zh-cn']['num-separator'] = '';
+				localizationText['zh-cn']['num-fractional'] = '.';
 			}
 			
 			return localizationText[lang];
