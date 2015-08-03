@@ -5,55 +5,82 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.0.13
+// @version 0.4.0.14
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
-// @include http://worldofwarships.eu/*/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
 // @include http://forum.worldofwarships.ru/index.php?/user/*
+// @include http://ru.wargaming.net/clans/*/players*
+// @include http://worldofwarships.eu/*/community/accounts/*
 // @include http://forum.worldofwarships.eu/index.php?/topic/*
 // @include http://forum.worldofwarships.eu/index.php?/user/*
-// @include http://ru.wargaming.net/clans/*/players*
 // @include http://eu.wargaming.net/clans/*/players*
+// @include http://worldofwarships.com/*/community/accounts/*
+// @include http://forum.worldofwarships.com/index.php?/topic/*
+// @include http://forum.worldofwarships.com/index.php?/user/*
+// @include http://na.wargaming.net/clans/*/players*
+// @include http://worldofwarships.asia/*/community/accounts/*
+// @include http://forum.worldofwarships.asia/index.php?/topic/*
+// @include http://forum.worldofwarships.asia/index.php?/user/*
+// @include http://asia.wargaming.net/clans/*/players*
 // @match http://worldofwarships.ru/ru/community/accounts/*
-// @match http://worldofwarships.eu/*/community/accounts/*
 // @match http://forum.worldofwarships.ru/index.php?/topic/*
 // @match http://forum.worldofwarships.ru/index.php?/user/*
+// @match http://ru.wargaming.net/clans/*/players*
+// @match http://worldofwarships.eu/*/community/accounts/*
 // @match http://forum.worldofwarships.eu/index.php?/topic/*
 // @match http://forum.worldofwarships.eu/index.php?/user/*
-// @match http://ru.wargaming.net/clans/*/players*
 // @match http://eu.wargaming.net/clans/*/players*
+// @match http://worldofwarships.com/*/community/accounts/*
+// @match http://forum.worldofwarships.com/index.php?/topic/*
+// @match http://forum.worldofwarships.com/index.php?/user/*
+// @match http://na.wargaming.net/clans/*/players*
+// @match http://worldofwarships.asia/*/community/accounts/*
+// @match http://forum.worldofwarships.asia/index.php?/topic/*
+// @match http://forum.worldofwarships.asia/index.php?/user/*
+// @match http://asia.wargaming.net/clans/*/players*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.4.0.12';
+		var VersionWoWsStatInfo = '0.4.0.14';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
+		WoWsStatInfoLinkLoc['asia'] = '#';
+		WoWsStatInfoLinkLoc['na'] = '#';
 		WoWsStatInfoLinkLoc['eu'] = 'http://forum.worldofwarships.eu/index.php?/topic/14650-';
+		
 		
 		var WoWsStatInfoLinkNameLoc = [];
 		WoWsStatInfoLinkNameLoc['ru'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
+		WoWsStatInfoLinkNameLoc['asia'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
+		WoWsStatInfoLinkNameLoc['na'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
 		WoWsStatInfoLinkNameLoc['eu'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
 		
 		var lang = 'ru';
+		var realm = 'ru';
+		var realm_host = 'ru';
 		if(window.location.host.indexOf(".wargaming.net") > -1){
 			lang = getCookie('wgccfe_language');
+			realm = window.location.host.split('.')[0];
+			realm_host = realm; if(realm == 'na'){realm_host = 'com';}
 		}else if(window.location.host.indexOf("worldofwarships") > -1){
 			lang = getCookie('hllang');
+			var host_split = window.location.host.split('.');
+			realm = host_split[host_split.length - 1];
+			if(realm == 'com'){realm = 'na';}
+			realm_host = realm; if(realm == 'na'){realm_host = 'com';}
 		}
-		console.log(lang);
-		var localization = getLocalization(lang);
 		
-		var realm = localization['realm'];
+		var localizationText = getlocalizationText(lang);
 		var application_id = getApplicationId(realm);
 		
 		var WoWsStatInfoLink = WoWsStatInfoLinkLoc[realm];
 		var WoWsStatInfoLinkName = WoWsStatInfoLinkNameLoc[realm];
 		
-		var WGAPI = 'http://api.worldoftanks.'+realm+'/';
+		var WGAPI = 'http://api.worldoftanks.'+realm_host+'/';
 		var WoWsStatInfoHref = 'http://vzhabin.ru/US_WoWsStatInfo/';
 	
 		var Process = 0;
@@ -72,7 +99,7 @@
 		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%
 		
 		var colorStat = jQ.parseJSON('{"battles":[130,240,409,867,1327,99999],"avg_xp":[814.21,1054.35,1309.24,1748.69,2095.73,99999],"avg_damage":[16869.71,23764.09,29094.78,39358.63,50285.54,999999],"avg_frags_ships":[0.47,0.65,0.79,1.01,1.19,99],"avg_frags_planes":[0.64,1.49,2.26,4.33,7.27,99],"hits_percents_battery":[25,29,32,37,41,999],"hits_percents_torpedo":[5,9,12,17,22,999],"avg_capture_base":[0.37,0.99,1.53,2.66,3.75,99],"avg_defend_base":[3.62,5.41,6.89,9.42,11.51,999],"max_xp":[3270,6376,9268,13360,17040,999999],"max_damage":[82182,113691,138603,189286,241514,9999999],"max_frags_ships":[3,4,5,6,7,99],"max_frags_planes":[12,24,34,58,78,999],"avg_level_battles":[3.9,4.7,5.3,6.3,7,99],"wins_percents":[43.66,48,50.91,55.76,59.55,100],"losses_percents":[100,58.1,54.81,50.26,47.37,42.69],"draws_percents":[100,8.57,7.14,5.64,4.58,2.88],"survived_percents":[20.91,31.17,38.68,50.87,60.39,100],"kill_dead":[0.64,0.96,1.26,1.88,2.61,99],"wr":[568.41,860.96,1064.95,1404.64,1697.06,99999]}');
-		var ExpShips = jQ.parseJSON('{"PJSB006":{"avg_damage":43923.16,"avg_defend_base":5.89,"avg_frags_ships":0.98,"avg_capture_base":1.22,"avg_frags_planes":1.04},"PASD027":{"avg_damage":12228.02,"avg_defend_base":4.25,"avg_frags_ships":0.55,"avg_capture_base":0.55,"avg_frags_planes":0.02},"PRSC003":{"avg_damage":29437.04,"avg_defend_base":9.48,"avg_frags_ships":0.86,"avg_capture_base":0.84,"avg_frags_planes":1.14},"PJSC026":{"avg_damage":26072.59,"avg_defend_base":7.87,"avg_frags_ships":0.95,"avg_capture_base":1.07,"avg_frags_planes":0.72},"PJSB008":{"avg_damage":25986.89,"avg_defend_base":6.18,"avg_frags_ships":0.76,"avg_capture_base":1.16,"avg_frags_planes":0.16},"PRSC002":{"avg_damage":22766.96,"avg_defend_base":17.48,"avg_frags_ships":1.2,"avg_capture_base":1.64,"avg_frags_planes":0.01},"PJSB007":{"avg_damage":32093.11,"avg_defend_base":5.93,"avg_frags_ships":0.78,"avg_capture_base":0.9,"avg_frags_planes":0.81},"PJSB001":{"avg_damage":21638.59,"avg_defend_base":8.12,"avg_frags_ships":0.86,"avg_capture_base":1.32,"avg_frags_planes":0.04},"PASD029":{"avg_damage":14976.04,"avg_defend_base":4.71,"avg_frags_ships":0.48,"avg_capture_base":1.06,"avg_frags_planes":0.24},"PJSB003":{"avg_damage":22023.82,"avg_defend_base":5.3,"avg_frags_ships":0.57,"avg_capture_base":0.91,"avg_frags_planes":0.35},"PJSA009":{"avg_damage":66811.77,"avg_defend_base":7.87,"avg_frags_ships":1.47,"avg_capture_base":0.32,"avg_frags_planes":4.95},"PJSD012":{"avg_damage":44157.01,"avg_defend_base":0.56,"avg_frags_ships":0.76,"avg_capture_base":0.01,"avg_frags_planes":2.13},"PJSD010":{"avg_damage":32693.33,"avg_defend_base":3.55,"avg_frags_ships":0.61,"avg_capture_base":1.53,"avg_frags_planes":0.39},"PASB001":{"avg_damage":21074.21,"avg_defend_base":8.94,"avg_frags_ships":0.76,"avg_capture_base":1.09,"avg_frags_planes":0.02},"PJSA002":{"avg_damage":41708.31,"avg_defend_base":2.85,"avg_frags_ships":0.97,"avg_capture_base":0.35,"avg_frags_planes":5.71},"PASB006":{"avg_damage":32662.81,"avg_defend_base":6.84,"avg_frags_ships":0.83,"avg_capture_base":1.14,"avg_frags_planes":0.59},"PASB004":{"avg_damage":30519.52,"avg_defend_base":8.01,"avg_frags_ships":0.86,"avg_capture_base":1.19,"avg_frags_planes":0.38},"PJSA006":{"avg_damage":56990.97,"avg_defend_base":5.37,"avg_frags_ships":1.35,"avg_capture_base":0.44,"avg_frags_planes":6.65},"PASB008":{"avg_damage":40591.65,"avg_defend_base":5.36,"avg_frags_ships":0.73,"avg_capture_base":1.04,"avg_frags_planes":2.79},"PASD021":{"avg_damage":32974.24,"avg_defend_base":21.69,"avg_frags_ships":0.95,"avg_capture_base":2.4,"avg_frags_planes":1.04},"PRSC010":{"avg_damage":21892.39,"avg_defend_base":20.46,"avg_frags_ships":1.12,"avg_capture_base":1.65,"avg_frags_planes":0.01},"PJSD014":{"avg_damage":16998.68,"avg_defend_base":10.09,"avg_frags_ships":0.97,"avg_capture_base":0.14,"avg_frags_planes":0.01},"PASC024":{"avg_damage":19622.04,"avg_defend_base":7.5,"avg_frags_ships":0.61,"avg_capture_base":0.71,"avg_frags_planes":0.11},"PJSC015":{"avg_damage":20441.6,"avg_defend_base":8.15,"avg_frags_ships":0.82,"avg_capture_base":0.74,"avg_frags_planes":0.03},"PJSB018":{"avg_damage":99505.75,"avg_defend_base":15.59,"avg_frags_ships":1.38,"avg_capture_base":0.8,"avg_frags_planes":17.85},"PASD014":{"avg_damage":25694.38,"avg_defend_base":5.64,"avg_frags_ships":0.98,"avg_capture_base":1.0,"avg_frags_planes":0.3},"PJSC013":{"avg_damage":26874.99,"avg_defend_base":8.15,"avg_frags_ships":0.87,"avg_capture_base":0.79,"avg_frags_planes":0.25},"PJSB013":{"avg_damage":55693.21,"avg_defend_base":5.55,"avg_frags_ships":0.96,"avg_capture_base":1.54,"avg_frags_planes":4.41},"PASD019":{"avg_damage":21104.82,"avg_defend_base":4.55,"avg_frags_ships":0.87,"avg_capture_base":0.95,"avg_frags_planes":0.02},"PBSB002":{"avg_damage":33656.3,"avg_defend_base":5.6,"avg_frags_ships":0.77,"avg_capture_base":0.79,"avg_frags_planes":2.0},"PJSB011":{"avg_damage":13218.69,"avg_defend_base":6.65,"avg_frags_ships":0.8,"avg_capture_base":1.51,"avg_frags_planes":0.01},"PJSB010":{"avg_damage":45813.95,"avg_defend_base":4.92,"avg_frags_ships":0.86,"avg_capture_base":0.99,"avg_frags_planes":1.94},"PJSC012":{"avg_damage":44723.17,"avg_defend_base":9.76,"avg_frags_ships":1.0,"avg_capture_base":1.21,"avg_frags_planes":4.78},"PJSD002":{"avg_damage":13531.36,"avg_defend_base":4.17,"avg_frags_ships":0.77,"avg_capture_base":0.8,"avg_frags_planes":0.01},"PJSD001":{"avg_damage":19422.91,"avg_defend_base":4.97,"avg_frags_ships":1.15,"avg_capture_base":0.83,"avg_frags_planes":0.01},"PRSD001":{"avg_damage":22223.64,"avg_defend_base":5.63,"avg_frags_ships":0.78,"avg_capture_base":1.12,"avg_frags_planes":0.3},"PJSB021":{"avg_damage":58700.3,"avg_defend_base":10.12,"avg_frags_ships":1.0,"avg_capture_base":1.0,"avg_frags_planes":8.56},"PASB034":{"avg_damage":42953.45,"avg_defend_base":6.51,"avg_frags_ships":1.0,"avg_capture_base":1.34,"avg_frags_planes":1.13},"PJSD007":{"avg_damage":31782.9,"avg_defend_base":4.74,"avg_frags_ships":0.78,"avg_capture_base":2.47,"avg_frags_planes":0.47},"PJSD004":{"avg_damage":34816.77,"avg_defend_base":3.25,"avg_frags_ships":1.21,"avg_capture_base":1.51,"avg_frags_planes":0.12},"PJSD003":{"avg_damage":24368.48,"avg_defend_base":3.06,"avg_frags_ships":0.93,"avg_capture_base":1.14,"avg_frags_planes":0.08},"PJSD006":{"avg_damage":28067.87,"avg_defend_base":5.0,"avg_frags_ships":0.75,"avg_capture_base":2.55,"avg_frags_planes":0.66},"PRSC001":{"avg_damage":21117.35,"avg_defend_base":11.28,"avg_frags_ships":0.77,"avg_capture_base":0.99,"avg_frags_planes":0.01},"PJSD005":{"avg_damage":25293.51,"avg_defend_base":2.81,"avg_frags_ships":0.78,"avg_capture_base":2.13,"avg_frags_planes":0.45},"PJSC007":{"avg_damage":36365.12,"avg_defend_base":9.42,"avg_frags_ships":1.02,"avg_capture_base":1.39,"avg_frags_planes":2.24},"PASC045":{"avg_damage":42287.76,"avg_defend_base":11.36,"avg_frags_ships":1.4,"avg_capture_base":0.86,"avg_frags_planes":0.27},"PJSC008":{"avg_damage":48965.79,"avg_defend_base":10.16,"avg_frags_ships":1.19,"avg_capture_base":1.46,"avg_frags_planes":2.96},"PJSC009":{"avg_damage":55984.74,"avg_defend_base":10.94,"avg_frags_ships":1.2,"avg_capture_base":1.68,"avg_frags_planes":3.43},"PJSC004":{"avg_damage":17860.88,"avg_defend_base":6.75,"avg_frags_ships":0.59,"avg_capture_base":0.62,"avg_frags_planes":1.19},"PJSC005":{"avg_damage":22070.59,"avg_defend_base":6.63,"avg_frags_ships":0.66,"avg_capture_base":0.89,"avg_frags_planes":0.36},"PASA012":{"avg_damage":64411.49,"avg_defend_base":7.58,"avg_frags_ships":1.19,"avg_capture_base":0.65,"avg_frags_planes":31.19},"PASA013":{"avg_damage":99741.88,"avg_defend_base":18.24,"avg_frags_ships":1.74,"avg_capture_base":0.94,"avg_frags_planes":20.64},"PASA010":{"avg_damage":60955.12,"avg_defend_base":6.99,"avg_frags_ships":1.11,"avg_capture_base":0.26,"avg_frags_planes":17.0},"PASA015":{"avg_damage":102950.27,"avg_defend_base":10.45,"avg_frags_ships":2.09,"avg_capture_base":0.56,"avg_frags_planes":12.28},"PASC004":{"avg_damage":23047.14,"avg_defend_base":12.41,"avg_frags_ships":0.88,"avg_capture_base":1.1,"avg_frags_planes":0.01},"PASD006":{"avg_damage":25588.17,"avg_defend_base":6.98,"avg_frags_ships":0.87,"avg_capture_base":2.56,"avg_frags_planes":0.54},"PASC001":{"avg_damage":11167.23,"avg_defend_base":10.37,"avg_frags_ships":0.76,"avg_capture_base":0.86,"avg_frags_planes":0.01},"PASC002":{"avg_damage":11346.76,"avg_defend_base":9.95,"avg_frags_ships":0.49,"avg_capture_base":0.77,"avg_frags_planes":0.01},"PASD008":{"avg_damage":32676.22,"avg_defend_base":8.71,"avg_frags_ships":0.86,"avg_capture_base":6.98,"avg_frags_planes":0.41},"PASC007":{"avg_damage":38945.31,"avg_defend_base":11.48,"avg_frags_ships":1.14,"avg_capture_base":1.51,"avg_frags_planes":3.45},"PASD002":{"avg_damage":10838.8,"avg_defend_base":5.06,"avg_frags_ships":0.62,"avg_capture_base":0.56,"avg_frags_planes":0.01},"PASC005":{"avg_damage":34437.51,"avg_defend_base":10.55,"avg_frags_ships":1.1,"avg_capture_base":1.14,"avg_frags_planes":1.15},"PASD005":{"avg_damage":25335.87,"avg_defend_base":6.47,"avg_frags_ships":0.96,"avg_capture_base":2.1,"avg_frags_planes":0.55},"PASC006":{"avg_damage":26167.19,"avg_defend_base":8.25,"avg_frags_ships":0.74,"avg_capture_base":1.19,"avg_frags_planes":2.85},"PASC044":{"avg_damage":36400.16,"avg_defend_base":14.27,"avg_frags_ships":0.96,"avg_capture_base":0.26,"avg_frags_planes":0.23},"PJSC034":{"avg_damage":67523.06,"avg_defend_base":18.71,"avg_frags_ships":1.51,"avg_capture_base":3.32,"avg_frags_planes":5.56},"PASA002":{"avg_damage":32836.55,"avg_defend_base":3.61,"avg_frags_ships":0.64,"avg_capture_base":0.17,"avg_frags_planes":12.54},"PJSC038":{"avg_damage":29758.86,"avg_defend_base":7.19,"avg_frags_ships":0.59,"avg_capture_base":0.9,"avg_frags_planes":1.83},"PJSC037":{"avg_damage":13645.73,"avg_defend_base":12.39,"avg_frags_ships":1.06,"avg_capture_base":1.24,"avg_frags_planes":0.01},"PASA004":{"avg_damage":23937.22,"avg_defend_base":1.57,"avg_frags_ships":0.49,"avg_capture_base":0.13,"avg_frags_planes":9.16},"PJSC035":{"avg_damage":14790.27,"avg_defend_base":9.49,"avg_frags_ships":0.65,"avg_capture_base":0.83,"avg_frags_planes":0.01},"PASA006":{"avg_damage":55677.61,"avg_defend_base":6.35,"avg_frags_ships":1.08,"avg_capture_base":0.67,"avg_frags_planes":10.71},"PASB018":{"avg_damage":74911.87,"avg_defend_base":9.21,"avg_frags_ships":1.18,"avg_capture_base":0.58,"avg_frags_planes":5.98},"PASB012":{"avg_damage":57587.71,"avg_defend_base":5.29,"avg_frags_ships":0.97,"avg_capture_base":1.57,"avg_frags_planes":9.31},"PJSD024":{"avg_damage":16828.59,"avg_defend_base":3.31,"avg_frags_ships":0.76,"avg_capture_base":0.78,"avg_frags_planes":0.02},"PASB013":{"avg_damage":28356.59,"avg_defend_base":7.47,"avg_frags_ships":0.79,"avg_capture_base":1.13,"avg_frags_planes":0.01},"PASC012":{"avg_damage":32227.31,"avg_defend_base":9.14,"avg_frags_ships":0.78,"avg_capture_base":1.54,"avg_frags_planes":3.96},"PASC014":{"avg_damage":36663.49,"avg_defend_base":9.93,"avg_frags_ships":0.76,"avg_capture_base":1.59,"avg_frags_planes":6.3},"PJSA015":{"avg_damage":96289.91,"avg_defend_base":10.43,"avg_frags_ships":1.98,"avg_capture_base":0.19,"avg_frags_planes":14.43},"PASC017":{"avg_damage":39382.69,"avg_defend_base":10.24,"avg_frags_ships":0.69,"avg_capture_base":1.81,"avg_frags_planes":7.67},"PJSA011":{"avg_damage":71017.64,"avg_defend_base":8.47,"avg_frags_ships":1.49,"avg_capture_base":0.63,"avg_frags_planes":10.97},"PJSA012":{"avg_damage":69258.62,"avg_defend_base":8.71,"avg_frags_ships":1.27,"avg_capture_base":0.57,"avg_frags_planes":14.41}}');
+		var ExpShips = jQ.parseJSON('{"PJSB006":{"avg_damage":42963.33,"avg_defend_base":5.95,"avg_frags_ships":0.97,"avg_capture_base":1.22,"avg_frags_planes":1.03},"PASD027":{"avg_damage":11805.03,"avg_defend_base":4.12,"avg_frags_ships":0.53,"avg_capture_base":0.55,"avg_frags_planes":0.02},"PRSC003":{"avg_damage":28800.72,"avg_defend_base":9.07,"avg_frags_ships":0.84,"avg_capture_base":0.82,"avg_frags_planes":1.12},"PJSC026":{"avg_damage":26117.98,"avg_defend_base":7.66,"avg_frags_ships":0.94,"avg_capture_base":1.09,"avg_frags_planes":0.74},"PJSB008":{"avg_damage":25331.87,"avg_defend_base":5.99,"avg_frags_ships":0.74,"avg_capture_base":1.09,"avg_frags_planes":0.16},"PRSC002":{"avg_damage":22239.85,"avg_defend_base":17.19,"avg_frags_ships":1.14,"avg_capture_base":1.37,"avg_frags_planes":0.01},"PJSB007":{"avg_damage":31224.76,"avg_defend_base":5.86,"avg_frags_ships":0.76,"avg_capture_base":0.89,"avg_frags_planes":0.78},"PJSB001":{"avg_damage":21088.98,"avg_defend_base":7.85,"avg_frags_ships":0.83,"avg_capture_base":1.3,"avg_frags_planes":0.04},"PASD029":{"avg_damage":14696.3,"avg_defend_base":4.64,"avg_frags_ships":0.46,"avg_capture_base":1.1,"avg_frags_planes":0.24},"PJSB003":{"avg_damage":21441.66,"avg_defend_base":5.12,"avg_frags_ships":0.56,"avg_capture_base":0.88,"avg_frags_planes":0.35},"PJSA009":{"avg_damage":64515.51,"avg_defend_base":7.7,"avg_frags_ships":1.42,"avg_capture_base":0.29,"avg_frags_planes":4.96},"PJSD012":{"avg_damage":44157.01,"avg_defend_base":0.56,"avg_frags_ships":0.76,"avg_capture_base":0.01,"avg_frags_planes":2.13},"PJSD010":{"avg_damage":35418.33,"avg_defend_base":5.97,"avg_frags_ships":0.63,"avg_capture_base":1.34,"avg_frags_planes":0.77},"PASB001":{"avg_damage":20336.33,"avg_defend_base":8.67,"avg_frags_ships":0.73,"avg_capture_base":1.08,"avg_frags_planes":0.02},"PJSA002":{"avg_damage":40720.54,"avg_defend_base":2.82,"avg_frags_ships":0.95,"avg_capture_base":0.35,"avg_frags_planes":5.68},"PASB006":{"avg_damage":31631.47,"avg_defend_base":6.68,"avg_frags_ships":0.81,"avg_capture_base":1.07,"avg_frags_planes":0.58},"PASB004":{"avg_damage":29795.89,"avg_defend_base":7.82,"avg_frags_ships":0.84,"avg_capture_base":1.17,"avg_frags_planes":0.38},"PJSA006":{"avg_damage":55555.88,"avg_defend_base":5.27,"avg_frags_ships":1.31,"avg_capture_base":0.38,"avg_frags_planes":6.51},"PASB008":{"avg_damage":39391.06,"avg_defend_base":5.42,"avg_frags_ships":0.7,"avg_capture_base":0.95,"avg_frags_planes":2.55},"PASD021":{"avg_damage":32974.24,"avg_defend_base":21.69,"avg_frags_ships":0.95,"avg_capture_base":2.4,"avg_frags_planes":1.04},"PRSC010":{"avg_damage":21980.7,"avg_defend_base":20.54,"avg_frags_ships":1.09,"avg_capture_base":1.74,"avg_frags_planes":0.01},"PJSD014":{"avg_damage":18375.55,"avg_defend_base":12.08,"avg_frags_ships":1.1,"avg_capture_base":1.14,"avg_frags_planes":0.01},"PASC024":{"avg_damage":19007.16,"avg_defend_base":7.3,"avg_frags_ships":0.59,"avg_capture_base":0.67,"avg_frags_planes":0.11},"PJSC015":{"avg_damage":19792.88,"avg_defend_base":7.9,"avg_frags_ships":0.79,"avg_capture_base":0.73,"avg_frags_planes":0.03},"PJSB018":{"avg_damage":82443.43,"avg_defend_base":10.84,"avg_frags_ships":1.26,"avg_capture_base":1.75,"avg_frags_planes":13.17},"PASD014":{"avg_damage":25101.76,"avg_defend_base":5.61,"avg_frags_ships":0.96,"avg_capture_base":1.03,"avg_frags_planes":0.31},"PJSC013":{"avg_damage":26218.59,"avg_defend_base":7.93,"avg_frags_ships":0.85,"avg_capture_base":0.78,"avg_frags_planes":0.25},"PJSC014":{"avg_damage":25319.21,"avg_defend_base":4.17,"avg_frags_ships":0.31,"avg_capture_base":1.17,"avg_frags_planes":0.27},"PJSB013":{"avg_damage":55358.89,"avg_defend_base":6.02,"avg_frags_ships":0.98,"avg_capture_base":1.39,"avg_frags_planes":4.38},"PASD019":{"avg_damage":20527.56,"avg_defend_base":4.47,"avg_frags_ships":0.84,"avg_capture_base":0.92,"avg_frags_planes":0.02},"PBSB002":{"avg_damage":33050.79,"avg_defend_base":5.74,"avg_frags_ships":0.76,"avg_capture_base":0.91,"avg_frags_planes":1.99},"PJSB011":{"avg_damage":13025.97,"avg_defend_base":7.04,"avg_frags_ships":0.75,"avg_capture_base":1.48,"avg_frags_planes":0.01},"PJSB010":{"avg_damage":44912.06,"avg_defend_base":5.22,"avg_frags_ships":0.84,"avg_capture_base":1.03,"avg_frags_planes":1.91},"PJSC012":{"avg_damage":44723.17,"avg_defend_base":9.76,"avg_frags_ships":1.0,"avg_capture_base":1.21,"avg_frags_planes":4.78},"PJSD002":{"avg_damage":13154.04,"avg_defend_base":4.15,"avg_frags_ships":0.74,"avg_capture_base":0.77,"avg_frags_planes":0.01},"PJSD001":{"avg_damage":19387.75,"avg_defend_base":5.27,"avg_frags_ships":1.18,"avg_capture_base":1.04,"avg_frags_planes":0.01},"PRSD001":{"avg_damage":22005.16,"avg_defend_base":5.66,"avg_frags_ships":0.77,"avg_capture_base":1.11,"avg_frags_planes":0.3},"PJSB021":{"avg_damage":60722.51,"avg_defend_base":8.81,"avg_frags_ships":1.05,"avg_capture_base":1.02,"avg_frags_planes":6.83},"PASB034":{"avg_damage":41313.22,"avg_defend_base":6.41,"avg_frags_ships":0.97,"avg_capture_base":1.39,"avg_frags_planes":1.09},"PJSD007":{"avg_damage":30109.42,"avg_defend_base":5.24,"avg_frags_ships":0.75,"avg_capture_base":2.41,"avg_frags_planes":0.59},"PJSD004":{"avg_damage":34014.45,"avg_defend_base":3.15,"avg_frags_ships":1.19,"avg_capture_base":1.49,"avg_frags_planes":0.12},"PJSD003":{"avg_damage":23648.44,"avg_defend_base":3.0,"avg_frags_ships":0.91,"avg_capture_base":1.13,"avg_frags_planes":0.08},"PJSD006":{"avg_damage":27414.84,"avg_defend_base":4.75,"avg_frags_ships":0.75,"avg_capture_base":2.52,"avg_frags_planes":0.67},"PRSC001":{"avg_damage":20520.79,"avg_defend_base":11.05,"avg_frags_ships":0.75,"avg_capture_base":0.94,"avg_frags_planes":0.01},"PJSD005":{"avg_damage":24889.95,"avg_defend_base":2.86,"avg_frags_ships":0.76,"avg_capture_base":2.1,"avg_frags_planes":0.46},"PJSC007":{"avg_damage":35364.82,"avg_defend_base":9.27,"avg_frags_ships":0.99,"avg_capture_base":1.3,"avg_frags_planes":2.18},"PASC045":{"avg_damage":41303.2,"avg_defend_base":12.6,"avg_frags_ships":1.42,"avg_capture_base":0.73,"avg_frags_planes":0.25},"PJSC008":{"avg_damage":46541.47,"avg_defend_base":9.19,"avg_frags_ships":1.13,"avg_capture_base":1.42,"avg_frags_planes":2.77},"PJSC009":{"avg_damage":50543.77,"avg_defend_base":10.25,"avg_frags_ships":1.08,"avg_capture_base":1.37,"avg_frags_planes":3.01},"PJSC004":{"avg_damage":17664.23,"avg_defend_base":6.87,"avg_frags_ships":0.58,"avg_capture_base":0.72,"avg_frags_planes":1.19},"PJSC005":{"avg_damage":21430.24,"avg_defend_base":6.46,"avg_frags_ships":0.64,"avg_capture_base":0.87,"avg_frags_planes":0.36},"PASA012":{"avg_damage":62818.03,"avg_defend_base":7.59,"avg_frags_ships":1.14,"avg_capture_base":0.7,"avg_frags_planes":30.11},"PASA013":{"avg_damage":99741.88,"avg_defend_base":18.24,"avg_frags_ships":1.74,"avg_capture_base":0.94,"avg_frags_planes":20.64},"PASA010":{"avg_damage":58596.77,"avg_defend_base":6.83,"avg_frags_ships":1.04,"avg_capture_base":0.32,"avg_frags_planes":17.03},"PASA015":{"avg_damage":102950.27,"avg_defend_base":10.45,"avg_frags_ships":2.09,"avg_capture_base":0.56,"avg_frags_planes":12.28},"PASC004":{"avg_damage":22396.8,"avg_defend_base":12.03,"avg_frags_ships":0.85,"avg_capture_base":1.07,"avg_frags_planes":0.01},"PASD006":{"avg_damage":25232.85,"avg_defend_base":5.86,"avg_frags_ships":0.95,"avg_capture_base":4.59,"avg_frags_planes":0.56},"PASC001":{"avg_damage":10933.7,"avg_defend_base":10.17,"avg_frags_ships":0.74,"avg_capture_base":0.84,"avg_frags_planes":0.01},"PASC002":{"avg_damage":11072.38,"avg_defend_base":9.74,"avg_frags_ships":0.48,"avg_capture_base":0.75,"avg_frags_planes":0.01},"PASD008":{"avg_damage":30529.76,"avg_defend_base":9.17,"avg_frags_ships":0.83,"avg_capture_base":5.82,"avg_frags_planes":0.42},"PASC007":{"avg_damage":37989.7,"avg_defend_base":11.16,"avg_frags_ships":1.11,"avg_capture_base":1.43,"avg_frags_planes":3.32},"PASD002":{"avg_damage":10502.14,"avg_defend_base":4.97,"avg_frags_ships":0.6,"avg_capture_base":0.56,"avg_frags_planes":0.01},"PASC005":{"avg_damage":33545.04,"avg_defend_base":10.31,"avg_frags_ships":1.06,"avg_capture_base":1.12,"avg_frags_planes":1.12},"PASD005":{"avg_damage":24993.38,"avg_defend_base":6.25,"avg_frags_ships":0.94,"avg_capture_base":1.83,"avg_frags_planes":0.53},"PASC006":{"avg_damage":25313.06,"avg_defend_base":7.63,"avg_frags_ships":0.71,"avg_capture_base":1.29,"avg_frags_planes":2.87},"PASC044":{"avg_damage":36179.64,"avg_defend_base":12.69,"avg_frags_ships":1.01,"avg_capture_base":0.36,"avg_frags_planes":0.21},"PJSC034":{"avg_damage":67523.06,"avg_defend_base":18.71,"avg_frags_ships":1.51,"avg_capture_base":3.32,"avg_frags_planes":5.56},"PASA002":{"avg_damage":31728.41,"avg_defend_base":3.62,"avg_frags_ships":0.63,"avg_capture_base":0.17,"avg_frags_planes":12.33},"PJSC038":{"avg_damage":29021.8,"avg_defend_base":6.87,"avg_frags_ships":0.58,"avg_capture_base":0.86,"avg_frags_planes":1.83},"PJSC037":{"avg_damage":13445.0,"avg_defend_base":12.29,"avg_frags_ships":1.03,"avg_capture_base":1.23,"avg_frags_planes":0.01},"PASA004":{"avg_damage":22965.21,"avg_defend_base":1.53,"avg_frags_ships":0.47,"avg_capture_base":0.12,"avg_frags_planes":9.02},"PJSC035":{"avg_damage":14418.68,"avg_defend_base":9.25,"avg_frags_ships":0.62,"avg_capture_base":0.8,"avg_frags_planes":0.01},"PASA006":{"avg_damage":53432.11,"avg_defend_base":6.29,"avg_frags_ships":1.04,"avg_capture_base":0.61,"avg_frags_planes":10.57},"PASB017":{"avg_damage":89708.6,"avg_defend_base":18.84,"avg_frags_ships":1.69,"avg_capture_base":1.54,"avg_frags_planes":11.04},"PASB018":{"avg_damage":70725.18,"avg_defend_base":8.5,"avg_frags_ships":1.24,"avg_capture_base":1.81,"avg_frags_planes":8.93},"PASB012":{"avg_damage":55794.23,"avg_defend_base":4.91,"avg_frags_ships":0.96,"avg_capture_base":1.46,"avg_frags_planes":8.72},"PJSD024":{"avg_damage":16315.68,"avg_defend_base":3.24,"avg_frags_ships":0.74,"avg_capture_base":0.74,"avg_frags_planes":0.02},"PASB013":{"avg_damage":27855.93,"avg_defend_base":7.3,"avg_frags_ships":0.78,"avg_capture_base":1.13,"avg_frags_planes":0.01},"PASC012":{"avg_damage":31523.2,"avg_defend_base":8.94,"avg_frags_ships":0.76,"avg_capture_base":1.41,"avg_frags_planes":3.72},"PASC014":{"avg_damage":35981.62,"avg_defend_base":10.26,"avg_frags_ships":0.75,"avg_capture_base":1.51,"avg_frags_planes":6.02},"PJSA015":{"avg_damage":96329.25,"avg_defend_base":10.49,"avg_frags_ships":2.02,"avg_capture_base":0.24,"avg_frags_planes":14.52},"PASC017":{"avg_damage":41004.55,"avg_defend_base":11.87,"avg_frags_ships":0.83,"avg_capture_base":2.08,"avg_frags_planes":9.24},"PJSA011":{"avg_damage":69579.21,"avg_defend_base":8.41,"avg_frags_ships":1.46,"avg_capture_base":0.52,"avg_frags_planes":10.94},"PJSA012":{"avg_damage":69987.37,"avg_defend_base":8.97,"avg_frags_ships":1.31,"avg_capture_base":0.56,"avg_frags_planes":13.85}}');
 		
 		/* ===== Style UserScript ===== */
 		{
@@ -94,7 +121,7 @@
 		}		
 		
 		/* ===== Message UserScript ===== */
-		if(window.location.host != 'forum.worldofwarships.'+realm){
+		if(window.location.host != 'forum.worldofwarships.'+realm_host){
 			var message = document.createElement("div");
 			message.setAttribute("id", "message-wowsstatinfo");
 			message.setAttribute("class", "ui-dialog ui-widget ui-widget-content ui-corner-all ui-front");
@@ -154,11 +181,11 @@
 						'<button id="userscript-message-ok" class="button button__align-middle">' +
 							'<span class="button_wrapper">' +
 								'<span class="button_body">' +
-									'<span class="button_inner">'+localization['Ok']+'</span>' +
+									'<span class="button_inner">'+localizationText['Ok']+'</span>' +
 								'</span>' +
 							'</span>' +
 						'</button>' +
-						'<a id="userscript-message-cancel" class="link link__cancel" style="display: block; cursor: pointer;" >'+localization['Cancel']+'</a>' +
+						'<a id="userscript-message-cancel" class="link link__cancel" style="display: block; cursor: pointer;" >'+localizationText['Cancel']+'</a>' +
 					'</div>' +
 				'</div>' +
 			'';
@@ -176,7 +203,7 @@
 			else if(source.indexOf(".js") != -1){return false;}
 			if(message == 'Script error.' && errorObj == null){console.log('message == \'Script error.\' && errorObj == null'); return false;}
 			
-			lineno += 29;
+			lineno += 45;
 			
 			var agent = '';
 			var agentArr = navigator.userAgent.split(')');
@@ -185,7 +212,7 @@
 				agent += agentArr[i];
 			}
 			
-			var error = localization['ErrorScript']+"\n\n" +
+			var error = localizationText['ErrorScript']+"\n\n" +
 					"Lang: "+lang+"\n"+
 					"Browser name: "+navigatorInfo['browserName']+"\n"+
 					"Full version: "+navigatorInfo['fullVersion']+"\n"+
@@ -197,19 +224,19 @@
 					"Line: "+lineno+"\n"+
 					"Column: "+column+"\n"+
 					"StackTrace: "+errorObj+"\n\n"+
-					localization['ErrorSendDeveloper'];
+					localizationText['ErrorSendDeveloper'];
 			
 			console.log(error);
 			
-			if(window.location.host == 'forum.worldofwarships.'+realm){
+			if(window.location.host == 'forum.worldofwarships.'+realm_host){
 				alert(error);
 			}else{
 				error = error.split('\n').join('<br />');
 				onShowMessage(
-					localization['Box'],
+					localizationText['Box'],
 					error,
 					onCloseMessage,
-					localization['Ok'],
+					localizationText['Ok'],
 					false
 				);			
 			}
@@ -311,14 +338,14 @@
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 9 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
-			lang = window.location.href.split('/')[3].match(/[a-z][a-z]/);
-			localization = getLocalization(lang);
+			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/);
+			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var account_id = window.location.href.split('/')[6].match(/[0-9]+/);
 			MemberProfilePage();
-		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/user/") > -1){
+		}else if(window.location.host == 'forum.worldofwarships.'+realm_host && window.location.href.indexOf("/user/") > -1){
 			ForumUserPage();
-		}else if(window.location.host == 'forum.worldofwarships.'+realm && window.location.href.indexOf("/topic/") > -1){
+		}else if(window.location.host == 'forum.worldofwarships.'+realm_host && window.location.href.indexOf("/topic/") > -1){
 			ForumTopicPage();
 		}else if(window.location.href.indexOf("clans") > -1 && window.location.href.split('/')[4].match(/[0-9]+/) != null 
 			&& window.location.href.indexOf("players") > -1 && window.location.href.split('/').length >= 6
@@ -334,10 +361,10 @@
 			var data = response;
 			if(VersionWoWsStatInfo != data['version']){
 				onShowMessage(
-					localization['Box'],
-					localization['NewVersion']+' WoWsStatInfo '+data['version']+'<br />'+localization['NewUpdate']+'.', 
+					localizationText['Box'],
+					localizationText['NewVersion']+' WoWsStatInfo '+data['version']+'<br />'+localizationText['NewUpdate']+'.', 
 					onCloseMessage,
-					localization['Ok'],
+					localizationText['Ok'],
 					false
 				);
 			}
@@ -358,7 +385,7 @@
 			row.outerHTML += '' +
 				'<div id="userscript-block-list">' +
 					'<div id="userscript-forum-link">' +
-						'<a target="_blank" href="http://forum.worldofwarships.'+realm+'/index.php?/user/dn-'+account_name+'-/">'+localization['forum-profile']+'</a>' +
+						'<a target="_blank" href="http://forum.worldofwarships.'+realm_host+'/index.php?/user/dn-'+account_name+'-/">'+localizationText['forum-profile']+'</a>' +
 					'</div>' +
 					'<style>' +
 						'.b-profile-clan{max-width: 400px; padding-right: 100px;margin-bottom: 14px;padding-top: 5px;position: relative;}' +
@@ -403,11 +430,11 @@
 			var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
 			ipsList_data.innerHTML += '' +
 				'<li class="clear clearfix">' +
-					'<span class="row_title">'+localization['profile-wows']+':</span>' +
-					'<span class="row_data"><a href="http://worldofwarships.'+realm+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
+					'<span class="row_title">'+localizationText['profile-wows']+':</span>' +
+					'<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
 				'</li>' +
 				'<li class="clear clearfix">' +
-					'<span class="row_title">'+localization['profile-clan']+':</span>' +
+					'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
 					'<span class="row_data member_'+user_id+'"></span>' +
 				'</li>' +				
 			'';
@@ -431,7 +458,7 @@
 					basic_info[i].innerHTML += '' +
 						'<li class="member_'+account_id+' desc lighter" style="min-height: 50px;">' +
 							'<img style="width: 32px; height: 32px;" src="http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' +
-							localization['search-clan-forum'] +
+							localizationText['search-clan-forum'] +
 						'</li>' +
 					'';
 				}
@@ -441,13 +468,13 @@
 			var view_block_history = getLocalStorage('clan-member-history', false);
 			if(view_block_history == null){view_block_history = 'hide';}
 			
-			var games_tabs = document.getElementsByClassName("games-tabs")[0];
-			games_tabs.outerHTML += '' +
+			var page_header = document.getElementsByClassName("page-header")[0];
+			page_header.outerHTML += '' +
 				'<div style="padding-bottom: 20px;">' +
 					getUserScriptDeveloperBlock() + 
 					'<div class="div-link-block">' +
 						'<span id="clan-member-history" class="link-block '+view_block_history+'-block">' +
-							localization['block-link-clan-member-history'] +
+							localizationText['block-link-clan-member-history'] +
 							'<div class="icon-link-block"></div>'+
 						'</span>' +
 					'</div>' +
@@ -549,12 +576,12 @@
 						'<div class="b-profile-clan_text">' +
 							'<div class="b-profile-clan_text-wrpr">' +
 								'<a class="b-link-clan" href="http://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clans']['clan']['clan_id']+'/" target="_blank">' +
-									'<span class="b-link-clan_tag">['+MembersArray[0]['clans']['clan']['tag']+']</span>&nbsp;'+MembersArray[0]['clans']['clan']['name']+'' +
+									'<span class="b-link-clan_tag" style="color: '+MembersArray[0]['clans']['clan']['color']+';">['+MembersArray[0]['clans']['clan']['tag']+']</span>&nbsp;'+MembersArray[0]['clans']['clan']['name']+'' +
 								'</a>' +
 							'</div>' +
 							'<div class="b-statistic">' +
-								'<p class="b-statistic_item">'+localization['role']+': <span class="b-statistic_value">'+MembersArray[0]['clans']['role_i18n']+'</span></p>' +
-								'<p class="b-statistic_item">'+localization['clan-day']+': <span class="b-statistic_value">'+day+'</span></p>' +
+								'<p class="b-statistic_item">'+localizationText['role']+': <span class="b-statistic_value">'+MembersArray[0]['clans']['role_i18n']+'</span></p>' +
+								'<p class="b-statistic_item">'+localizationText['clan-day']+': <span class="b-statistic_value">'+day+'</span></p>' +
 							'</div>' +
 						'</div>' +
 					'</div>' +
@@ -721,7 +748,7 @@
 						if(i == 0 && row.cells.length < 6){
 							var th = document.createElement('th');
 							th.setAttribute('class', '_value');
-							th.innerHTML = '<span>'+localization['wr']+'</span>';
+							th.innerHTML = '<span>'+localizationText['wr']+'</span>';
 							row.appendChild(th);
 							
 							continue;
@@ -948,7 +975,7 @@
 				
 				var userbar = '';
 				if(login_name == MembersArray[0]['account_name']){
-					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px;">'+localization['generator-userbar']+'</button>';
+					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px;">'+localizationText['generator-userbar']+'</button>';
 				}
 				userbar += '' +
 					'<br />'+
@@ -1011,14 +1038,14 @@
 						'<thead>' +
 							'<tr>' +
 								'<th colspan="2">' +
-									'<h3 class="_title">'+localization['additional-results']+'</h3>' +
+									'<h3 class="_title">'+localizationText['additional-results']+'</h3>' +
 								'</th>' +
 							'</tr>' +
 						'</thead>' +
 						'<tbody>' +
 							'<tr>' +
 								'<td class="_name">' +
-									'<span>'+localization['number-ships-x']+'</span>' +
+									'<span>'+localizationText['number-ships-x']+'</span>' +
 								'</td>' +
 								'<td class="_value">' +
 									'<span>'+MembersArray[0]['pvp']['ships_x_level']+'</span>'+
@@ -1026,7 +1053,7 @@
 							'</tr>' +
 							'<tr>' +
 								'<td class="_name">' +
-									'<span>'+localization['wr']+'</span>' +
+									'<span>'+localizationText['wr']+'</span>' +
 								'</td>' +
 								'<td class="_value">' +
 									'<span style="color: '+findColorASC(MembersArray[0]['pvp']['wr'], 'wr')+';">'+
@@ -1112,10 +1139,10 @@
 			html += '</div>';
 			
 			onShowMessage(
-				localization['userbar-bg'],
+				localizationText['userbar-bg'],
 				html,
 				function(){GeneratorUserBar(); onCloseMessage();},
-				localization['Ok'],
+				localizationText['Ok'],
 				true
 			);			
 		}
@@ -1128,10 +1155,10 @@
 			'';
 			
 			onShowMessage(
-				localization['userbar-bg'],
+				localizationText['userbar-bg'],
 				html,
 				function(){GeneratorUserBar(); onCloseMessage();},
-				localization['Ok'],
+				localizationText['Ok'],
 				true
 			);
 		}
@@ -1148,25 +1175,26 @@
 			for(var i = 1; i < table.rows.length; i++){
 				var row = table.rows[i];
 				
-				var index = MembersArray.length;
-				MembersArray[index] = [];
-				
 				var account_id = row.getAttribute('data-account_id');
-				MembersArray[index]['account_id'] = account_id;
-				
-				var player_name = row.getElementsByClassName("player_name")[0];
-				var account_name = player_name.innerHTML.trim();
-				MembersArray[index]['account_name'] = account_name;
-				
-				var image = row.getElementsByClassName('svg-icon')[1];
-				var srcArr = image.getAttribute('src').split("/");
-				MembersArray[index]['role'] = srcArr[srcArr.length - 1].split(".")[0];
-				MembersArray[index]['role_i18n'] = getRoleText(srcArr[srcArr.length - 1].split(".")[0]);
-				MembersArray[index]['role_sort_num'] = getRoleSortNum(srcArr[srcArr.length - 1].split(".")[0]);
-				
-				var colNum = (row.cells.length - 2) - 1;
-				var clan_days = row.cells[colNum].innerHTML.trim();
-				MembersArray[index]['clan_days'] = clan_days;
+				if(account_id != null){
+					var index = MembersArray.length;
+					MembersArray[index] = [];
+					MembersArray[index]['account_id'] = account_id;
+					
+					var player_name = row.getElementsByClassName("player_name")[0];
+					var account_name = player_name.innerHTML.trim();
+					MembersArray[index]['account_name'] = account_name;
+					
+					var image = row.getElementsByClassName('svg-icon')[1];
+					var srcArr = image.getAttribute('src').split("/");
+					MembersArray[index]['role'] = srcArr[srcArr.length - 1].split(".")[0];
+					MembersArray[index]['role_i18n'] = getRoleText(srcArr[srcArr.length - 1].split(".")[0]);
+					MembersArray[index]['role_sort_num'] = getRoleSortNum(srcArr[srcArr.length - 1].split(".")[0]);
+					
+					var colNum = (row.cells.length - 2) - 1;
+					var clan_days = row.cells[colNum].innerHTML.trim();
+					MembersArray[index]['clan_days'] = clan_days;
+				}
 			}
 			
 			if(MembersArray.length > 0){
@@ -1243,24 +1271,24 @@
 					var mNew = arrChange[4];
 					
 					if(type == '1'){
-						var text = localization['member-history-leave'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');
+						var text = localizationText['member-history-leave'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								' <font color="red">'+text+'</font>'+
 							'</td>'+
 						'</tr>';						
 					}else if(type == '2'){
-						var text = localization['member-history-join'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						var text = localizationText['member-history-join'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');					
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								' <font color="green">'+text+'</font>'+
 							'</td>'+
 						'</tr>';						
 					}else if(type == '3'){
-						var text = localization['member-history-rerole'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						var text = localizationText['member-history-rerole'];
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');					
 						text = text.replace('%OLDROLE%',getRoleText(mOld));					
 						text = text.replace('%NEWROLE%',getRoleText(mNew));					
 						html +=  '<tr>'+				
@@ -1269,9 +1297,9 @@
 							'</td>'+
 						'</tr>';					
 					}else if(type == '4'){
-						var text = localization['member-history-rename'];
+						var text = localizationText['member-history-rename'];
 						text = text.replace('%OLDNAME%',mOld);						
-						text = text.replace('%NEWNAME%','<a target="_blank" href="http://worldoftanks.'+realm+'/community/accounts/'+mId+'/">'+mNew+'</a>');						
+						text = text.replace('%NEWNAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mNew+'</a>');						
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								text+
@@ -1283,7 +1311,7 @@
 				html += '' +
 					'<tr>' +
 						'<td class="table-default_cell" style="padding: 0px;">' +
-							localization['member-history-notchange'] +
+							localizationText['member-history-notchange'] +
 						'</td>' +
 					'</tr>' +
 				'';
@@ -1296,7 +1324,7 @@
 					'<button id="run-history-clear" class="button" style="display: block;">' +
 						'<span class="button_wrapper">' +
 							'<span style="padding: 5px;" class="button_body">' +
-								'<span class="button_inner">'+localization['member-history-clear']+'</span>' +
+								'<span class="button_inner">'+localizationText['member-history-clear']+'</span>' +
 							'</span>' +
 						'</span>' +
 					'</button>' +
@@ -1386,12 +1414,12 @@
 					newValue = valueSplit[0].substr(i - 1, 1)+''+newValue;
 					numChar++;
 				}else{
-					newValue = valueSplit[0].substr(i - 1, 1)+''+localization['num-separator']+''+newValue;
+					newValue = valueSplit[0].substr(i - 1, 1)+''+localizationText['num-separator']+''+newValue;
 					numChar = 1;
 				}
 			}
 			
-			if(valueSplit.length > 1){newValue += localization['num-fractional']+''+valueSplit[1];}
+			if(valueSplit.length > 1){newValue += localizationText['num-fractional']+''+valueSplit[1];}
 			
 			return newValue;
 		}
@@ -1401,8 +1429,8 @@
 			
 			value = value.replace('%', '');
 			
-			value = value.split(localization['num-separator']).join('');
-			value = value.replace(localization['num-fractional'], '.');
+			value = value.split(localizationText['num-separator']).join('');
+			value = value.replace(localizationText['num-fractional'], '.');
 			
 			if(value.indexOf('(') > -1 && value.indexOf(')') > -1){
 				value = (value.split('('))[0];
@@ -1427,8 +1455,10 @@
 		function getApplicationId(realm){
 			var applicationId = [];
 			
-			applicationId['ru'] = '7149a13b5f5fb7109c5b2400d31b7d42'; // .ru
-			applicationId['eu'] = '953df86f6bca01a7af80c3bdedd9c1d9'; // .eu
+			applicationId['ru'] = '7149a13b5f5fb7109c5b2400d31b7d42';
+			applicationId['na'] = '7225f37baa8385ced2469cbaca8aeaba';
+			applicationId['asia'] = '4ce71a5573f43c721806b4b4dadc822d';
+			applicationId['eu'] = '953df86f6bca01a7af80c3bdedd9c1d9';
 			
 			return applicationId[realm].split("").reverse().join("");
 		}
@@ -1460,17 +1490,17 @@
 				'</div>' +
 				'<div id="userscript-block" class="userscriptwowsstatinfo hide-block" style="text-align: center;">' +
 					'<span class="userscript-developer" align="center">' +
-						localization['userscript-developer'] +
+						localizationText['userscript-developer'] +
 						' <a target="_blank" style="color: #658C4C; font-weight: bold; border-bottom: 1px dotted #658C4C;" href="http://worldofwarships.ru/cbt/accounts/635939-Vov_chiK/">Vov_chiK</a> ' +
-						localization['userscript-alliance'] +
+						localizationText['userscript-alliance'] +
 						' <a target="_blank" style="color: #2CA8C7; font-weight: bold; border-bottom: 1px dotted #2CA8C7;" href="http://ru.wargaming.net/clans/search/#wgsearch&offset=0&limit=10&search=Walkure">Walkure</a>.' +
 						'<br /><br />' +
-						localization['userscript-topic']+' '+
+						localizationText['userscript-topic']+' '+
 						'<a target="_blank" href="'+WoWsStatInfoLink+'">' +
 							WoWsStatInfoLinkName +
 						'</a>' +
 						'<br /><br />' +
-						'<font style="font-size: 16px; color: #658C4C;">'+localization['userscript-developer-support']+'</font><br />'+
+						'<font style="font-size: 16px; color: #658C4C;">'+localizationText['userscript-developer-support']+'</font><br />'+
 						'<font style="color: #2CA8C7;">Web-Money WMR</font> R295712009837 <br />'+
 						'<font style="color: #2CA8C7;">Web-Money WMZ</font> Z226959724402 <br />'+
 						'<font style="color: #2CA8C7;">Yandex Money</font> 41001290117791 <br />'+
@@ -1631,7 +1661,7 @@
 		})();
 		function getRoleText(role){
 			var roleText = role;
-			if(localization[role] !== undefined){roleText = localization[role];}
+			if(localizationText[role] !== undefined){roleText = localizationText[role];}
 			return roleText;
 		}		
 		function getRoleSortNum(role){
@@ -1648,185 +1678,219 @@
 			else if (role == 'reservist') return 10;
 			else return 11;
 		}		
-		function getLocalization(lang){
-			var localization = [];
+		function getlocalizationText(lang){
+			var localizationText = [];
 			
 			{/* Русский */
-				localization['ru'] = [];
+				localizationText['ru'] = [];
 				
-				localization['ru']['realm'] = 'ru';
-				localization['ru']['num-separator'] = ' ';
-				localization['ru']['num-fractional'] = ',';
+				localizationText['ru']['num-separator'] = ' ';
+				localizationText['ru']['num-fractional'] = ',';
 				
-				localization['ru']['Box'] = 'Оповещение';
-				localization['ru']['Ok'] = 'Ok';
-				localization['ru']['Cancel'] = 'Отмена';
+				localizationText['ru']['Box'] = 'Оповещение';
+				localizationText['ru']['Ok'] = 'Ok';
+				localizationText['ru']['Cancel'] = 'Отмена';
 				
-				localization['ru']['NewVersion'] = 'Вышла новая версия скрипта';
-				localization['ru']['NewUpdate'] = 'Пожалуйста, обновите скрипт';
+				localizationText['ru']['NewVersion'] = 'Вышла новая версия скрипта';
+				localizationText['ru']['NewUpdate'] = 'Пожалуйста, обновите скрипт';
 				
-				localization['ru']['ErrorScript'] = 'Во время работы UserScript WoWsStatInfo '+VersionWoWsStatInfo+', возникла ошибка:';
-				localization['ru']['ErrorSendDeveloper'] = 'Сообщите об ошибке разработчику скрипта.';
+				localizationText['ru']['ErrorScript'] = 'Во время работы UserScript WoWsStatInfo '+VersionWoWsStatInfo+', возникла ошибка:';
+				localizationText['ru']['ErrorSendDeveloper'] = 'Сообщите об ошибке разработчику скрипта.';
 				
-				localization['ru']['userscript-developer'] = 'Разработчик UserScript WoWsStatInfo:';
-				localization['ru']['userscript-alliance'] = 'член альянса';
-				localization['ru']['userscript-topic'] = 'Тема на форуме:';
-				localization['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
+				localizationText['ru']['userscript-developer'] = 'Разработчик UserScript WoWsStatInfo:';
+				localizationText['ru']['userscript-alliance'] = 'член альянса';
+				localizationText['ru']['userscript-topic'] = 'Тема на форуме:';
+				localizationText['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
 				
-				localization['ru']['search-clan-forum'] = 'Поиск клана...';
+				localizationText['ru']['search-clan-forum'] = 'Поиск клана...';
 				
-				localization['ru']['profile-wows'] = 'Профиль в World of Warships';
-				localization['ru']['profile-clan'] = 'Клан';
-				localization['ru']['forum-profile'] = 'Профиль на форуме';
-				localization['ru']['role'] = 'Должность';
-				localization['ru']['clan-day'] = 'Количество дней в клане';
+				localizationText['ru']['profile-wows'] = 'Профиль в World of Warships';
+				localizationText['ru']['profile-clan'] = 'Клан';
+				localizationText['ru']['forum-profile'] = 'Профиль на форуме';
+				localizationText['ru']['role'] = 'Должность';
+				localizationText['ru']['clan-day'] = 'Количество дней в клане';
 				
-				localization['ru']['generator-userbar'] = 'Создать UserBar';
-				localization['ru']['userbar-bg'] = 'Выберите фон:';
+				localizationText['ru']['generator-userbar'] = 'Создать UserBar';
+				localizationText['ru']['userbar-bg'] = 'Выберите фон:';
 				
-				localization['ru']['additional-results'] = 'Дополнительные результаты';
-				localization['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
-				localization['ru']['wr'] = 'WR';
+				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
+				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
+				localizationText['ru']['wr'] = 'WR';
 				
-				localization['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
-				localization['ru']['link-clan-member-history'] = 'Изменения в составе клана';
-				localization['ru']['member-history-clear'] = 'Очистить историю';
-				localization['ru']['member-history-join'] = 'Вступил в клан %NAME%';
-				localization['ru']['member-history-leave'] = 'Покинул клан %NAME%';
-				localization['ru']['member-history-rename'] = '%OLDNAME% сменил ник на %NEWNAME%';
-				localization['ru']['member-history-rerole'] = '%NAME% сменил должность %OLDROLE% &rArr; %NEWROLE%';
-				localization['ru']['member-history-notchange'] = 'С момента установки скрипта WoWsStatInfo и последнего захода на страницу, изменений в составе клана не производились.';
+				localizationText['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
+				localizationText['ru']['link-clan-member-history'] = 'Изменения в составе клана';
+				localizationText['ru']['member-history-clear'] = 'Очистить историю';
+				localizationText['ru']['member-history-join'] = 'Вступил в клан %NAME%';
+				localizationText['ru']['member-history-leave'] = 'Покинул клан %NAME%';
+				localizationText['ru']['member-history-rename'] = '%OLDNAME% сменил ник на %NEWNAME%';
+				localizationText['ru']['member-history-rerole'] = '%NAME% сменил должность %OLDROLE% &rArr; %NEWROLE%';
+				localizationText['ru']['member-history-notchange'] = 'С момента установки скрипта WoWsStatInfo и последнего захода на страницу, изменений в составе клана не производились.';
 				
-				localization['ru']['banned'] = 'Забанен';
-				localization['ru']['commander'] = 'Командующий';
-				localization['ru']['executive_officer'] = 'Заместитель командующего';
-				localization['ru']['personnel_officer'] = 'Офицер штаба';
-				localization['ru']['intelligence_officer'] = 'Офицер разведки';
-				localization['ru']['quartermaster'] = 'Офицер снабжения';
-				localization['ru']['recruitment_officer'] = 'Офицер по кадрам';
-				localization['ru']['junior_officer'] = 'Младший офицер';
-				localization['ru']['combat_officer'] = 'Командир подразделения';
-				localization['ru']['private'] = 'Боец';
-				localization['ru']['recruit'] = 'Новобранец';
-				localization['ru']['reservist'] = 'Резервист';					
+				localizationText['ru']['banned'] = 'Забанен';
+				localizationText['ru']['commander'] = 'Командующий';
+				localizationText['ru']['executive_officer'] = 'Заместитель командующего';
+				localizationText['ru']['personnel_officer'] = 'Офицер штаба';
+				localizationText['ru']['intelligence_officer'] = 'Офицер разведки';
+				localizationText['ru']['quartermaster'] = 'Офицер снабжения';
+				localizationText['ru']['recruitment_officer'] = 'Офицер по кадрам';
+				localizationText['ru']['junior_officer'] = 'Младший офицер';
+				localizationText['ru']['combat_officer'] = 'Командир подразделения';
+				localizationText['ru']['private'] = 'Боец';
+				localizationText['ru']['recruit'] = 'Новобранец';
+				localizationText['ru']['reservist'] = 'Резервист';					
 			}
 			
 			{/* English */
-				localization['en'] = [];
+				localizationText['en'] = [];
 				
-				localization['en']['realm'] = 'eu';
-				localization['en']['num-separator'] = ',';
-				localization['en']['num-fractional'] = '.';
+				localizationText['en']['num-separator'] = ',';
+				localizationText['en']['num-fractional'] = '.';
 
-				localization['en']['Box'] = 'Notification';
-				localization['en']['Ok'] = 'Ok';
-				localization['en']['Cancel'] = 'Cancel';
+				localizationText['en']['Box'] = 'Notification';
+				localizationText['en']['Ok'] = 'Ok';
+				localizationText['en']['Cancel'] = 'Cancel';
 				
-				localization['en']['NewVersion'] = 'New version was released';
-				localization['en']['NewUpdate'] = 'Please, update the extension';
+				localizationText['en']['NewVersion'] = 'New version was released';
+				localizationText['en']['NewUpdate'] = 'Please, update the extension';
 				
-				localization['en']['ErrorScript'] = 'An error occurred while running UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
+				localizationText['en']['ErrorScript'] = 'An error occurred while running UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
 				
-				localization['en']['ErrorSendDeveloper'] = 'Please, inform script developer about this error.';
+				localizationText['en']['ErrorSendDeveloper'] = 'Please, inform script developer about this error.';
 				
-				localization['en']['userscript-developer'] = 'Developer - UserScript WoWsStatInfo:';
-				localization['en']['userscript-alliance'] = 'аlliance member';
-				localization['en']['userscript-topic'] = 'Forum topic:';
-				localization['en']['userscript-developer-support'] = 'Ways to support the developer:';
+				localizationText['en']['userscript-developer'] = 'Developer - UserScript WoWsStatInfo:';
+				localizationText['en']['userscript-alliance'] = 'аlliance member';
+				localizationText['en']['userscript-topic'] = 'Forum topic:';
+				localizationText['en']['userscript-developer-support'] = 'Ways to support the developer:';
 				
-				localization['en']['search-clan-forum'] = 'Clan Search...';
+				localizationText['en']['search-clan-forum'] = 'Clan Search...';
 				
-				localization['en']['profile-wows'] = 'World of Warships profile';
-				localization['en']['profile-clan'] = 'Clan';
-				localization['en']['forum-profile'] = 'Forum profile';
-				localization['en']['role'] = 'Alliance rank';
-				localization['en']['clan-day'] = 'Days in clan';
+				localizationText['en']['profile-wows'] = 'World of Warships profile';
+				localizationText['en']['profile-clan'] = 'Clan';
+				localizationText['en']['forum-profile'] = 'Forum profile';
+				localizationText['en']['role'] = 'Alliance rank';
+				localizationText['en']['clan-day'] = 'Days in clan';
 				
-				localization['en']['generator-userbar'] = 'Create UserBar';
-				localization['en']['userbar-bg'] = 'Choose a background:';
+				localizationText['en']['generator-userbar'] = 'Create UserBar';
+				localizationText['en']['userbar-bg'] = 'Choose a background:';
 				
-				localization['en']['additional-results'] = 'Additional Results';
-				localization['en']['number-ships-x'] = 'Number of X Tier ships';
-				localization['en']['wr'] = 'WR';
+				localizationText['en']['additional-results'] = 'Additional Results';
+				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
+				localizationText['en']['wr'] = 'WR';
 				
-				localization['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
-				localization['en']['link-clan-member-history'] = 'Changes in clan members';
-				localization['en']['member-history-clear'] = 'Clear history';
-				localization['en']['member-history-join'] = 'Entered %NAME% clan';
-				localization['en']['member-history-leave'] = 'Left %NAME% clan';
-				localization['en']['member-history-rename'] = '%OLDNAME% has changed his nickname to %NEWNAME%';
-				localization['en']['member-history-rerole'] = '%NAME% has changed his position in clan rank: %OLDROLE% &rArr; %NEWROLE%';
-				localization['en']['member-history-notchange'] = 'Since installing WoWsStatInfo script and last entering on this page no changes in clan members were made.';
+				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
+				localizationText['en']['link-clan-member-history'] = 'Changes in clan members';
+				localizationText['en']['member-history-clear'] = 'Clear history';
+				localizationText['en']['member-history-join'] = 'Entered %NAME% clan';
+				localizationText['en']['member-history-leave'] = 'Left %NAME% clan';
+				localizationText['en']['member-history-rename'] = '%OLDNAME% has changed his nickname to %NEWNAME%';
+				localizationText['en']['member-history-rerole'] = '%NAME% has changed his position in clan rank: %OLDROLE% &rArr; %NEWROLE%';
+				localizationText['en']['member-history-notchange'] = 'Since installing WoWsStatInfo script and last entering on this page no changes in clan members were made.';
 				
-				localization['en']['banned'] = 'Banned';
-				localization['en']['commander'] = 'Commander';
-				localization['en']['executive_officer'] = 'Executive Officer';
-				localization['en']['personnel_officer'] = 'Personnel Officer';
-				localization['en']['intelligence_officer'] = 'Intelligence Officer';
-				localization['en']['quartermaster'] = 'Quartermaster';
-				localization['en']['recruitment_officer'] = 'Recruitment Officer';
-				localization['en']['junior_officer'] = 'Junior Officer';
-				localization['en']['combat_officer'] = 'Combat Officer';
-				localization['en']['private'] = 'Private';
-				localization['en']['recruit'] = 'Recruit';
-				localization['en']['reservist'] = 'Reservist';				
+				localizationText['en']['banned'] = 'Banned';
+				localizationText['en']['commander'] = 'Commander';
+				localizationText['en']['executive_officer'] = 'Executive Officer';
+				localizationText['en']['personnel_officer'] = 'Personnel Officer';
+				localizationText['en']['intelligence_officer'] = 'Intelligence Officer';
+				localizationText['en']['quartermaster'] = 'Quartermaster';
+				localizationText['en']['recruitment_officer'] = 'Recruitment Officer';
+				localizationText['en']['junior_officer'] = 'Junior Officer';
+				localizationText['en']['combat_officer'] = 'Combat Officer';
+				localizationText['en']['private'] = 'Private';
+				localizationText['en']['recruit'] = 'Recruit';
+				localizationText['en']['reservist'] = 'Reservist';				
 			}
 			
 			{/* Français */
-				localization['fr'] = [];
+				localizationText['fr'] = [];
 				
-				localization['fr'] = jQ.extend([], localization['en']);
+				localizationText['fr'] = jQ.extend([], localizationText['en']);
 				
-				localization['fr']['num-separator'] = ' ';
-				localization['fr']['num-fractional'] = ',';
+				localizationText['fr']['num-separator'] = ' ';
+				localizationText['fr']['num-fractional'] = ',';
 			}
 			
 			{/* Deutsch */
-				localization['de'] = [];
+				localizationText['de'] = [];
 			
-				localization['de'] = jQ.extend([], localization['en']);
+				localizationText['de'] = jQ.extend([], localizationText['en']);
 				
-				localization['de']['num-separator'] = '.';
-				localization['de']['num-fractional'] = ',';
+				localizationText['de']['num-separator'] = '.';
+				localizationText['de']['num-fractional'] = ',';
 			}
 			
 			{/* Türkçe */
-				localization['tr'] = [];
+				localizationText['tr'] = [];
 			
-				localization['tr'] = jQ.extend([], localization['en']);
+				localizationText['tr'] = jQ.extend([], localizationText['en']);
 				
-				localization['tr']['num-separator'] = '.';
-				localization['tr']['num-fractional'] = ',';
+				localizationText['tr']['num-separator'] = '.';
+				localizationText['tr']['num-fractional'] = ',';
 			}
 			
 			{/* Español */
-				localization['es'] = [];
+				localizationText['es'] = [];
 			
-				localization['es'] = jQ.extend([], localization['en']);
+				localizationText['es'] = jQ.extend([], localizationText['en']);
 				
-				localization['es']['num-separator'] = '.';
-				localization['es']['num-fractional'] = ',';
+				localizationText['es']['num-separator'] = '.';
+				localizationText['es']['num-fractional'] = ',';
 			}
 			
 			{/* Čeština */
-				localization['cs'] = [];
+				localizationText['cs'] = [];
 			
-				localization['cs'] = jQ.extend([], localization['en']);
+				localizationText['cs'] = jQ.extend([], localizationText['en']);
 				
-				localization['cs']['num-separator'] = ' ';
-				localization['cs']['num-fractional'] = ',';
+				localizationText['cs']['num-separator'] = ' ';
+				localizationText['cs']['num-fractional'] = ',';
 			}
 			
 			{/* Polski */
-				localization['pl'] = [];
+				localizationText['pl'] = [];
 			
-				localization['pl'] = jQ.extend([], localization['en']);
+				localizationText['pl'] = jQ.extend([], localizationText['en']);
 				
-				localization['pl']['num-separator'] = ' ';
-				localization['pl']['num-fractional'] = ',';
+				localizationText['pl']['num-separator'] = ' ';
+				localizationText['pl']['num-fractional'] = ',';
 			}
 			
-			return localization[lang];
+			{/* 日本語 */
+				localizationText['ja'] = [];
+			
+				localizationText['ja'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['ja']['num-separator'] = '';
+				localizationText['ja']['num-fractional'] = '.';
+			}
+			
+			{/* ไทย */
+				localizationText['th'] = [];
+			
+				localizationText['th'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['th']['num-separator'] = '';
+				localizationText['th']['num-fractional'] = '.';
+			}
+			
+			{/* Tiếng Việt */
+				localizationText['vi'] = [];
+			
+				localizationText['vi'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['vi']['num-separator'] = '';
+				localizationText['vi']['num-fractional'] = ',';
+			}
+			
+			{/* 繁體中文 */
+				localizationText['zh-tw'] = [];
+			
+				localizationText['zh-tw'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['zh-tw']['num-separator'] = '';
+				localizationText['zh-tw']['num-fractional'] = '.';
+			}
+			
+			return localizationText[lang];
 		}
 	}
 	
