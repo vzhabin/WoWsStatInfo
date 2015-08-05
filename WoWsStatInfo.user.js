@@ -426,21 +426,23 @@
 		function ForumUserPage(){
 			var nickname = document.getElementsByClassName('nickname')[0];
 			var reputation__wrp = document.getElementsByClassName('reputation__wrp')[0];
-			var user_id = reputation__wrp.getAttribute('id').split('_')[1];
-			var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
-			ipsList_data.innerHTML += '' +
-				'<li class="clear clearfix">' +
-					'<span class="row_title">'+localizationText['profile-wows']+':</span>' +
-					'<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
-				'</li>' +
-				'<li class="clear clearfix">' +
-					'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
-					'<span class="row_data member_'+user_id+'"></span>' +
-				'</li>' +				
-			'';
-			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-			getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
+			if(undefined !== reputation__wrp){
+				var user_id = reputation__wrp.getAttribute('id').split('_')[1];
+				var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
+				ipsList_data.innerHTML += '' +
+					'<li class="clear clearfix">' +
+						'<span class="row_title">'+localizationText['profile-wows']+':</span>' +
+						'<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
+					'</li>' +
+					'<li class="clear clearfix">' +
+						'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
+						'<span class="row_data member_'+user_id+'"></span>' +
+					'</li>' +				
+				'';
+				
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+				getJson(WGAPI+'wgn/clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
+			}
 		}
 		function ForumTopicPage(){
 			var ForumTopicMembers = [];
