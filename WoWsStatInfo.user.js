@@ -2180,7 +2180,7 @@
 				'<div id="userscript-block" class="userscriptwowsstatinfo hide-block" style="text-align: center;">' +
 					'<span class="userscript-developer" align="center">' +
 						localizationText['userscript-developer'] +
-						' <a target="_blank" style="color: #658C4C; font-weight: bold; border-bottom: 1px dotted #658C4C;" href="http://worldofwarships.ru/cbt/accounts/635939-Vov_chiK/">Vov_chiK</a> ' +
+						' <a target="_blank" style="color: #658C4C; font-weight: bold; border-bottom: 1px dotted #658C4C;" href="http://worldofwarships.ru/community/accounts/635939-/">Vov_chiK</a> ' +
 						localizationText['userscript-alliance'] +
 						' <a target="_blank" style="color: #2CA8C7; font-weight: bold; border-bottom: 1px dotted #2CA8C7;" href="http://ru.wargaming.net/clans/search/#wgsearch&offset=0&limit=10&search=Walkure">Walkure</a>.' +
 						'<br /><br />' +
