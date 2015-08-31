@@ -71,6 +71,14 @@
 			var host_split = window.location.host.split('.'); realm = host_split[host_split.length - 1]; if(realm == 'com'){realm = 'na';}
 			realm_host = realm; if(realm == 'na'){realm_host = 'com';}
 		}
+		if(lang == null){
+			if(realm == 'ru'){
+				lang = 'ru';
+			}else{
+				lang = 'en';
+			}
+		}
+		if(window.location.host.indexOf("cm-ru.wargaming.net") > -1){return;}
 		
 		var localizationText = getlocalizationText(lang);
 		var application_id = getApplicationId(realm);
@@ -84,6 +92,69 @@
 	
 		var Process = 0;
 		var MaxProcess = 3;
+		
+		var SettingsWCI = null;
+		{ /* ===== Default Settings UserScript ===== */
+			var defaultSettingsWoWsStatInfo = ''+
+				'{' +
+					'"role_i18n": {"table": "1", "check": 1},' + // col 1
+					'"clan_days": {"table": "1", "check": 1},' +
+					'"info.last_battle_time": {"table": "1", "check": 1},' +
+					'"info.logout_at": {"table": "1", "check": 0},' +
+					'"null_1": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.battles": {"table": "1", "check": 1},' +
+					'"info.statistics.pvp.wins": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.losses": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.draws": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.survived_battles": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.survived_wins": {"table": "1", "check": 0},' +
+					'"null_2": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.kill_dead": {"table": "1", "check": 1},' +
+					'"info.statistics.pvp.xp": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.damage_dealt": {"table": "1", "check": 0},' +
+					'"null_3": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.frags": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.planes_killed": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.capture_points": {"table": "1", "check": 0},' +
+					'"info.statistics.pvp.dropped_capture_points": {"table": "1", "check": 0},' +
+					'"null_4": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.avg_xp": {"table": "2", "check": 1},' + // col 2
+					'"info.statistics.pvp.avg_damage_dealt": {"table": "2", "check": 1},' + 
+					'"info.statistics.pvp.avg_frags": {"table": "2", "check": 0},' + 
+					'"info.statistics.pvp.avg_planes_killed": {"table": "2", "check": 0},' + 
+					'"info.statistics.pvp.avg_capture_points": {"table": "2", "check": 0},' + 
+					'"info.statistics.pvp.avg_dropped_capture_points": {"table": "2", "check": 0},' + 
+					'"null_5": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.max_xp": {"table": "2", "check": 0},' +
+					'"info.statistics.pvp.max_damage_dealt": {"table": "2", "check": 0},' +  
+					'"info.statistics.pvp.max_frags_battle": {"table": "2", "check": 0},' +  
+					'"info.statistics.pvp.max_planes_killed": {"table": "2", "check": 0},' +  
+					'"null_6": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.wins_percents": {"table": "2", "check": 1},' +
+					'"info.statistics.pvp.survived_battles_percents": {"table": "2", "check": 0},' +
+					'"null_7": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.statistics.pvp.wr": {"table": "3", "check": 1},' + // col 3
+					'"null_8": {"table": "spacerow", "check": 0},' + // spacerow
+					'"info.ships_x_level": {"table": "3", "check": 1},' +
+					'"view_table": {' +
+						'"table": "position", ' +
+						'"check": 0, ' +
+						'"sort": "' +
+							'role_i18n,' +
+							'clan_days,' +
+							'info.last_battle_time,' +
+							'info.ships_x_level,' +
+							'info.statistics.pvp.battles,' +
+							'info.statistics.pvp.wins_percents,' +
+							'info.statistics.pvp.avg_xp,' +
+							'info.statistics.pvp.avg_damage_dealt,' +
+							'info.statistics.pvp.kill_dead,' +
+							'info.statistics.pvp.wr' +
+						'"' +
+					'}' +
+				'}' +
+			'';
+		}
 		
 		var MembersArray = [];
 		var Encyclopedia = null;
@@ -351,6 +422,7 @@
 		}else if(window.location.href.indexOf("clans") > -1 && window.location.href.split('/')[4].match(/[0-9]+/) != null 
 			&& window.location.href.indexOf("players") > -1 && window.location.href.split('/').length >= 6
 		){
+			SettingsWCI = getSettingsClanPage();
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var ClanId = window.location.href.split('/')[4].match(/[0-9]+/);
 			ClanPage();
@@ -382,34 +454,35 @@
 			var _nick = document.getElementsByClassName('_nick')[0];
 			nickname = _nick.textContent;
 			
-			var row = document.getElementsByClassName('row')[0];
-			row.outerHTML += '' +
-				'<div id="userscript-block-list">' +
-					'<div id="userscript-forum-link">' +
-						'<a target="_blank" href="http://forum.worldofwarships.'+realm_host+'/index.php?/user/dn-'+nickname+'-/">'+localizationText['forum-profile']+'</a>' +
-					'</div>' +
-					'<style>' +
-						'.b-profile-clan{max-width: 400px; padding-right: 100px;margin-bottom: 14px;padding-top: 5px;position: relative;}' +
-						'.b-profile-clan_photo{float: left;width: 61px;position: relative;min-height: 70px;top: 5px;}' +
-						'.b-profile-clan_color{width: 15px;height: 15px;position: absolute;left: 38px;top: 2px;}' +
-						'.b-profile-clan_link{background-image: url("data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkI4NTIxMEI3ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkI4NTIxMEI4ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6Qjg1MjEwQjU4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6Qjg1MjEwQjY4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7V+fopAAAMmElEQVR42sxazY7jxhEm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");display: block;height: 54px;position: absolute;left: 2px;padding: 11px 0 0 11px;width: 54px;}' +
-						'.b-profile-clan_text{margin-left: 61px;}' +
-						'.b-profile-clan_text-wrpr{font-size: 13px;margin: 5px 0 0;overflow: hidden;padding-right: 0;padding: 0 0 7px;text-overflow: ellipsis;white-space: nowrap;}' +
-						'.b-link-clan{color: #f9d088;font-weight: bold;text-decoration: none;}' +
-						'.b-link-clan_tag{color: #babcbf;}' +
-						'.b-statistic{overflow: hidden;margin: 0 0 16px;line-height: 14px;}' +
-						'.b-statistic_item{color: #606061;font-size: 11px;margin: 0;padding: 0;line-height: 125%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;word-wrap: normal;}' +
-						'.b-statistic_value{color: #babcbf;}' +
-					'</style>' +
-					'<div id="wowsstatinfo-profile-clan">' +
-						'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
-							'<img src="http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' + 
-						'</div>' +
-					'</div>' +
-					getUserScriptDeveloperBlock() +
-					'' +
+			var row = document.getElementsByClassName('row')[1];
+			var div = document.createElement('div');
+			div.setAttribute('id', 'userscript-block-list');
+			div.innerHTML = '' +
+				'<div id="userscript-forum-link">' +
+					'<a target="_blank" href="http://forum.worldofwarships.'+realm_host+'/index.php?/user/dn-'+nickname+'-/">'+localizationText['forum-profile']+'</a>' +
 				'</div>' +
-			'';			
+				'<style>' +
+					'.b-profile-clan{max-width: 400px; padding-right: 100px;margin-bottom: 14px;padding-top: 5px;position: relative;}' +
+					'.b-profile-clan_photo{float: left;width: 61px;position: relative;min-height: 70px;top: 5px;}' +
+					'.b-profile-clan_color{width: 15px;height: 15px;position: absolute;left: 38px;top: 2px;}' +
+					'.b-profile-clan_link{background-image: url("data:image/png;charset=utf-8;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkI4NTIxMEI3ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkI4NTIxMEI4ODRFODExRTI5ODYxODk4QjE3Q0IyNzkyIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6Qjg1MjEwQjU4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6Qjg1MjEwQjY4NEU4MTFFMjk4NjE4OThCMTdDQjI3OTIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7V+fopAAAMmElEQVR42sxazY7jxhEm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");display: block;height: 54px;position: absolute;left: 2px;padding: 11px 0 0 11px;width: 54px;}' +
+					'.b-profile-clan_text{margin-left: 61px;}' +
+					'.b-profile-clan_text-wrpr{font-size: 13px;margin: 5px 0 0;overflow: hidden;padding-right: 0;padding: 0 0 7px;text-overflow: ellipsis;white-space: nowrap;}' +
+					'.b-link-clan{color: #f9d088;font-weight: bold;text-decoration: none;}' +
+					'.b-link-clan_tag{color: #babcbf;}' +
+					'.b-statistic{overflow: hidden;margin: 0 0 16px;line-height: 14px;}' +
+					'.b-statistic_item{color: #606061;font-size: 11px;margin: 0;padding: 0;line-height: 125%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;word-wrap: normal;}' +
+					'.b-statistic_value{color: #babcbf;}' +
+				'</style>' +
+				'<div id="wowsstatinfo-profile-clan">' +
+					'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
+						'<img src="http://'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' + 
+					'</div>' +
+				'</div>' +
+				getUserScriptDeveloperBlock() +
+				'' +
+			'';
+			row.insertBefore(div, row.firstChild);
 			
 			var account_href = window.location.href.split('/')[6].split('-');
 			var account_id = account_href[0];
@@ -417,7 +490,7 @@
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
 			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
 			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
-			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+account_id, doneAccountInfo, errorAccountInfo);
+			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
 			jQ('.account-pvp-pve').click(function(){
 				setTimeout(function(){viewMainPageProfile();}, 1000);
@@ -479,6 +552,15 @@
 			var page_header = document.getElementsByClassName("page-header")[0];
 			page_header.outerHTML += '' +
 				'<div style="padding-bottom: 20px;">' +
+					'<div align="right">' +
+						'<button id="get-settings-button" class="button" style="display: block;">' +
+							'<span class="button_wrapper">' +
+								'<span style="padding: 5px;" class="button_body">' +
+									'<span class="button_inner">'+localizationText['get-settings-button']+'</span>' +
+								'</span>' +
+							'</span>' +
+						'</button>' +
+					'</div>' +
 					getUserScriptDeveloperBlock() + 
 					'<div class="div-link-block">' +
 						'<span id="clan-member-history" class="link-block '+view_block_history+'-block">' +
@@ -489,8 +571,31 @@
 					'<div id="userscript-block" class="clan-member-history '+view_block_history+'-block" style="text-align: center;">' +
 						'<img src="/clans/static/0.1.0.1/images/processing/loader.gif" />' +
 					'</div>' +
+					'<div align="right" style="margin-top: 20px; padding-bottom: 20px;">' +
+						'<table style="border: 0px;">' +
+							'<tr>' +						
+								'<td valign="center">' +
+									'<button id="get-clan-statistic-block" class="button" style="display: block;">' +
+										'<span class="button_wrapper">' +
+											'<span style="padding: 5px;" class="button_body">' +
+												'<span id="statistic-clan-button-text" class="button_inner">'+localizationText['statistic-clan-button-0']+'</span>' +
+											'</span>' +
+										'</span>' +
+									'</button>' +
+									'<span id="statistic-clan-load-text" style="display: none; font-size: 12px; width: 220px;">' +
+										localizationText['statistic-clan-load-text']+' 0%'+localizationText['statistic-load-text-lost']+' 0 '+localizationText['statistic-load-text-min']+' 0 '+localizationText['statistic-load-text-sec'] +
+									'</span>'+
+								'</td>' +
+								'<td valign="center">' +
+									'<img id="statistic-clan-load-icon" src="/clans/static/0.1.0.1/images/processing/loader.gif" style="display: none;" />' +
+								'</td>' +							
+							'</tr>' +
+						'</table>' +
+					'</div>' +
 				'</div>' +
 			'';
+			jQ('#get-clan-statistic-block').click(function(){runGetStatisticClan();});
+			jQ('#get-settings-button').click(function(){runSettingsClanPage();});
 			
 			getClanMembersList();
 		}
@@ -549,6 +654,8 @@
 			var vars = getUrlVars(url);
 			var account_id = vars['account_id'];
 			
+			if(response['data'][account_id] == null){errorClanInfo(); return;}
+			
 			MembersArray[0]['clan'] = response['data'][account_id]['clan'];
 			MembersArray[0]['clan']['account_id'] = response['data'][account_id]['account_id'];
 			MembersArray[0]['clan']['role_i18n'] = response['data'][account_id]['role_i18n'];
@@ -603,66 +710,9 @@
 				wowsstatinfo_profile_clan.innerHTML = '';
 			}			
 		}
-		function doneAccountInfo(url, response){
-			if(response.status && response.status == "error"){
-				errorAccountInfo();
-				return;
-			}
-			
-			var vars = getUrlVars(url);
-			var account_id = vars['account_id'];
-			
-			MembersArray[0]['info'] = response['data'][account_id];
-			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&language='+language+'&account_id='+account_id, doneShipsStats, errorShipsStats);
-		}
-		function errorAccountInfo(url){
-			var vars = getUrlVars(url);
-			var account_id = vars['account_id'];
-			
-			console.log('Error AccountInfo '+account_id);
-			
-			onShowMessage(
-				localizationText['Box'],
-				localizationText['ErrorAPI'],
-				onCloseMessage,
-				localizationText['Ok'],
-				false
-			);
-		}
-		function doneShipsStats(url, response){
-			if(response.status && response.status == "error"){
-				errorShipsStats();
-				return;
-			}
-			
-			var vars = getUrlVars(url);
-			var account_id = vars['account_id'];
-			
-			MembersArray[0]['ships'] = response['data'][account_id];
-			
-			if(calcStat()){
-				viewMainPageProfile();
-			}else{
-				console.log('Error calcStat '+account_id);
-			}
-		}
-		function errorShipsStats(url){
-			var vars = getUrlVars(url);
-			var account_id = vars['account_id'];
-			
-			console.log('Error ShipsStats '+account_id);
-			
-			onShowMessage(
-				localizationText['Box'],
-				localizationText['ErrorAPI'],
-				onCloseMessage,
-				localizationText['Ok'],
-				false
-			);
-		}
 		function viewMainPageProfile(){
+			if(Encyclopedia == null){setTimeout(function(){viewMainPageProfile();}, 1000);}
+		
 			var tabContainer = null;
 			var tab_container = document.getElementsByClassName('tab-container');
 			for(var tc = 0; tc < tab_container.length; tc++){
@@ -692,7 +742,7 @@
 						'<hr />' +
 						'<table id="main-page-script-block" style="width: 100%;">' +
 							'<tr>' +
-								'<td style="width: 410px; vertical-align: top;">' +
+								'<td style="/* width: 410px; */ vertical-align: top;">' +
 									'<table class="account-table">' +
 										'<thead>' +
 											'<tr>' +
@@ -771,29 +821,35 @@
 						account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points');
 						account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points');
 						
-						//Рекордные показатели
-						// Bug WG API
-						// account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp');
+						// Рекордные показатели
 						account_table[2].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt'], 'max_damage_dealt');
 						account_table[2].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_frags_battle'], 'max_frags_battle');
 						account_table[2].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_planes_killed'], 'max_planes_killed');
 						
 						//Дополнительно
 						account_table[0].rows[2].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents');
-						if(account_table[0].rows[3].cells[1].getElementsByClassName('small-survived_battles_percents')[0] == null){
+						if(account_table[2].rows[1].cells[1].getElementsByClassName('small-max_xp')[0] == undefined){
+							account_table[2].rows[1].cells[1].innerHTML += '<small class="small-max_xp">('+valueFormat(MembersArray[0]['info']['statistics']['pvp']['max_xp'])+')</small>';
+							account_table[2].rows[1].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp');
+						}
+						if(account_table[0].rows[3].cells[1].getElementsByClassName('small-survived_battles_percents')[0] == undefined){
 							account_table[0].rows[3].cells[1].innerHTML += '<small class="small-survived_battles_percents">('+valueFormat((MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents']).toFixed(2))+'%)</small>';
 							account_table[0].rows[3].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents'], 'survived_battles_percents');
 						}
-						if(account_table[2].rows[1].cells[0].getElementsByClassName('small-max_xp_ship')[0] == null){
+						if(account_table[2].rows[1].cells[0].getElementsByClassName('small-max_xp_ship')[0] == undefined 
+							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] !== undefined){
 							account_table[2].rows[1].cells[0].innerHTML += '<small class="small-max_xp_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']]['name']+')</small>';
 						}
-						if(account_table[2].rows[2].cells[0].getElementsByClassName('small-max_damage_dealt_ship')[0] == null){
+						if(account_table[2].rows[2].cells[0].getElementsByClassName('small-max_damage_dealt_ship')[0] == undefined 
+							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt_ship_id']] !== undefined){
 							account_table[2].rows[2].cells[0].innerHTML += '<small class="small-max_damage_dealt_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt_ship_id']]['name']+')</small>';
 						}
-						if(account_table[2].rows[3].cells[0].getElementsByClassName('small-max_frags_ship')[0] == null){
+						if(account_table[2].rows[3].cells[0].getElementsByClassName('small-max_frags_ship')[0] == undefined 
+							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_frags_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_frags_ship_id']] !== undefined){
 							account_table[2].rows[3].cells[0].innerHTML += '<small class="small-max_frags_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_frags_ship_id']]['name']+')</small>';
 						}
-						if(account_table[2].rows[4].cells[0].getElementsByClassName('small-max_planes_killed_ship')[0] == null){
+						if(account_table[2].rows[4].cells[0].getElementsByClassName('small-max_planes_killed_ship')[0] == undefined 
+							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] !== undefined){
 							account_table[2].rows[4].cells[0].innerHTML += '<small class="small-max_planes_killed_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']]['name']+')</small>';
 						}
 						
@@ -892,45 +948,45 @@
 			}
 		}
 		function GeneratorUserBar(){
-			// var userbarbg = 'userbar';
+			var userbarbg = 'userbar';
 			
-			// var radios = document.getElementsByName('userbar-bg');
-			// for(var i = 0; i < radios.length; i++){
-				// if(radios[i].checked){
-					// userbarbg = radios[i].value;
-					// break;
-				// }
-			// }
+			var radios = document.getElementsByName('userbar-bg');
+			for(var i = 0; i < radios.length; i++){
+				if(radios[i].checked){
+					userbarbg = radios[i].value;
+					break;
+				}
+			}
 		
-			// var jsonString = 'json='+JSON.stringify(MembersArray[0]['info'])+'&type=userbar&userbarbg='+userbarbg+'&lang='+lang;
+			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar&userbarbg='+userbarbg+'&lang='+lang;
 			
-			// var xmlhttp;
-			// try{
-				// xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
-			// }catch(e){
-				// try{
-					// xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
-				// }catch(E){
-					// xmlhttp = false;
-				// }
-			// }
-			// if(!xmlhttp && typeof XMLHttpRequest != 'undefined'){
-				// xmlhttp = new XMLHttpRequest();
-			// }
-			// xmlhttp.open('POST', ''+WoWsStatInfoHref+'userbar.php?random='+Math.floor(Math.random()*100000001), true);
-			// xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			// xmlhttp.onreadystatechange = function(){
-				// if(xmlhttp.readyState == 4){
-					// if(xmlhttp.status == 200){
-						// var userbar_img = document.getElementById('userbar-img');
-						// userbar_img.src = xmlhttp.responseText+'?'+Math.floor(Math.random()*100000001);
+			var xmlhttp;
+			try{
+				xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
+			}catch(e){
+				try{
+					xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+				}catch(E){
+					xmlhttp = false;
+				}
+			}
+			if(!xmlhttp && typeof XMLHttpRequest != 'undefined'){
+				xmlhttp = new XMLHttpRequest();
+			}
+			xmlhttp.open('POST', ''+WoWsStatInfoHref+'userbar.php?random='+Math.floor(Math.random()*100000001), true);
+			xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xmlhttp.onreadystatechange = function(){
+				if(xmlhttp.readyState == 4){
+					if(xmlhttp.status == 200){
+						var userbar_img = document.getElementById('userbar-img');
+						userbar_img.src = xmlhttp.responseText+'?'+Math.floor(Math.random()*100000001);
 						
-						// var userbar_link = document.getElementById('userbar-link');
-						// userbar_link.textContent = '[img]'+xmlhttp.responseText+'[/img]';
-					// }
-				// }
-			// };
-			// xmlhttp.send(jsonString);
+						var userbar_link = document.getElementById('userbar-link');
+						userbar_link.textContent = '[img]'+xmlhttp.responseText+'[/img]';
+					}
+				}
+			};
+			xmlhttp.send(jsonString);
 		}
 		function doneUserBarBG(url, response){
 			var html = '';
@@ -987,6 +1043,234 @@
 		}
 		
 		/* ===== ClanPage function ===== */
+		function getSettingsClanPage(){
+			var SettingsWoWsStatInfo = getLocalStorage('SettingsWoWsStatInfo', false);
+			if(SettingsWoWsStatInfo == null){
+				setLocalStorage('SettingsWoWsStatInfo', defaultSettingsWoWsStatInfo, false);
+				return jQ.parseJSON(defaultSettingsWoWsStatInfo);
+			}else{
+				return jQ.parseJSON(SettingsWoWsStatInfo);
+			}
+		}
+		function runSettingsClanPage(){
+			var layout_spreader = document.getElementsByClassName("layout_spreader")[0];
+			countColumn = (layout_spreader.offsetWidth / 100).toFixed(0);
+			
+			var html = '';
+			html += '<table style="font-size: 14px;">';
+			html += '<caption><b>'+localizationText['table-setting-caption']+'</b> (<span id="table-setting-count-check">0</span>/'+countColumn+')</caption>';
+			html += '<tr>';
+			html += '<td>';
+			
+			var countCheck = 0;
+			var tableNum = null;
+			for(attr in SettingsWCI){
+				if(tableNum != SettingsWCI[attr]['table'] && 'spacerow' != SettingsWCI[attr]['table'] && 'position' != SettingsWCI[attr]['table']){
+					if(tableNum != null){
+						html += '</table>';
+						html += '</td>';
+						html += '<td>';						
+					}
+					
+					html += '<table id="table-settings-num'+SettingsWCI[attr]['table']+'" style="margin-right: 10px;">';
+					
+					tableNum = SettingsWCI[attr]['table']
+				}
+				
+				html += '<tr>';
+				html += '<td>';
+				
+				if('spacerow' != SettingsWCI[attr]['table'] && 'position' != SettingsWCI[attr]['table']){
+					var checkbox = ''; if(SettingsWCI[attr]['check'] == 1){countCheck++; checkbox = 'checked';}
+					
+					html += '<input class="table-settings-row-input" type="checkbox" name="'+attr+'" tablenum="'+SettingsWCI[attr]['table']+'" '+checkbox+'>'+localizationText[attr];
+				}else if('position' == SettingsWCI[attr]['table']){
+					html += '' +
+						'<input class="table-settings-row-input" type="hidden" name="'+attr+'" tablenum="'+SettingsWCI[attr]['table']+'">' +
+						'<br />'+localizationText['table-setting-structure']+
+						'<table>'+
+							'<tr>'+
+								'<td>'+
+								'<select size="10" class="table-setting-structure" style="width: 180px; margin-top: 5px; height: 230px;">' + 
+					'';
+					
+					var sort = SettingsWCI[attr]['sort'].split(',');
+					for(var i = 0; i < sort.length; i++){
+						html += '<option value="'+sort[i]+'">'+localizationText[sort[i]]+'</option>';
+					}
+					
+					html += '' +
+								'</select>'+
+								'</td>'+
+								'<td valign="center" style="padding-left: 2px;">'+
+									'<br />'+
+									'<br />'+
+									'<br />'+
+									'<br />'+
+									'<button style="cursor:pointer;" class="table-setting-structure-up">&#9650;</button>'+
+									'<br />'+
+									'<button style="cursor:pointer;" class="table-setting-structure-down">&#9660;</button>'+
+								'</td>'+
+							'</tr>'+
+						'</table>'+
+					'';
+				}else{
+					html += '<input class="table-settings-row-input" type="hidden" name="'+attr+'" tablenum="'+SettingsWCI[attr]['table']+'">';
+					html += '<div style="border-bottom: #000 solid 1px; box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.07); margin-bottom: 5px;"> </div>';
+				}
+				
+				html += '</td>';
+				html += '</tr>';
+			}
+			
+			html += '</td>';
+			html += '</tr>';
+			html += '</table>';
+			html += '</td>';
+			html += '</tr>';
+			html += '</table>';
+			
+			onShowMessage(
+				localizationText['get-settings-button'], 
+				html, 
+				function(){onOkSettingsClanPage(); onCloseMessage();}, 
+				localizationText['Ok'], 
+				true
+			);
+			
+			checkSettingsClanPage();
+			
+			jQ('.table-settings-row-input').click(function(){checkSettingsClanPage();});
+			jQ(".table-setting-structure-up").click(function(){
+				var table_setting_structure = document.getElementsByClassName("table-setting-structure")[0];
+				if(table_setting_structure.selectedIndex == 0 || table_setting_structure.selectedIndex == -1){return;}
+				var structure_table_selected_value = table_setting_structure.options[table_setting_structure.selectedIndex].value;
+				var structure_table_selected_text = table_setting_structure.options[table_setting_structure.selectedIndex].text;
+				for(i = 0; i < table_setting_structure.options.length; i++){
+					if(table_setting_structure.options[i+1].value == structure_table_selected_value){
+						table_setting_structure.options[i+1].value = table_setting_structure.options[i].value;
+						table_setting_structure.options[i+1].text = table_setting_structure.options[i].text;
+						table_setting_structure.options[i].value = structure_table_selected_value;
+						table_setting_structure.options[i].text = structure_table_selected_text;
+						table_setting_structure.selectedIndex = i;
+						break;
+					}
+				}
+			});
+			jQ(".table-setting-structure-down").click(function(){
+				var table_setting_structure = document.getElementsByClassName("table-setting-structure")[0];
+				if(table_setting_structure.selectedIndex == (table_setting_structure.options.length - 1) || table_setting_structure.selectedIndex == -1){return;}
+				var structure_table_selected_value = table_setting_structure.options[table_setting_structure.selectedIndex].value;
+				var structure_table_selected_text = table_setting_structure.options[table_setting_structure.selectedIndex].text;
+				for(i = 0; i < table_setting_structure.options.length; i++){
+					if(table_setting_structure.options[i].value == structure_table_selected_value){
+						table_setting_structure.options[i].value = table_setting_structure.options[i+1].value;
+						table_setting_structure.options[i].text = table_setting_structure.options[i+1].text;
+						table_setting_structure.options[i+1].value = structure_table_selected_value;
+						table_setting_structure.options[i+1].text = structure_table_selected_text;
+						table_setting_structure.selectedIndex = i + 1;
+						break;
+					}
+				}
+			});
+			
+			
+		}
+		function checkSettingsClanPage(){
+			var countCheck = 0;
+			var table_settings_row_input = document.getElementsByClassName("table-settings-row-input");
+			var table_setting_structure = document.getElementsByClassName("table-setting-structure")[0];
+			for(var i = 0; i < table_settings_row_input.length; i++){
+				if(table_settings_row_input[i].checked){
+					countCheck++;
+					
+					for(j = 0; j < table_setting_structure.options.length; j++){
+						if(table_settings_row_input[i].name == table_setting_structure.options[j].value){
+							break;
+						}
+						if(j == table_setting_structure.options.length - 1){
+							var option = document.createElement("option");
+							option.text = localizationText[table_settings_row_input[i].name];
+							option.value = table_settings_row_input[i].name;
+							table_setting_structure.add(option);							
+						}
+					}
+					if(table_setting_structure.options.length == 0){
+						var option = document.createElement("option");
+						option.text = localizationText[table_settings_row_input[i].name];
+						option.value = table_settings_row_input[i].name;
+						table_setting_structure.add(option);
+					}
+				}else{
+					for(j = 0; j < table_setting_structure.options.length; j++){
+						if(table_settings_row_input[i].name == table_setting_structure.options[j].value){
+							table_setting_structure.remove(j);
+							break;
+						}
+					}
+				}
+			}
+			
+			jQ('#table-setting-count-check').html(countCheck);
+		
+			if(countCheck < countColumn){
+				jQ('.table-settings-row-input').attr('disabled', false);
+			}else{
+				jQ('.table-settings-row-input').attr('disabled', true);
+			}
+			
+			for(var i = 0; i < table_settings_row_input.length; i++){
+				if(table_settings_row_input[i].checked){
+					table_settings_row_input[i].disabled = false;
+				}
+			}
+		}
+		function onOkSettingsClanPage(){
+			var getSettings = '';
+			var table_settings_row_input = document.getElementsByClassName("table-settings-row-input");
+			for(var i = 0; i < table_settings_row_input.length; i++){
+				var input = table_settings_row_input[i];
+				var attr = input.getAttribute('name');
+				var table = input.getAttribute('tablenum');
+				var check = 0; if(input.checked){check = 1;}
+				
+				if(table == 'position'){
+					var sort = '';
+					var table_setting_structure = document.getElementsByClassName("table-setting-structure")[0];
+					for(j = 0; j < table_setting_structure.options.length; j++){
+						sort += table_setting_structure.options[j].value+',';
+					}
+					sort = sort.substring(sort.length - 1, 0);
+					getSettings += '"'+attr+'": {"table": "'+table+'", "check": '+check+', "sort": "'+sort+'"}';
+				}else{
+					getSettings += '"'+attr+'": {"table": "'+table+'", "check": '+check+'},';
+				}
+			}
+			var saveSettingsClanPage = '{'+getSettings+'}';
+			setLocalStorage('SettingsWoWsStatInfo', saveSettingsClanPage, false);
+			
+			SettingsWCI = getSettingsClanPage();
+			
+			if(loadMemberClan){
+				var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+			
+				var table_clan_statistic = document.getElementById('table-clan-statistic');
+				table_clan_statistic.parentNode.removeChild(table_clan_statistic);
+				
+				var statistic_clan_button_text = document.getElementById('statistic-clan-button-text');
+				statistic_clan_button_text.innerHTML = localizationText['statistic-clan-button-1'];
+				
+				if(clickRunCount % 2 == 1){
+					clickRunCount++;
+				}
+				
+				viewMainPageClan();
+				
+				window.pageYOffset = scrollTop;
+				document.documentElement.scrollTop = scrollTop;
+				document.body.scrollTop = scrollTop;
+			}
+		}
 		function getClanMembersList(){
 			var table = document.getElementsByClassName("rating-table__players")[0];
 			
@@ -1163,43 +1447,369 @@
 			setLocalStorage('ClanMemberSave', newClanMemberSave, true);
 			setLocalStorage('ClanChangeSave', newClanChangeSave, true);
 		}		
+		var clickRunCount = 0;
+		var loadMemberClan = false;
+		var loadTimeStart = 0;
+		var countMembers = 0;
+		var loadOnePercent = 0;
+		var loadMemberCount = 0;
+		function runGetStatisticClan(){
+			if(clickRunCount % 2 == 0){
+				var statistic_clan_button_text = document.getElementById('statistic-clan-button-text');
+				statistic_clan_button_text.innerHTML = localizationText['statistic-clan-button-1'];
+				
+				if(!loadMemberClan){
+					var get_clan_statistic_block = document.getElementById('get-clan-statistic-block');
+					get_clan_statistic_block.style.display = 'none';
+					
+					var statistic_clan_load_icon = document.getElementById('statistic-clan-load-icon');
+					statistic_clan_load_icon.style.display = 'block';
+					
+					var statistic_clan_load_text = document.getElementById('statistic-clan-load-text');
+					statistic_clan_load_text.style.display = 'block';
+					statistic_clan_load_text.innerHTML = localizationText['statistic-clan-load-text']+' 0%'+localizationText['statistic-load-text-lost']+' 0 '+localizationText['statistic-load-text-min']+' 0 '+localizationText['statistic-load-text-sec'];
+					
+					if(Encyclopedia == null){
+						getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
+					}
+					
+					var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+					
+					loadTimeStart = new Date().getTime();
+					countMembers = MembersArray.length;
+					loadOnePercent = 100 / countMembers;
+					for(var i = 0; i < MembersArray.length; i++){
+						getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+MembersArray[i]['account_id']+'&index='+i+'&type=clan', doneAccountInfo, errorAccountInfo);
+					}
+				}else{
+					jQ('.timeframe').hide();
+					jQ('#js-clan-statistics').hide();
+					jQ('#js-playerslist-table').hide();
+					jQ('#js-players-management').hide();
+			
+					jQ('#table-clan-statistic').show();
+				}
+			}else if(clickRunCount % 2 == 1){
+				var statistic_clan_button_text = document.getElementById('statistic-clan-button-text');
+				statistic_clan_button_text.innerHTML = localizationText['statistic-clan-button-0'];
+				
+				jQ('.timeframe').show();
+				jQ('#js-clan-statistics').show();
+				jQ('#js-playerslist-table').show();
+				jQ('#js-players-management').show();
+				
+				jQ('#table-clan-statistic').hide();
+			}
+			
+			clickRunCount++;
+		}
+		function viewMainPageClan(){
+			if(loadMemberCount != countMembers){
+				var loadPercent = (loadMemberCount * loadOnePercent).toFixed(0);
+				
+				var loadTime = (((new Date().getTime() - loadTimeStart) / loadMemberCount) * countMembers) + loadTimeStart;
+				var lostTime = loadTime - new Date().getTime();
+				var ss = (lostTime / 1000 % 60).toFixed(0);
+				var mm = parseInt((lostTime / (60 * 1000) % 60), 10);
+				
+				var statistic_clan_load_text = document.getElementById('statistic-clan-load-text');
+				statistic_clan_load_text.innerHTML = localizationText['statistic-clan-load-text']+' '+loadPercent+'%'+
+				localizationText['statistic-load-text-lost']+
+				' '+mm+' '+localizationText['statistic-load-text-min']+' '+ss+' '+localizationText['statistic-load-text-sec'];
+				
+				return;
+			}
+			
+			loadMemberClan = true;
+			
+			var statistic_clan_load_icon = document.getElementById('statistic-clan-load-icon');
+			statistic_clan_load_icon.style.display = 'none';
+			
+			var statistic_clan_load_text = document.getElementById('statistic-clan-load-text');
+			statistic_clan_load_text.style.display = 'none';
+			
+			var get_clan_statistic_block = document.getElementById('get-clan-statistic-block');
+			get_clan_statistic_block.style.display = 'block';
+			
+			jQ('.timeframe').hide();
+			jQ('#js-clan-statistics').hide();
+			jQ('#js-playerslist-table').hide();
+			jQ('#js-players-management').hide();
+			
+			var layout_spreader = document.getElementsByClassName("layout_spreader")[0];
+			var tableSizeWidth = layout_spreader.offsetWidth;
+			
+			var table = document.createElement('table');
+			table.setAttribute('id', 'table-clan-statistic');
+			table.setAttribute('style', 'border-collapse: separate; font-size: 13px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-top: 20px; margin-left: -40px; width: '+tableSizeWidth+'px;');
+			
+			var thead = document.createElement('thead');
+			var tr_head = document.createElement('tr');
+			var th = document.createElement('th');
+			th.setAttribute('class', 'table-default_heading');
+			th.innerHTML = '<span id="account_name" sort="none" class="table-clan-statistic-sorter table-sorter" style="cursor: pointer;">' +
+				localizationText['account_name'] +
+				'<span class="table-sorter_arrow"></span>' +
+			'</span>'; 
+			tr_head.appendChild(th);
+			
+			var column = SettingsWCI['view_table']['sort'].split(',');
+			for(var i = 0; i < column.length; i++){          
+				var th = document.createElement('th');
+				th.setAttribute('class', 'table-default_heading');
+				th.innerHTML = '<span id="'+column[i]+'" sort="none" class="table-clan-statistic-sorter table-sorter" style="cursor: pointer;">' +
+					localizationText[column[i]] +
+					'<span class="table-sorter_arrow"></span>' +
+				'</span>';
+				tr_head.appendChild(th);
+			}
+			thead.appendChild(tr_head);
+			table.appendChild(thead);
+			
+			var tbody = document.createElement('tbody');
+			for(var index = 0; index < MembersArray.length; index++){
+				var tr = document.createElement('tr');
+				var td = document.createElement('td');
+				td.setAttribute('class', 'table-default_cell');
+				td.innerHTML = (index + 1)+'.&nbsp;<a class="user-link" target="_blank" href="http://worldofwarships.'+realm+'/community/accounts/'+MembersArray[index]['account_id']+'-/">' +
+					MembersArray[index]['account_name'] + 
+				'</a>';
+				tr.appendChild(td);
+				
+				for(var i = 0; i < column.length; i++){
+					var td = document.createElement('td');
+					td.setAttribute('class', 'table-default_cell');
+					td.innerHTML = getStatisticClanMember(index, column[i], td);
+					tr.appendChild(td);
+				}
+				tbody.appendChild(tr);
+			}
+			table.appendChild(tbody);
+			
+			var ClanPageElement = document.getElementsByClassName('rating')[0];
+			ClanPageElement.appendChild(table);
+			
+			jQ('.table-clan-statistic-sorter').click(function(){sortStatisticClan(this);});
+		}
+		function getStatisticClanMember(index, attr, td){
+			var layer = attr.split('\.');
+			var value = null;
+			for(var i = 0; i < layer.length; i++){
+				if(value == null){
+					value = MembersArray[index][layer[i]];
+				}else{
+					value = value[layer[i]];
+				}
+			}
+			
+			if(attr.indexOf("last_battle_time") > -1 || attr.indexOf("logout_at") > -1){
+				return TimeToDate(value);
+			}else if(attr.indexOf("role_i18n") > -1){
+				return value;
+			}
+			
+			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1){
+				value = (value).toFixed(2);
+			}
+			
+			var value_html = '';
+			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || (attr.indexOf(".max_") > -1 && attr.indexOf(".max_xp") == -1) 
+				|| attr.indexOf(".battles") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1){
+				value_html = '<font color="'+findColorASC(value, layer[layer.length - 1])+'">'+valueFormat(value)+'</font>';
+				td.setAttribute('style', 'white-space: nowrap;');
+			}else{
+				value_html = valueFormat(value);
+				td.setAttribute('style', 'white-space: nowrap;');
+			}
+			
+			return value_html;
+		}
+		function sortStatisticClan(elementSort){
+			var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+			
+			var attr = elementSort.getAttribute('id');
+			var sort = elementSort.getAttribute('sort');
+			var table_clan_statistic = document.getElementById('table-clan-statistic');
+			table_clan_statistic.parentNode.removeChild(table_clan_statistic);
+			
+			if(sort === 'desc' || sort === 'none'){
+				MembersArray.sort(ASC(attr));
+			}else{
+				MembersArray.sort(DESC(attr));
+			}
+			
+			viewMainPageClan();
+			
+			window.pageYOffset = scrollTop;
+			document.documentElement.scrollTop = scrollTop;
+			document.body.scrollTop = scrollTop;
+			
+			var table_clan_statistic_sorter = document.getElementById(attr);
+			if(sort === 'desc' || sort === 'none'){
+				table_clan_statistic_sorter.setAttribute('sort', 'asc');
+				table_clan_statistic_sorter.setAttribute('class', 'table-clan-statistic-sorter table-sorter table-sorter__up');
+			}else{
+				table_clan_statistic_sorter.setAttribute('sort', 'desc');
+				table_clan_statistic_sorter.setAttribute('class', 'table-clan-statistic-sorter table-sorter table-sorter__down');
+			}
+		}
 		
 		/* ===== UserScript function ===== */
-		function calcStat(){// Гремящий и другие корабли WR, Создание юзербара
+		function doneAccountInfo(url, response){
+			if(response.status && response.status == "error"){
+				errorAccountInfo();
+				return;
+			}
+			
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			MembersArray[index]['info'] = response['data'][account_id];
+			
+			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+		}
+		function errorAccountInfo(url){
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			console.log('Error AccountInfo '+account_id);
+			
+			if(type == 'profile'){
+				onShowMessage(
+					localizationText['Box'],
+					localizationText['ErrorAPI'],
+					onCloseMessage,
+					localizationText['Ok'],
+					false
+				);
+			}else if(type == 'clan'){
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+				getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+			}
+		}
+		function doneShipsStats(url, response){
+			if(response.status && response.status == "error"){
+				errorShipsStats();
+				return;
+			}
+			
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			MembersArray[index]['ships'] = response['data'][account_id];
+			
+			if(!calcStat(index)){
+				console.log('Error calcStat '+account_id);
+			}
+			
+			if(type == 'profile'){
+				viewMainPageProfile();
+			}else if(type == 'clan'){
+				loadMemberCount++;
+				viewMainPageClan();
+			}
+		}
+		function errorShipsStats(url){
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			console.log('Error ShipsStats '+account_id);
+			
+			if(type == 'profile'){
+				onShowMessage(
+					localizationText['Box'],
+					localizationText['ErrorAPI'],
+					onCloseMessage,
+					localizationText['Ok'],
+					false
+				);
+			}else if(type == 'clan'){
+				loadMemberCount++;
+				viewMainPageClan();
+			}
+		}
+		function calcStat(index){
+			if(MembersArray[index]['info'] == null || MembersArray[index]['ships'] == null){
+				MembersArray[index]['info'] = [];
+				MembersArray[index]['info']['last_battle_time'] = 0;
+				MembersArray[index]['info']['logout_at'] = 0;
+				MembersArray[index]['info']['ships_x_level'] = 0;
+				
+				MembersArray[index]['info']['statistics'] = [];
+				MembersArray[index]['info']['statistics']['pvp'] = [];
+				MembersArray[index]['info']['statistics']['pvp']['battles'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['wins'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['losses'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['draws'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['survived_battles'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['survived_wins'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['kill_dead'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['xp'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['damage_dealt'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['frags'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['planes_killed'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['capture_points'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['dropped_capture_points'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_xp'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_damage_dealt'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_frags'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_planes_killed'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_capture_points'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_dropped_capture_points'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['max_xp'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['max_damage_dealt'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['max_frags_battle'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['max_planes_killed'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['wins_percents'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['survived_battles_percents'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['wr'] = 0;
+				
+				return false;
+			}
+			
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
-				var Statistics = MembersArray[0]['info']['statistics'][type];
+				var Statistics = MembersArray[index]['info']['statistics'][type];
 				
-				MembersArray[0]['info']['statistics'][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_xp'])){MembersArray[0]['info']['statistics'][type]['avg_xp'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_xp'])){MembersArray[index]['info']['statistics'][type]['avg_xp'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'])){MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_damage_dealt'])){MembersArray[index]['info']['statistics'][type]['avg_damage_dealt'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['avg_frags'] = Statistics['frags'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_frags'])){MembersArray[0]['info']['statistics'][type]['avg_frags'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_frags'] = Statistics['frags'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_frags'])){MembersArray[index]['info']['statistics'][type]['avg_frags'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_planes_killed'])){MembersArray[0]['info']['statistics'][type]['avg_planes_killed'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_planes_killed'])){MembersArray[index]['info']['statistics'][type]['avg_planes_killed'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_capture_points'])){MembersArray[0]['info']['statistics'][type]['avg_capture_points'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_capture_points'])){MembersArray[index]['info']['statistics'][type]['avg_capture_points'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points'])){MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_dropped_capture_points'])){MembersArray[index]['info']['statistics'][type]['avg_dropped_capture_points'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['wins_percents'])){MembersArray[0]['info']['statistics'][type]['wins_percents'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['wins_percents'])){MembersArray[index]['info']['statistics'][type]['wins_percents'] = 0;}
 				
-				MembersArray[0]['info']['statistics'][type]['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['survived_battles_percents'])){MembersArray[0]['info']['statistics'][type]['survived_battles_percents'] = 0;}
+				MembersArray[index]['info']['statistics'][type]['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['survived_battles_percents'])){MembersArray[index]['info']['statistics'][type]['survived_battles_percents'] = 0;}
 				
 				if(Statistics['battles'] == Statistics['survived_battles']){
-					MembersArray[0]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/Statistics['battles'];
+					MembersArray[index]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/Statistics['battles'];
 				}else{
-					MembersArray[0]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
+					MembersArray[index]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
 				}
-				if(isNaN(MembersArray[0]['info']['statistics'][type]['kill_dead'])){MembersArray[0]['info']['statistics'][type]['kill_dead'] = 0;}
+				if(isNaN(MembersArray[index]['info']['statistics'][type]['kill_dead'])){MembersArray[index]['info']['statistics'][type]['kill_dead'] = 0;}
 			}
 			
 			var ships_x_level = 0;
@@ -1231,92 +1841,96 @@
 				StatShipsClass[type]['expDroppedCapturePoints'] = 0;
 			}
 			
-			for(var shipI = 0; shipI < MembersArray[0]['ships'].length; shipI++){
-				var Ship = MembersArray[0]['ships'][shipI];
+			for(var shipI = 0; shipI < MembersArray[index]['ships'].length; shipI++){
+				var Ship = MembersArray[index]['ships'][shipI];
 				var ship_id = Ship['ship_id'];
 				
 				for(var t = 0; t < typeStat.length; t++){
 					var type = typeStat[t];
 					var Statistics = Ship[type];
 					
-					MembersArray[0]['ships'][shipI][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_xp'])){MembersArray[0]['ships'][shipI][type]['avg_xp'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_xp'])){MembersArray[index]['ships'][shipI][type]['avg_xp'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_damage_dealt'])){MembersArray[0]['ships'][shipI][type]['avg_damage_dealt'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_damage_dealt'])){MembersArray[index]['ships'][shipI][type]['avg_damage_dealt'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['avg_frags'] = Statistics['frags'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_frags'])){MembersArray[0]['ships'][shipI][type]['avg_frags'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_frags'] = Statistics['frags'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_frags'])){MembersArray[index]['ships'][shipI][type]['avg_frags'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_planes_killed'])){MembersArray[0]['ships'][shipI][type]['avg_planes_killed'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_planes_killed'])){MembersArray[index]['ships'][shipI][type]['avg_planes_killed'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_capture_points'])){MembersArray[0]['ships'][shipI][type]['avg_capture_points'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_capture_points'])){MembersArray[index]['ships'][shipI][type]['avg_capture_points'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['avg_dropped_capture_points'])){MembersArray[0]['ships'][shipI][type]['avg_dropped_capture_points'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['avg_dropped_capture_points'])){MembersArray[index]['ships'][shipI][type]['avg_dropped_capture_points'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['wins_percents'])){MembersArray[0]['ships'][shipI][type]['wins_percents'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['wins_percents'])){MembersArray[index]['ships'][shipI][type]['wins_percents'] = 0;}
 					
-					MembersArray[0]['ships'][shipI][type]['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['survived_battles_percents'])){MembersArray[0]['ships'][shipI][type]['survived_battles_percents'] = 0;}
+					MembersArray[index]['ships'][shipI][type]['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['survived_battles_percents'])){MembersArray[index]['ships'][shipI][type]['survived_battles_percents'] = 0;}
 					
 					if(Statistics['battles'] == Statistics['survived_battles']){
-						MembersArray[0]['ships'][shipI][type]['kill_dead'] = Statistics['frags']/Statistics['battles'];
+						MembersArray[index]['ships'][shipI][type]['kill_dead'] = Statistics['frags']/Statistics['battles'];
 					}else{
-						MembersArray[0]['ships'][shipI][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
+						MembersArray[index]['ships'][shipI][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
 					}
-					if(isNaN(MembersArray[0]['ships'][shipI][type]['kill_dead'])){MembersArray[0]['ships'][shipI][type]['kill_dead'] = 0;}
+					if(isNaN(MembersArray[index]['ships'][shipI][type]['kill_dead'])){MembersArray[index]['ships'][shipI][type]['kill_dead'] = 0;}
 					
 					if(Encyclopedia != null && type == 'pvp'){
 						var ship_type = Encyclopedia[ship_id]['type'];
 						var image = Encyclopedia[ship_id]['images']['small'];
 						var ship_code = image.split('/')[image.split('/').length - 1].split('.')[0];
 						
-						var battles = Statistics['battles'];
-						var damage_dealt = Statistics['damage_dealt'];
-						var frags = Statistics['frags'];
-						var planes_killed = Statistics['planes_killed'];
-						var capture_points = Statistics['capture_points'];
-						var dropped_capture_points = Statistics['dropped_capture_points'];
-						
-						var StatShip = [];
-						StatShip['damage_dealt'] = damage_dealt;
-						StatShip['frags'] = frags;
-						StatShip['planes_killed'] = planes_killed;
-						StatShip['capture_points'] = capture_points;
-						StatShip['dropped_capture_points'] = dropped_capture_points;
-						StatShip['expDamage'] = battles * ExpShips[ship_code]['expDamage'];
-						StatShip['expFrags'] = battles * ExpShips[ship_code]['expFrags'];
-						StatShip['expPlanesKilled'] = battles * ExpShips[ship_code]['expPlanesKilled'];
-						StatShip['expCapturePoints'] = battles * ExpShips[ship_code]['expCapturePoints'];
-						StatShip['expDroppedCapturePoints'] = battles * ExpShips[ship_code]['expDroppedCapturePoints'];
-						
-						MembersArray[0]['ships'][shipI][type]['wr'] = calcWR(StatShip);
-						
-						StatShipsClass[ship_type]['damage_dealt'] += damage_dealt;
-						StatShipsClass[ship_type]['frags'] += frags;
-						StatShipsClass[ship_type]['planes_killed'] += planes_killed;
-						StatShipsClass[ship_type]['capture_points'] += capture_points;
-						StatShipsClass[ship_type]['dropped_capture_points'] += dropped_capture_points;
-						StatShipsClass[ship_type]['expDamage'] += StatShip['expDamage'];
-						StatShipsClass[ship_type]['expFrags'] += StatShip['expFrags'];
-						StatShipsClass[ship_type]['expPlanesKilled'] += StatShip['expPlanesKilled'];
-						StatShipsClass[ship_type]['expCapturePoints'] += StatShip['expCapturePoints'];
-						StatShipsClass[ship_type]['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
-						
-						StatShips['damage_dealt'] += damage_dealt;
-						StatShips['frags'] += frags;
-						StatShips['planes_killed'] += planes_killed;
-						StatShips['capture_points'] += capture_points;
-						StatShips['dropped_capture_points'] += dropped_capture_points;
-						StatShips['expDamage'] += StatShip['expDamage'];
-						StatShips['expFrags'] += StatShip['expFrags'];
-						StatShips['expPlanesKilled'] += StatShip['expPlanesKilled'];
-						StatShips['expCapturePoints'] += StatShip['expCapturePoints'];
-						StatShips['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
+						if(ExpShips[ship_code] !== undefined){
+							var battles = Statistics['battles'];
+							var damage_dealt = Statistics['damage_dealt'];
+							var frags = Statistics['frags'];
+							var planes_killed = Statistics['planes_killed'];
+							var capture_points = Statistics['capture_points'];
+							var dropped_capture_points = Statistics['dropped_capture_points'];
+							
+							var StatShip = [];
+							StatShip['damage_dealt'] = damage_dealt;
+							StatShip['frags'] = frags;
+							StatShip['planes_killed'] = planes_killed;
+							StatShip['capture_points'] = capture_points;
+							StatShip['dropped_capture_points'] = dropped_capture_points;
+							StatShip['expDamage'] = battles * ExpShips[ship_code]['expDamage'];
+							StatShip['expFrags'] = battles * ExpShips[ship_code]['expFrags'];
+							StatShip['expPlanesKilled'] = battles * ExpShips[ship_code]['expPlanesKilled'];
+							StatShip['expCapturePoints'] = battles * ExpShips[ship_code]['expCapturePoints'];
+							StatShip['expDroppedCapturePoints'] = battles * ExpShips[ship_code]['expDroppedCapturePoints'];
+							
+							MembersArray[index]['ships'][shipI][type]['wr'] = calcWR(StatShip);
+							
+							StatShipsClass[ship_type]['damage_dealt'] += damage_dealt;
+							StatShipsClass[ship_type]['frags'] += frags;
+							StatShipsClass[ship_type]['planes_killed'] += planes_killed;
+							StatShipsClass[ship_type]['capture_points'] += capture_points;
+							StatShipsClass[ship_type]['dropped_capture_points'] += dropped_capture_points;
+							StatShipsClass[ship_type]['expDamage'] += StatShip['expDamage'];
+							StatShipsClass[ship_type]['expFrags'] += StatShip['expFrags'];
+							StatShipsClass[ship_type]['expPlanesKilled'] += StatShip['expPlanesKilled'];
+							StatShipsClass[ship_type]['expCapturePoints'] += StatShip['expCapturePoints'];
+							StatShipsClass[ship_type]['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
+							
+							StatShips['damage_dealt'] += damage_dealt;
+							StatShips['frags'] += frags;
+							StatShips['planes_killed'] += planes_killed;
+							StatShips['capture_points'] += capture_points;
+							StatShips['dropped_capture_points'] += dropped_capture_points;
+							StatShips['expDamage'] += StatShip['expDamage'];
+							StatShips['expFrags'] += StatShip['expFrags'];
+							StatShips['expPlanesKilled'] += StatShip['expPlanesKilled'];
+							StatShips['expCapturePoints'] += StatShip['expCapturePoints'];
+							StatShips['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
+						}else{
+							MembersArray[index]['ships'][shipI][type]['wr'] = 0;
+						}
 					}
 				}
 				
@@ -1327,15 +1941,15 @@
 				}
 			}
 			
-			MembersArray[0]['info']['ships_x_level'] = ships_x_level;
+			MembersArray[index]['info']['ships_x_level'] = ships_x_level;
 			
 			for(var t = 0; t < typeShip.length; t++){
 				var type = typeShip[t];
 				
-				MembersArray[0]['info']['statistics']['pvp']['wr_'+type] = calcWR(StatShipsClass[type]);
+				MembersArray[index]['info']['statistics']['pvp']['wr_'+type] = calcWR(StatShipsClass[type]);
 			}
 			
-			MembersArray[0]['info']['statistics']['pvp']['wr'] = calcWR(StatShips);
+			MembersArray[index]['info']['statistics']['pvp']['wr'] = calcWR(StatShips);
 			
 			return true;
 		}
@@ -1414,7 +2028,42 @@
 			
 			return return_color;
 		}
+		function ASC(a){
+			return function (b, c){
+				if(a == 'account_name'){
+					return b[a].toLowerCase() < c[a].toLowerCase() ? -1 : b[a].toLowerCase() > c[a].toLowerCase() ? 1 : 0;
+				}else if(a == 'role_i18n'){
+					a = 'role_sort_num';
+					return parseFloat(b[a]) < parseFloat(c[a]) ? -1 : parseFloat(b[a]) > parseFloat(c[a]) ? 1 : 0;
+				}else{
+					var attr = a.split('.');
+					for(var i = 0; i < attr.length; i++){
+						b = b[attr[i]];
+						c = c[attr[i]];
+					}				
+					return parseFloat(b) < parseFloat(c) ? -1 : parseFloat(b) > parseFloat(c) ? 1 : 0;
+				}
+			}
+		};
+		function DESC(a){
+			return function (b, c){
+				if(a == 'account_name'){
+					return b[a].toLowerCase() > c[a].toLowerCase() ? -1 : b[a].toLowerCase() < c[a].toLowerCase() ? 1 : 0;
+				}else if(a == 'role_i18n'){
+					a = 'role_sort_num';
+					return parseFloat(b[a]) > parseFloat(c[a]) ? -1 : parseFloat(b[a]) < parseFloat(c[a]) ? 1 : 0;
+				}else{
+					var attr = a.split('.');
+					for(var i = 0; i < attr.length; i++){
+						b = b[attr[i]];
+						c = c[attr[i]];
+					}					
+					return parseFloat(b) > parseFloat(c) ? -1 : parseFloat(b) < parseFloat(c) ? 1 : 0;
+				}
+			}
+		};
 		function valueFormat(value){
+			if(isInt(value)){value = value.toString();}
 			var newValue = '';
 			var valueSplit = value.split('.');
 			
@@ -1432,6 +2081,9 @@
 			if(valueSplit.length > 1){newValue += localizationText['num-fractional']+''+valueSplit[1];}
 			
 			return newValue;
+		}
+		function isInt(value){
+			return !isNaN(value) && (function(x){return (x | 0) === x;})(parseFloat(value));
 		}
 		function htmlParseMemberStatistic(element){
 			var value = element.textContent.trim().replace(new RegExp(' ', 'g'), '');
@@ -1478,6 +2130,33 @@
 				vars[key] = value;
 			});
 			return vars;
+		}
+		function TimeToDate(time){
+			var date = new Date(time * 1000);
+			var seconds = date.getSeconds();
+			var minutes = date.getMinutes();
+			var hour = date.getHours();
+			var day = date.getDate();
+			var month = (date.getMonth() + 1);
+			var year = date.getFullYear();
+			
+			if(seconds < 10){
+				seconds = '0'+seconds;
+			}
+			if(minutes < 10){
+				minutes = '0'+minutes;
+			}
+			if(hour < 10){
+				hour = '0'+hour;
+			}
+			if(day < 10){
+				day = '0'+day;
+			}
+			if(month < 10){
+				month = '0'+month;
+			}
+			
+			return 	day+'.'+month+'.'+year+' '+hour+':'+minutes;
 		}
 		function dateDiffInDays(a, b){
 			var date1 = new Date(a);
@@ -1748,7 +2427,61 @@
 				localizationText['ru']['combat_officer'] = 'Командир подразделения';
 				localizationText['ru']['private'] = 'Боец';
 				localizationText['ru']['recruit'] = 'Новобранец';
-				localizationText['ru']['reservist'] = 'Резервист';					
+				localizationText['ru']['reservist'] = 'Резервист';
+				
+				localizationText['ru']['get-settings-button'] = 'Настройка';
+				localizationText['ru']['table-setting-caption'] = 'Отображать в таблице "Статистика клана"';
+				localizationText['ru']['table-setting-structure'] = 'Порядок столбцов в таблице';
+				
+				localizationText['ru']['statistic-clan-button-0'] = 'Статистика клана';				
+				localizationText['ru']['statistic-clan-button-1'] = 'Состав клана';	
+				localizationText['ru']['statistic-clan-load-text'] = 'Пожалуйста, подождите ...<br />Получение статистики состава';
+				
+				localizationText['ru']['statistic-load-text-lost'] = '<br />Осталось &#8776;';
+				localizationText['ru']['statistic-load-text-min'] = 'мин.';
+				localizationText['ru']['statistic-load-text-sec'] = 'сек.';
+				
+				localizationText['ru']['account_name'] = 'Имя игрока';
+				
+				localizationText['ru']['role_i18n'] = 'Должность';
+				localizationText['ru']['clan_days'] = 'Дней в клане';
+				localizationText['ru']['info.last_battle_time'] = 'Время последнего боя';
+				localizationText['ru']['info.logout_at'] = 'Время окончания сессии';
+				
+				localizationText['ru']['info.statistics.pvp.battles'] = 'Проведено боёв';
+				localizationText['ru']['info.statistics.pvp.wins'] = 'Победы';
+				localizationText['ru']['info.statistics.pvp.losses'] = 'Поражения';
+				localizationText['ru']['info.statistics.pvp.draws'] = 'Ничьи';
+				localizationText['ru']['info.statistics.pvp.survived_battles'] = 'Выжил в боях';
+				localizationText['ru']['info.statistics.pvp.survived_wins'] = 'Выжил в боях и победил';
+				
+				localizationText['ru']['info.statistics.pvp.kill_dead'] = 'Уничтожил / Убит';
+				localizationText['ru']['info.statistics.pvp.xp'] = 'Суммарный опыт';
+				localizationText['ru']['info.statistics.pvp.damage_dealt'] = 'Нанесено дамага';
+				
+				localizationText['ru']['info.statistics.pvp.frags'] = 'Потоплено кораблей';
+				localizationText['ru']['info.statistics.pvp.planes_killed'] = 'Уничтожено самолётов';
+				localizationText['ru']['info.statistics.pvp.capture_points'] = 'Очки захвата базы';
+				localizationText['ru']['info.statistics.pvp.dropped_capture_points'] = 'Очки защиты базы';
+				
+				localizationText['ru']['info.statistics.pvp.avg_xp'] = 'Ср. опыт';
+				localizationText['ru']['info.statistics.pvp.avg_damage_dealt'] = 'Ср. урон';
+				localizationText['ru']['info.statistics.pvp.avg_frags'] = 'Ср. потоплено кораблей';
+				localizationText['ru']['info.statistics.pvp.avg_planes_killed'] = 'Ср. уничтожено самолётов';
+				localizationText['ru']['info.statistics.pvp.avg_capture_points'] = 'Ср. захвата базы';
+				localizationText['ru']['info.statistics.pvp.avg_dropped_capture_points'] = 'Ср. защиты базы';
+				
+				localizationText['ru']['info.statistics.pvp.max_xp'] = 'Максимальный опыт';
+				localizationText['ru']['info.statistics.pvp.max_damage_dealt'] = 'Максимальный урон';
+				localizationText['ru']['info.statistics.pvp.max_frags_battle'] = 'Максимально потоплено кораблей';
+				localizationText['ru']['info.statistics.pvp.max_planes_killed'] = 'Максимально уничтожено самолётов';
+				
+				localizationText['ru']['info.statistics.pvp.wins_percents'] = 'Процент побед';
+				localizationText['ru']['info.statistics.pvp.survived_battles_percents'] = 'Процент выживания';
+				
+				localizationText['ru']['info.statistics.pvp.wr'] = 'WR';
+				
+				localizationText['ru']['info.ships_x_level'] = '10 lvl';
 			}
 			
 			{/* English */
@@ -1808,7 +2541,61 @@
 				localizationText['en']['combat_officer'] = 'Combat Officer';
 				localizationText['en']['private'] = 'Private';
 				localizationText['en']['recruit'] = 'Recruit';
-				localizationText['en']['reservist'] = 'Reservist';				
+				localizationText['en']['reservist'] = 'Reservist';
+
+				localizationText['en']['get-settings-button'] = 'Settings';
+				localizationText['en']['table-setting-caption'] = 'View column table "Clan Statistics"';
+				localizationText['en']['table-setting-structure'] = 'Sort column table';
+				
+				localizationText['en']['statistic-clan-button-0'] = 'Clan Statistics';				
+				localizationText['en']['statistic-clan-button-1'] = 'Clan Composition';	
+				localizationText['en']['statistic-clan-load-text'] = 'Please wait ...<br />Getting statistics';
+				
+				localizationText['en']['statistic-load-text-lost'] = '<br />time remaining &#8776;';
+				localizationText['en']['statistic-load-text-min'] = 'min.';
+				localizationText['en']['statistic-load-text-sec'] = 'sec.';
+				
+				localizationText['en']['account_name'] = 'Player name';
+				
+				localizationText['en']['role_i18n'] = 'Role';
+				localizationText['en']['clan_days'] = 'Days in clan';
+				localizationText['en']['info.last_battle_time'] = 'Last battle time';
+				localizationText['en']['info.logout_at'] = 'End time of last game session';
+				
+				localizationText['en']['info.statistics.pvp.battles'] = 'Battles';
+				localizationText['en']['info.statistics.pvp.wins'] = 'Victories';
+				localizationText['en']['info.statistics.pvp.losses'] = 'Defeats';
+				localizationText['en']['info.statistics.pvp.draws'] = 'Draws';
+				localizationText['en']['info.statistics.pvp.survived_battles'] = 'Battles survived';
+				localizationText['en']['info.statistics.pvp.survived_wins'] = 'Victories in battles survived';
+				
+				localizationText['en']['info.statistics.pvp.kill_dead'] = 'Kill / Death';
+				localizationText['en']['info.statistics.pvp.xp'] = 'Total Experience';
+				localizationText['en']['info.statistics.pvp.damage_dealt'] = 'Damage caused';
+				
+				localizationText['en']['info.statistics.pvp.frags'] = 'Warships destroyed';
+				localizationText['en']['info.statistics.pvp.planes_killed'] = 'Aircraft destroyed';
+				localizationText['en']['info.statistics.pvp.capture_points'] = 'Base capture points';
+				localizationText['en']['info.statistics.pvp.dropped_capture_points'] = 'Base defense points';
+				
+				localizationText['en']['info.statistics.pvp.avg_xp'] = 'Avg experience';
+				localizationText['en']['info.statistics.pvp.avg_damage_dealt'] = 'Avg Damage caused';
+				localizationText['en']['info.statistics.pvp.avg_frags'] = 'Avg warships destroyed';
+				localizationText['en']['info.statistics.pvp.avg_planes_killed'] = 'Avg aircraft destroyed';
+				localizationText['en']['info.statistics.pvp.avg_capture_points'] = 'Avg Base capture';
+				localizationText['en']['info.statistics.pvp.avg_dropped_capture_points'] = 'Avg Base defense';
+				
+				localizationText['en']['info.statistics.pvp.max_xp'] = 'Maximum experience';
+				localizationText['en']['info.statistics.pvp.max_damage_dealt'] = 'Maximum Damage caused';
+				localizationText['en']['info.statistics.pvp.max_frags_battle'] = 'Maximum warships destroyed';
+				localizationText['en']['info.statistics.pvp.max_planes_killed'] = 'Maximum aircraft destroyed';
+				
+				localizationText['en']['info.statistics.pvp.wins_percents'] = 'Percent of victories';
+				localizationText['en']['info.statistics.pvp.survived_battles_percents'] = 'Percent of survived';
+				
+				localizationText['en']['info.statistics.pvp.wr'] = 'WR';
+				
+				localizationText['en']['info.ships_x_level'] = '10 lvl';
 			}
 			
 			{/* Français */
