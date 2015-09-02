@@ -408,6 +408,11 @@
 			return navigatorInfo;
 		}
 		
+		if(lang == 'zh-cn' || lang == 'zh-tw' || lang == 'tr' || lang == 'vi'){
+			console.log('No support "'+lang+'" language WoWs API');
+			return;
+		}
+		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 9 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
@@ -711,8 +716,12 @@
 			}			
 		}
 		function viewMainPageProfile(){
-			if(Encyclopedia == null){setTimeout(function(){viewMainPageProfile();}, 1000);}
-		
+			if(Encyclopedia == null){console.log('Encyclopedia == null'); setTimeout(function(){viewMainPageProfile();}, 1000);return;}
+			
+			if(!calcStat(0)){
+				console.log('Error calcStat '+MembersArray[0]['account_id']);
+			}
+			
 			var tabContainer = null;
 			var tab_container = document.getElementsByClassName('tab-container');
 			for(var tc = 0; tc < tab_container.length; tc++){
@@ -1567,7 +1576,11 @@
 			table.appendChild(thead);
 			
 			var tbody = document.createElement('tbody');
-			for(var index = 0; index < MembersArray.length; index++){
+			for(var index = 0; index < MembersArray.length; index++){			
+				if(!calcStat(index)){
+					console.log('Error calcStat '+MembersArray[index]['account_id']);
+				}
+			
 				var tr = document.createElement('tr');
 				var td = document.createElement('td');
 				td.setAttribute('class', 'table-default_cell');
@@ -1704,10 +1717,6 @@
 			var type = vars['type'];
 			
 			MembersArray[index]['ships'] = response['data'][account_id];
-			
-			if(!calcStat(index)){
-				console.log('Error calcStat '+account_id);
-			}
 			
 			if(type == 'profile'){
 				viewMainPageProfile();
