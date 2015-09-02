@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.1.14
+// @version 0.4.1.15
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -48,8 +48,8 @@
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
-		WoWsStatInfoLinkLoc['asia'] = '#';
-		WoWsStatInfoLinkLoc['na'] = '#';
+		WoWsStatInfoLinkLoc['asia'] = 'http://forum.worldofwarships.asia/index.php?/topic/8950-';
+		WoWsStatInfoLinkLoc['na'] = 'http://forum.worldofwarships.com/index.php?/topic/47436-';
 		WoWsStatInfoLinkLoc['eu'] = 'http://forum.worldofwarships.eu/index.php?/topic/14650-';
 		
 		
@@ -950,8 +950,10 @@
 					for(var shipI = 0; shipI < MembersArray[0]['ships'].length; shipI++){
 						var ship_id = MembersArray[0]['ships'][shipI]['ship_id'];
 						var wr_cell = document.getElementById('wr-'+ship_id);
-						wr_cell.setAttribute('style', 'white-space: nowrap;');
-						wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
+						if(wr_cell != null){
+							wr_cell.setAttribute('style', 'white-space: nowrap;');
+							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
+						}
 					}
 				}
 			}
