@@ -964,7 +964,7 @@
 						var item = achieve_item[i];
 						var js_tooltip_show = item.getAttribute('js-tooltip-show');
 						var _counter = item.getElementsByClassName('_counter')[0];
-						if(_counter != null){
+						if(_counter != null && item.getElementsByClassName('_counter').length == 1){
 							_counter.setAttribute('style', 'left:70%; background-color:#F7882E;');
 							item.innerHTML += '<div class="_counter" style="left:30%; background-color:#AAAAAA;">'+MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle']+'</div>';
 						}
