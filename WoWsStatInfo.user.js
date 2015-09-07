@@ -956,6 +956,20 @@
 						}
 					}
 				}
+			
+				var achieves_block = tabContainer.getElementsByClassName('achieves-block')[0];
+				if(achieves_block != null){
+					var achieve_item = tabContainer.getElementsByClassName('achieve-item');
+					for(var i = 0; i < achieve_item.length; i++){
+						var item = achieve_item[i];
+						var js_tooltip_show = item.getAttribute('js-tooltip-show');
+						var _counter = item.getElementsByClassName('_counter')[0];
+						if(_counter != null){
+							_counter.setAttribute('style', 'left:70%; background-color:#F7882E;');
+							item.innerHTML += '<div class="_counter" style="left:30%; background-color:#AAAAAA;">'+MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle']+'</div>';
+						}
+					}
+				}
 			}
 		}
 		function GeneratorUserBar(){
@@ -1671,8 +1685,8 @@
 		
 		/* ===== UserScript function ===== */
 		function doneAccountInfo(url, response){
-			if(response.status && response.status == "error"){
-				errorAccountInfo();
+			if(response.status && response.status == 'error'){
+				errorAccountInfo(url);
 				return;
 			}
 			
@@ -1708,8 +1722,8 @@
 			}
 		}
 		function doneShipsStats(url, response){
-			if(response.status && response.status == "error"){
-				errorShipsStats();
+			if(response.status && response.status == 'error'){
+				errorShipsStats(url);
 				return;
 			}
 			
@@ -1720,12 +1734,8 @@
 			
 			MembersArray[index]['ships'] = response['data'][account_id];
 			
-			if(type == 'profile'){
-				viewMainPageProfile();
-			}else if(type == 'clan'){
-				loadMemberCount++;
-				viewMainPageClan();
-			}
+			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+			getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
 		}
 		function errorShipsStats(url){
 			var vars = getUrlVars(url);
@@ -1734,6 +1744,47 @@
 			var type = vars['type'];
 			
 			console.log('Error ShipsStats '+account_id);
+			
+			if(type == 'profile'){
+				onShowMessage(
+					localizationText['Box'],
+					localizationText['ErrorAPI'],
+					onCloseMessage,
+					localizationText['Ok'],
+					false
+				);
+			}else if(type == 'clan'){
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+				getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
+			}
+		}
+		function doneAchievements(url, response){
+			if(response.status && response.status == 'error'){
+				errorAchievements(url);
+				return;
+			}
+			
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			MembersArray[index]['achievements'] = response['data'][account_id];
+			
+			if(type == 'profile'){
+				viewMainPageProfile();
+			}else if(type == 'clan'){
+				loadMemberCount++;
+				viewMainPageClan();
+			}
+		}
+		function errorAchievements(url){
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			console.log('Error Achievements '+account_id);
 			
 			if(type == 'profile'){
 				onShowMessage(
@@ -1961,6 +2012,12 @@
 			}
 			
 			MembersArray[index]['info']['statistics']['pvp']['wr'] = calcWR(StatShips);
+			
+			for(var key in MembersArray[index]['achievements']['battle']){
+				var battle = MembersArray[index]['info']['statistics']['pvp']['battles'];
+				var achievements = MembersArray[index]['achievements']['battle'];
+				MembersArray[index]['achievements']['battle'][key+'_battle'] = (battle / achievements[key]).toFixed(0);
+			}
 			
 			return true;
 		}
