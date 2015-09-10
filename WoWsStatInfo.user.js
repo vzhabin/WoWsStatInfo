@@ -1014,30 +1014,90 @@
 			xmlhttp.send(jsonString);
 		}
 		var UserBarBGData = null;
+		var CountUserBar = [];
 		function doneUserBarBG(url, response){
+			UserBarBGData = response;
+			
+			CountUserBar['all'] = 0;
+			CountUserBar['clan'] = 0;
+			CountUserBar['noclassification'] = 0;
+			
+			CountUserBar['battleship'] = [];
+			CountUserBar['battleship']['count'] = 0;
+			CountUserBar['battleship']['japan'] = 0;
+			CountUserBar['battleship']['ussr'] = 0;
+			CountUserBar['battleship']['germany'] = 0;
+			CountUserBar['battleship']['uk'] = 0;
+			CountUserBar['battleship']['usa'] = 0;
+			
+			CountUserBar['aircarrier'] = [];
+			CountUserBar['aircarrier']['count'] = 0;
+			CountUserBar['aircarrier']['japan'] = 0;
+			CountUserBar['aircarrier']['ussr'] = 0;
+			CountUserBar['aircarrier']['germany'] = 0;
+			CountUserBar['aircarrier']['uk'] = 0;
+			CountUserBar['aircarrier']['usa'] = 0;
+			
+			CountUserBar['cruiser'] = [];
+			CountUserBar['cruiser']['count'] = 0;
+			CountUserBar['cruiser']['japan'] = 0;
+			CountUserBar['cruiser']['ussr'] = 0;
+			CountUserBar['cruiser']['germany'] = 0;
+			CountUserBar['cruiser']['uk'] = 0;
+			CountUserBar['cruiser']['usa'] = 0;
+			
+			CountUserBar['destroyer'] = [];
+			CountUserBar['destroyer']['count'] = 0;
+			CountUserBar['destroyer']['japan'] = 0;
+			CountUserBar['destroyer']['ussr'] = 0;
+			CountUserBar['destroyer']['germany'] = 0;
+			CountUserBar['destroyer']['uk'] = 0;
+			CountUserBar['destroyer']['usa'] = 0;
+			
+			for(var i = 0; i < UserBarBGData.length; i++){
+				var img = UserBarBGData[i].split('_');
+				if(img.length > 1){
+					for(var i_id = 1; i_id < img.length; i_id++){
+						if(MembersArray[0]['clan'] == null){break;}
+						if(img[i_id] == MembersArray[0]['clan']['clan_id']){
+							CountUserBar['clan']++;
+						}
+					}
+				}else{
+					CountUserBar['all']++;
+					var shipsBG = UserBarBGData[i].split('-');
+					if(shipsBG.length == 2){
+						CountUserBar['noclassification']++;
+					}else if(shipsBG.length == 3){
+						var type = shipsBG[1];
+						var nation = shipsBG[2];
+						CountUserBar[type]['count']++;
+						CountUserBar[type][nation]++;
+					}
+				}
+			}
+			
 			var html = '' +
 				'<div style="width: 488px; border-bottom: 1px solid rgba(0, 0, 0, 0.7); box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05); padding: 0 0 14px; margin: 0 0 14px;">' +
-					localizationText['userbar-filters'] + ' ' +
+					localizationText['userbar-filters']+' ' +
 					'<select id="userbar-bg-filtr-types" name="types" style="color: black;">' +
-						'<option value="all">' + localizationText['filters-all'] +'</option>' +
-						'<option value="clan">' + localizationText['filters-clan'] +'</option>' +
-						'<option value="noclassification">' + localizationText['filters-noclassification'] +'</option>' +
-						'<option value="battleship">' + localizationText['filters-battleship'] +'</option>' +
-						'<option value="aircarrier">' + localizationText['filters-aircarrier'] +'</option>' +
-						'<option value="cruiser">' + localizationText['filters-cruiser'] +'</option>' +
-						'<option value="destroyer">' + localizationText['filters-destroyer'] +'</option>' +
+						'<option value="all">'+localizationText['filters-all']+' ('+CountUserBar['all']+')</option>' +
+						'<option value="clan">'+localizationText['filters-clan']+' ('+CountUserBar['clan']+')</option>' +
+						'<option value="noclassification">'+localizationText['filters-noclassification']+' ('+CountUserBar['noclassification']+')</option>' +
+						'<option value="battleship">'+localizationText['filters-battleship']+' ('+CountUserBar['battleship']['count']+')</option>' +
+						'<option value="aircarrier">'+localizationText['filters-aircarrier']+' ('+CountUserBar['aircarrier']['count']+')</option>' +
+						'<option value="cruiser">'+localizationText['filters-cruiser']+' ('+CountUserBar['cruiser']['count']+')</option>' +
+						'<option value="destroyer">'+localizationText['filters-destroyer']+' ('+CountUserBar['destroyer']['count']+')</option>' +
 					'</select>' +
 					'<select id="userbar-bg-filtr-nations" name="nations" style="color: black; margin-left: 10px; display: none;">' +
-						'<option value="japan">' + localizationText['filters-japan'] +'</option>' +
-						'<option value="ussr">' + localizationText['filters-ussr'] +'</option>' +
-						'<option value="germany">' + localizationText['filters-germany'] +'</option>' +
-						'<option value="uk">' + localizationText['filters-uk'] +'</option>' +
-						'<option value="usa">' + localizationText['filters-usa'] +'</option>' +
+						'<option value="japan">'+localizationText['filters-japan']+'</option>' +
+						'<option value="ussr">'+localizationText['filters-ussr']+'</option>' +
+						'<option value="germany">'+localizationText['filters-germany']+'</option>' +
+						'<option value="uk">'+localizationText['filters-uk']+'</option>' +
+						'<option value="usa">'+localizationText['filters-usa']+'</option>' +
 					'</select>' +
 				'</div>' +
 			'';
-			
-			UserBarBGData = response;
 			
 			var check = true;
 			html += '<div id="userbar-bg-content" style="width: 488px; height: 429px; overflow-y: scroll;">';
@@ -1105,6 +1165,11 @@
 			
 			if(types != 'all' && types != 'clan' && types != 'noclassification'){
 				userbar_bg_filtr_nations.style.display = 'inline';
+				
+				for(i = 0; i < userbar_bg_filtr_nations.options.length; i++){
+					var nation = userbar_bg_filtr_nations.options[i].value
+					userbar_bg_filtr_nations.options[i].text = localizationText['filters-'+nation]+' ('+CountUserBar[types][nation]+')';
+				}
 			}else{
 				userbar_bg_filtr_nations.style.display = 'none';
 			}
