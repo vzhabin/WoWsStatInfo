@@ -1,6 +1,5 @@
 ﻿{
 	"manifest_version": 2,
-    "background_page" : "background.html", 
     "content_scripts" : [
         {
             "js":[ "WoWsStatInfo.user.js" ], 
@@ -34,5 +33,5 @@
     "description" : "Расширенная статистика и функционал на сайте World of Warships.",
     "name" : "WoWsStatInfo", 
     "permissions" : ["http://*/*", "unlimitedStorage"],
-    "version" : "0.4.1.16"
+    "version" : "0.4.1.17"
 }

@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.1.16
+// @version 0.4.1.17
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.4.1.16';
+		var VersionWoWsStatInfo = '0.4.1.17';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -1013,16 +1013,37 @@
 			};
 			xmlhttp.send(jsonString);
 		}
+		var UserBarBGData = null;
 		function doneUserBarBG(url, response){
-			var html = '';
+			var html = '' +
+				'<div style="width: 488px; border-bottom: 1px solid rgba(0, 0, 0, 0.7); box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05); padding: 0 0 14px; margin: 0 0 14px;">' +
+					localizationText['userbar-filters'] + ' ' +
+					'<select id="userbar-bg-filtr-types" name="types" style="color: black;">' +
+						'<option value="all">' + localizationText['filters-all'] +'</option>' +
+						'<option value="clan">' + localizationText['filters-clan'] +'</option>' +
+						'<option value="noclassification">' + localizationText['filters-noclassification'] +'</option>' +
+						'<option value="battleship">' + localizationText['filters-battleship'] +'</option>' +
+						'<option value="aircarrier">' + localizationText['filters-aircarrier'] +'</option>' +
+						'<option value="cruiser">' + localizationText['filters-cruiser'] +'</option>' +
+						'<option value="destroyer">' + localizationText['filters-destroyer'] +'</option>' +
+					'</select>' +
+					'<select id="userbar-bg-filtr-nations" name="nations" style="color: black; margin-left: 10px; display: none;">' +
+						'<option value="japan">' + localizationText['filters-japan'] +'</option>' +
+						'<option value="ussr">' + localizationText['filters-ussr'] +'</option>' +
+						'<option value="germany">' + localizationText['filters-germany'] +'</option>' +
+						'<option value="uk">' + localizationText['filters-uk'] +'</option>' +
+						'<option value="usa">' + localizationText['filters-usa'] +'</option>' +
+					'</select>' +
+				'</div>' +
+			'';
 			
-			var data = response;
+			UserBarBGData = response;
 			
 			var check = true;
-			html += '<div style="width: 488px; height: 429px; overflow-y: scroll;">';
-			for(var i = 0; i < data.length; i++){				
+			html += '<div id="userbar-bg-content" style="width: 488px; height: 429px; overflow-y: scroll;">';
+			for(var i = 0; i < UserBarBGData.length; i++){				
 				var imgbgview = false;
-				var img = data[i].split('_');
+				var img = UserBarBGData[i].split('_');
 				if(img.length > 1){
 					for(var i_id = 1; i_id < img.length; i_id++){
 						if(MembersArray[0]['clan'] == null){break;}
@@ -1036,8 +1057,8 @@
 				
 				if(imgbgview){
 					var checked = ''; if(check){checked = 'checked="checked"'; check = false;}
-					html += '<input type="radio" name="userbar-bg" value="'+data[i]+'" '+checked+'> '+data[i]+'<br />';
-					html += '<img src="'+WoWsStatInfoHref+'bg/'+data[i]+'.png" title="'+data[i]+'"/><br /><br />';
+					html += '<input type="radio" name="userbar-bg" value="'+UserBarBGData[i]+'" '+checked+'> '+UserBarBGData[i]+'<br />';
+					html += '<img src="'+WoWsStatInfoHref+'bg/'+UserBarBGData[i]+'.png" title="'+UserBarBGData[i]+'"/><br /><br />';
 				}
 			}
 			html += '</div>';
@@ -1048,7 +1069,14 @@
 				function(){GeneratorUserBar(); onCloseMessage();},
 				localizationText['Ok'],
 				true
-			);			
+			);
+
+			jQ('#userbar-bg-filtr-types').change(function(){
+				updateUserBarBG();
+			});			
+			jQ('#userbar-bg-filtr-nations').change(function(){
+				updateUserBarBG();
+			});
 		}
 		function errorUserBarBG(url){
 			var html = '' +
@@ -1065,6 +1093,74 @@
 				localizationText['Ok'],
 				true
 			);
+		}
+		function updateUserBarBG(){
+			var html = '';
+			
+			var userbar_bg_filtr_types = document.getElementById("userbar-bg-filtr-types");
+			var types = userbar_bg_filtr_types.options[userbar_bg_filtr_types.selectedIndex].value;
+			
+			var userbar_bg_filtr_nations = document.getElementById("userbar-bg-filtr-nations");
+			var nations = userbar_bg_filtr_nations.options[userbar_bg_filtr_nations.selectedIndex].value;
+			
+			if(types != 'all' && types != 'clan' && types != 'noclassification'){
+				userbar_bg_filtr_nations.style.display = 'inline';
+			}else{
+				userbar_bg_filtr_nations.style.display = 'none';
+			}
+			
+			var check = true;
+			for(var i = 0; i < UserBarBGData.length; i++){				
+				var imgbgview = false;
+				var img = UserBarBGData[i].split('_');
+				if(img.length > 1 && types == 'clan'){
+					for(var i_id = 1; i_id < img.length; i_id++){
+						if(MembersArray[0]['clan'] == null){break;}
+						if(img[i_id] == MembersArray[0]['clan']['clan_id']){
+							imgbgview = true;
+						}
+					}
+				}else{
+					if(types == 'all'){
+						if(img.length > 1 && MembersArray[0]['clan'] != null){
+							for(var i_id = 1; i_id < img.length; i_id++){
+								if(MembersArray[0]['clan'] == null){break;}
+								if(img[i_id] == MembersArray[0]['clan']['clan_id']){
+									imgbgview = true;
+								}
+							}
+						}else{
+							imgbgview = true;
+						}
+					}else if(types == 'noclassification'){	
+						var shipsBG = UserBarBGData[i].split('-');
+						if(shipsBG.length == 2){
+							var noclassification = shipsBG[1];
+							if(types == noclassification){
+								imgbgview = true;
+							}
+						}
+					}else if(types != 'clan'){
+						var shipsBG = UserBarBGData[i].split('-');
+						if(shipsBG.length == 3){
+							var type = shipsBG[1];
+							var nation = shipsBG[2];
+							if(types == type && nations == nation){
+								imgbgview = true;
+							}
+						}
+					}
+				}
+				
+				if(imgbgview){
+					var checked = ''; if(check){checked = 'checked="checked"'; check = false;}
+					html += '<input type="radio" name="userbar-bg" value="'+UserBarBGData[i]+'" '+checked+'> '+UserBarBGData[i]+'<br />';
+					html += '<img src="'+WoWsStatInfoHref+'bg/'+UserBarBGData[i]+'.png" title="'+UserBarBGData[i]+'"/><br /><br />';
+				}
+			}
+			
+			var userbar_bg_content = document.getElementById("userbar-bg-content");
+			userbar_bg_content.innerHTML = html;
 		}
 		
 		/* ===== ClanPage function ===== */
@@ -2470,6 +2566,19 @@
 				
 				localizationText['ru']['generator-userbar'] = 'Создать UserBar';
 				localizationText['ru']['userbar-bg'] = 'Выберите фон:';
+				localizationText['ru']['userbar-filters'] = 'Фильтр:';
+				localizationText['ru']['filters-all'] = 'Все';
+				localizationText['ru']['filters-clan'] = 'Клан';
+				localizationText['ru']['filters-noclassification'] = 'Нет классификации';
+				localizationText['ru']['filters-battleship'] = 'Линкоры';
+				localizationText['ru']['filters-aircarrier'] = 'Авианосцы';
+				localizationText['ru']['filters-cruiser'] = 'Крейсеры';
+				localizationText['ru']['filters-destroyer'] = 'Эсминцы';
+				localizationText['ru']['filters-japan'] = 'Япония';
+				localizationText['ru']['filters-ussr'] = 'CCCP';
+				localizationText['ru']['filters-germany'] = 'Германия';
+				localizationText['ru']['filters-uk'] = 'Великобритания';
+				localizationText['ru']['filters-usa'] = 'США';
 				
 				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
@@ -2584,6 +2693,19 @@
 				
 				localizationText['en']['generator-userbar'] = 'Create UserBar';
 				localizationText['en']['userbar-bg'] = 'Choose a background:';
+				localizationText['en']['userbar-filters'] = 'Filters:';
+				localizationText['en']['filters-all'] = 'All';
+				localizationText['en']['filters-clan'] = 'Clan';
+				localizationText['en']['filters-noclassification'] = 'No Classification';
+				localizationText['en']['filters-battleship'] = 'Battleships';
+				localizationText['en']['filters-aircarrier'] = 'Aircraft carriers';
+				localizationText['en']['filters-cruiser'] = 'Cruisers';
+				localizationText['en']['filters-destroyer'] = 'Destroyers';
+				localizationText['en']['filters-japan'] = 'Japan';
+				localizationText['en']['filters-ussr'] = 'U.S.S.R.';
+				localizationText['en']['filters-germany'] = 'Germany';
+				localizationText['en']['filters-uk'] = 'U.K.';
+				localizationText['en']['filters-usa'] = 'U.S.A.';
 				
 				localizationText['en']['additional-results'] = 'Additional Results';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
