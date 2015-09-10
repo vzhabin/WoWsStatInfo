@@ -1061,6 +1061,7 @@
 						if(MembersArray[0]['clan'] == null){break;}
 						if(img[i_id] == MembersArray[0]['clan']['clan_id']){
 							CountUserBar['clan']++;
+							CountUserBar['all']++;
 						}
 					}
 				}else{
