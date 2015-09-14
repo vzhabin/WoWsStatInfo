@@ -2806,7 +2806,7 @@
 				localizationText['en']['additional-results'] = 'Additional Results';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
 				localizationText['en']['battles-level-ships'] = 'Average tier of warships used by player';
-				localizationText['en']['battles-days'] = 'Battles in days';
+				localizationText['en']['battles-days'] = 'Battles per day';
 				localizationText['en']['wr'] = 'WR';
 				
 				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
