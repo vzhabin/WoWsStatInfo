@@ -771,6 +771,14 @@
 											'</tr>' +
 											'<tr>' +
 												'<td class="_name">' +
+													'<span>'+localizationText['battles-level-ships']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+valueFormat((MembersArray[0]['info']['battles_level']).toFixed(1))+'</span>'+
+												'</td>' +
+											'</tr>' +
+											'<tr>' +
+												'<td class="_name">' +
 													'<span>'+localizationText['wr']+'</span>' +
 												'</td>' +
 												'<td class="_value">' +
@@ -1967,6 +1975,7 @@
 				MembersArray[index]['info']['last_battle_time'] = 0;
 				MembersArray[index]['info']['logout_at'] = 0;
 				MembersArray[index]['info']['ships_x_level'] = 0;
+				MembersArray[index]['info']['battles_level'] = 0;
 				
 				MembersArray[index]['info']['statistics'] = [];
 				MembersArray[index]['info']['statistics']['pvp'] = [];
@@ -2037,6 +2046,7 @@
 			}
 			
 			var ships_x_level = 0;
+			var battles_level = 0;
 			var StatShips = [];
 			StatShips['damage_dealt'] = 0;
 			StatShips['frags'] = 0;
@@ -2106,6 +2116,7 @@
 					
 					if(Encyclopedia != null && type == 'pvp'){
 						var ship_type = Encyclopedia[ship_id]['type'];
+						var ship_tier = Encyclopedia[ship_id]['tier'];
 						
 						if(ExpShips[ship_id] !== undefined){
 							var battles = Statistics['battles'];
@@ -2153,6 +2164,9 @@
 						}else{
 							MembersArray[index]['ships'][shipI][type]['wr'] = 0;
 						}
+						
+
+						battles_level += ship_tier * Statistics['battles'] / MembersArray[index]['info']['statistics']['pvp']['battles'];
 					}
 				}
 				
@@ -2164,6 +2178,7 @@
 			}
 			
 			MembersArray[index]['info']['ships_x_level'] = ships_x_level;
+			MembersArray[index]['info']['battles_level'] = battles_level;
 			
 			for(var t = 0; t < typeShip.length; t++){
 				var type = typeShip[t];
@@ -2646,6 +2661,7 @@
 				
 				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
+				localizationText['ru']['battles-level-ships'] = 'Средний уровень кораблей игрока в боях';
 				localizationText['ru']['wr'] = 'WR';
 				
 				localizationText['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
@@ -2773,6 +2789,7 @@
 				
 				localizationText['en']['additional-results'] = 'Additional Results';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
+				localizationText['en']['battles-level-ships'] = 'Average tier of warships used by player';
 				localizationText['en']['wr'] = 'WR';
 				
 				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
