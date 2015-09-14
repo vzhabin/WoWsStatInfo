@@ -763,6 +763,14 @@
 										'<tbody>' +
 											'<tr>' +
 												'<td class="_name">' +
+													'<span>'+localizationText['battles-days']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+valueFormat((MembersArray[0]['info']['battles_days']).toFixed(0))+'</span>'+
+												'</td>' +
+											'</tr>' +
+											'<tr>' +
+												'<td class="_name">' +
 													'<span>'+localizationText['number-ships-x']+'</span>' +
 												'</td>' +
 												'<td class="_value">' +
@@ -2009,6 +2017,13 @@
 				return false;
 			}
 			
+			
+			var timestamp = Math.round(+new Date()/1000);
+			var created_at = MembersArray[index]['info']['created_at'];
+			var days = (timestamp - created_at)/60/60/24;
+			var battles_days = MembersArray[index]['info']['statistics']['pvp']['battles'] / days;
+			MembersArray[index]['info']['battles_days'] = battles_days;
+			
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
 				var Statistics = MembersArray[index]['info']['statistics'][type];
@@ -2662,6 +2677,7 @@
 				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
 				localizationText['ru']['battles-level-ships'] = 'Средний уровень кораблей игрока в боях';
+				localizationText['ru']['battles-days'] = 'Количество боев в день';
 				localizationText['ru']['wr'] = 'WR';
 				
 				localizationText['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
@@ -2790,6 +2806,7 @@
 				localizationText['en']['additional-results'] = 'Additional Results';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
 				localizationText['en']['battles-level-ships'] = 'Average tier of warships used by player';
+				localizationText['en']['battles-days'] = 'Battles in days';
 				localizationText['en']['wr'] = 'WR';
 				
 				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
