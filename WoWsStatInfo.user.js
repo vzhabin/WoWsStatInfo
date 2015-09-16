@@ -1927,8 +1927,7 @@
 					false
 				);
 			}else if(type == 'clan'){
-				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-				getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
+				getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
 			}
 		}
 		function doneAchievements(url, response){
