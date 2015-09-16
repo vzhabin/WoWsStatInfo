@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.4.1.17
+// @version 0.5.0.17
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.4.1.17';
+		var VersionWoWsStatInfo = '0.5.0.17';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -414,7 +414,7 @@
 		}
 		
 		/* ===== Check load page ===== */
-		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length == 9 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
+		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
 			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
@@ -497,10 +497,12 @@
 			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
 			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
-			jQ('.account-pvp-pve').click(function(){
+			jQ('._item').click(function(){
+				console.log('_item');
 				setTimeout(function(){viewMainPageProfile();}, 1000);
 			});
 			jQ('.account-tabs').click(function(){
+				console.log('account-tabs');
 				setTimeout(function(){viewMainPageProfile();}, 1000);
 			});
 		}
