@@ -408,11 +408,6 @@
 			return navigatorInfo;
 		}
 		
-		// if(lang == 'zh-cn' || lang == 'zh-tw' || lang == 'tr' || lang == 'vi'){
-			// console.log('No support "'+lang+'" language WoWs API');
-			// return;
-		// }
-		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
