@@ -315,7 +315,7 @@
 			
 			return true;
 		}
-			
+		
 		function getBrowser(){
 			var nVer = navigator.appVersion;
 			var nAgt = navigator.userAgent;
@@ -408,10 +408,10 @@
 			return navigatorInfo;
 		}
 		
-		if(lang == 'zh-cn' || lang == 'zh-tw' || lang == 'tr' || lang == 'vi'){
-			console.log('No support "'+lang+'" language WoWs API');
-			return;
-		}
+		// if(lang == 'zh-cn' || lang == 'zh-tw' || lang == 'tr' || lang == 'vi'){
+			// console.log('No support "'+lang+'" language WoWs API');
+			// return;
+		// }
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
@@ -492,17 +492,15 @@
 			var account_href = window.location.href.split('/')[6].split('-');
 			var account_id = account_href[0];
 			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
 			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
 			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
-			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
+			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
 			jQ('._item').click(function(){
-				console.log('_item');
 				setTimeout(function(){viewMainPageProfile();}, 1000);
 			});
 			jQ('.account-tabs').click(function(){
-				console.log('account-tabs');
 				setTimeout(function(){viewMainPageProfile();}, 1000);
 			});
 		}
@@ -523,7 +521,7 @@
 					'</li>' +
 				'';
 				
-				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
 				getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
 			}
 		}
@@ -540,7 +538,7 @@
 					if(ForumTopicMembers['member_'+account_id] === undefined){
 						ForumTopicMembers['member_'+account_id] = account_id;
 						
-						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
+						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
 						getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneForumClanInfo, errorForumClanInfo);
 					}
 					basic_info[i].innerHTML += '' +
@@ -1684,7 +1682,7 @@
 					countMembers = MembersArray.length;
 					loadOnePercent = 100 / countMembers;
 					for(var i = 0; i < MembersArray.length; i++){
-						getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&language='+language+'&account_id='+MembersArray[i]['account_id']+'&index='+i+'&type=clan', doneAccountInfo, errorAccountInfo);
+						getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&account_id='+MembersArray[i]['account_id']+'&index='+i+'&type=clan', doneAccountInfo, errorAccountInfo);
 					}
 				}else{
 					jQ('.timeframe').hide();
@@ -1878,7 +1876,7 @@
 			MembersArray[index]['info'] = response['data'][account_id];
 			
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
 		}
 		function errorAccountInfo(url){
 			var vars = getUrlVars(url);
@@ -1898,7 +1896,7 @@
 				);
 			}else if(type == 'clan'){
 				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-				getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+				getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
 			}
 		}
 		function doneShipsStats(url, response){
@@ -1915,7 +1913,7 @@
 			MembersArray[index]['ships'] = response['data'][account_id];
 			
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-			getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
+			getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
 		}
 		function errorShipsStats(url){
 			var vars = getUrlVars(url);
