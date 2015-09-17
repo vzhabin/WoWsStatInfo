@@ -185,6 +185,7 @@
 				'div.hide-block{display: none;}' +
 				'div.wowsstatinfo-stat{text-align: center; margin-top: 10px; color: white; font-size: 16px;}' +
 				'span.name-stat{color: #ffcc33;}' +
+				'table.account-table td{white-space: nowrap;}' +
 				'' +
 			'';
 			var StyleWoWsStatInfoAdd = document.createElement("style");
