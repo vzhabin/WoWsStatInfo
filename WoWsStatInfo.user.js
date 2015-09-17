@@ -736,7 +736,7 @@
 				userbar += '' +
 					'<br />'+
 					'<img id="userbar-img" src="'+WoWsStatInfoHref+'bg/userbar.png" />'+
-					'<div id="userbar-link" style="margin: 5px; font-size: 14px;">[img]'+WoWsStatInfoHref+'bg/userbar.png[/img]</div>'
+					'<div id="userbar-link" style="margin: 5px; font-size: 14px;">[url='+WoWsStatInfoHref+'][img]'+WoWsStatInfoHref+'bg/userbar.png[/img][/url]</div>'
 				'';
 				
 				var main_page_script_block = document.getElementById('main-page-script-block');
@@ -809,7 +809,7 @@
 							userbar_img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['info']['nickname']+'.png'+'?'+Math.floor(Math.random()*100000001);
 							
 							var userbar_link = document.getElementById('userbar-link');
-							userbar_link.textContent = '[img]'+WoWsStatInfoHref+'userbar/'+MembersArray[0]['info']['nickname']+'.png[/img]';
+							userbar_link.textContent = '[url='+WoWsStatInfoHref+'?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'][img]'+WoWsStatInfoHref+'userbar/'+MembersArray[0]['info']['nickname']+'.png[/img][/url]';
 						}
 					}
 					img.src = WoWsStatInfoHref+'userbar/'+MembersArray[0]['info']['nickname']+'.png'+'?'+Math.floor(Math.random()*100000001);
@@ -1018,7 +1018,7 @@
 						userbar_img.src = xmlhttp.responseText+'?'+Math.floor(Math.random()*100000001);
 						
 						var userbar_link = document.getElementById('userbar-link');
-						userbar_link.textContent = '[img]'+xmlhttp.responseText+'[/img]';
+						userbar_link.textContent = '[url='+WoWsStatInfoHref+'?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'][img]'+xmlhttp.responseText+'[/img][/url]';
 					}
 				}
 			};
