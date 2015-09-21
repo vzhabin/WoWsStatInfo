@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.0.17
+// @version 0.5.0.18
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.0.17';
+		var VersionWoWsStatInfo = '0.5.0.18';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -159,7 +159,7 @@
 		var MembersArray = [];
 		var Encyclopedia = null;
 		
-		var typeStat = ["pvp", "pve"];
+		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div2", "pvp_div3"];
 		var typeShip = ["Cruiser", "AirCarrier", "Battleship", "Destroyer"];
 		
 		var color = new Array();
@@ -488,10 +488,10 @@
 			var account_href = window.location.href.split('/')[6].split('-');
 			var account_id = account_href[0];
 			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
+			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
 			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
 			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
-			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
+			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve,statistics.pvp_solo,statistics.pvp_div2,statistics.pvp_div3&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
 			jQ('._item').click(function(){
 				setTimeout(function(){viewMainPageProfile();}, 1000);
@@ -517,7 +517,7 @@
 					'</li>' +
 				'';
 				
-				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
 				getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
 			}
 		}
@@ -534,7 +534,7 @@
 					if(ForumTopicMembers['member_'+account_id] === undefined){
 						ForumTopicMembers['member_'+account_id] = account_id;
 						
-						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja'){language = 'en';}
+						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
 						getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneForumClanInfo, errorForumClanInfo);
 					}
 					basic_info[i].innerHTML += '' +
@@ -728,7 +728,254 @@
 			if(tabContainer != null){
 				var cm_parent_link_cutted_text = document.getElementsByClassName('cm-parent-link_cutted-text')[0];
 				var login_name = null; if(cm_parent_link_cutted_text != null){login_name = cm_parent_link_cutted_text.textContent;}
-
+				
+				var account_tab_division = tabContainer.getElementsByClassName('account-tab-division')[0];
+				if(account_tab_division == null){
+					var account_tab_ships = tabContainer.getElementsByClassName('account-tab-ships')[0];
+					account_tab_ships.outerHTML += '' +
+						'<div class="account-tab-division tab-container" js-tab-cont-id="account-tab-division-pvp">' +
+							'<div class="account-main-stats">' +
+								'<div class="_bg-for-average-exp"></div>' +
+								'<div class="account-main-stats-table">' +
+									'<div class="_icons">' +
+										'<div class="_battles">' +
+											'<div></div>' +
+										'</div>' +
+										'<div class="_victories">' +
+											'<div></div>' +
+										'</div>' +
+										'<div class="_average-exp">' +
+											'<div></div>' +
+										'</div>' +
+										'<div class="_kd">' +
+											'<div></div>' +
+										'</div>' +
+										'<div class="_other">' +
+											'<div></div>' +
+										'</div>' +
+									'</div>' +
+									'<div class="_names">' +
+										'<div>'+localizationText['title_battles']+'</div>' +
+										'<div>'+localizationText['title_wins_percents']+'</div>' +
+										'<div class="_average-exp">'+localizationText['title_avg_xp']+'</div>' +
+										'<div>'+localizationText['title_avg_damage_dealt']+'</div>' +
+										'<div>'+localizationText['title_kill_dead']+'</div>' +
+									'</div>' +
+									'<div class="_values">' +
+										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['battles']).toFixed(0))+'</div>' +
+										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['wins_percents']).toFixed(2))+'%</div>' +
+										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_xp']).toFixed(0))+'</div>' +
+										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_damage_dealt']).toFixed(0))+'</div>' +
+										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['kill_dead']).toFixed(2))+'</div>' +
+									'</div>' +
+								'</div>' +
+							'</div>' +
+							'<hr />' +
+							'<div class="account-battle-stats">' +
+								'<div class="row">' +
+									'<div class="col-xs-12 col-sm-4">' +
+										'<table class="account-table _left">' +
+											'<thead>' +
+												'<tr>' +
+													'<th colspan="2">' +
+														'<h3 class="account-title">'+localizationText['stat-table-1']+'</h3>' +
+													'</th>' +
+												'</tr>' +
+											'</thead>' +
+											'<tbody>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['battles']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['battles']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['wins']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['wins']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['survived_battles']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['survived_battles']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<!--' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>Меткость</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>31%</span>' +
+													'</td>' +
+												'</tr>' +
+												'-->' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['damage_dealt']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['damage_dealt']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['frags']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['frags']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['planes_killed']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['planes_killed']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['capture_points']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['capture_points']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['dropped_capture_points']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['dropped_capture_points']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+											'</tbody>' +
+										'</table>' +
+									'</div>' +
+									'<div class="col-xs-12 col-sm-4">' +
+										'<table class="account-table _center">' +
+											'<thead>' +
+											'<tr>' +
+												'<th colspan="2">' +
+													'<h3 class="account-title">'+localizationText['stat-table-2']+'</h3>' +
+												'</th>' +
+											'</tr>' +
+											'</thead>' +
+											'<tbody>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_xp']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_xp']).toFixed(2))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_damage_dealt']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_damage_dealt']).toFixed(2))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_frags']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_frags']).toFixed(2))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_planes_killed']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_planes_killed']).toFixed(2))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_capture_points']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_capture_points']).toFixed(2))+'</span>' +
+													'</td>' +
+												'</tr>' +
+												'<tr>' +
+													'<td class="_name">' +
+														'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
+													'</td>' +
+													'<td class="_value">' +
+														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_dropped_capture_points']).toFixed(0))+'</span>' +
+													'</td>' +
+												'</tr>' +
+											'</tbody>' +
+										'</table>' +
+									'</div>' +
+									'<div class="col-xs-12 col-sm-4">' +
+										'<table class="account-table _right">' +
+											'<thead>' +
+											'<tr>' +
+												'<th colspan="2">' +
+													'<h3 class="account-title">'+localizationText['stat-table-3']+'</h3>' +
+												'</th>' +
+											'</tr>' +
+											'</thead>' +
+											'<tbody>' +
+												'<tr>' +
+												'<td class="_name">' +
+													'<span>'+localizationText['max_damage_dealt']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_damage_dealt']).toFixed(0))+'</span>' +
+												'</td>' +
+											'</tr>' +
+											'<tr>' +
+												'<td class="_name">' +
+													'<span>'+localizationText['max_frags_battle']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_frags_battle']).toFixed(0))+'</span>' +
+												'</td>' +
+											'</tr>' +
+											'<tr>' +
+												'<td class="_name">' +
+													'<span>'+localizationText['max_planes_killed']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_planes_killed']).toFixed(0))+'</span>' +
+												'</td>' +
+											'</tr>' +
+											'</tbody>' +
+										'</table>' +
+									'</div>' +
+								'</div>' +
+							'</div>' +
+						'</div>' +
+					'';
+					
+					jQ(tabContainer).find('nav.account-tabs ul').append(''+
+						'<li class="account-tab" js-tab="" js-tab-show="account-tab-division-pvp">'+
+							'<div class="_title">'+localizationText['division']+'</div>'+
+							'<div class="_active-feature">'+
+								'<div class="_line"></div>'+
+								'<div class="_shadow"></div>'+
+							'</div>'+
+						'</li>'+
+					'');
+					jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
+						'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-division-pvp">'+localizationText['division']+'</li>' +
+					'');
+				}
 				
 				var userbar = '';
 				if(login_name == MembersArray[0]['info']['nickname']){
@@ -982,6 +1229,7 @@
 						}
 					}
 				}
+				
 			}
 		}
 		function GeneratorUserBar(){
@@ -1672,13 +1920,11 @@
 						getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
 					}
 					
-					var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-					
 					loadTimeStart = new Date().getTime();
 					countMembers = MembersArray.length;
 					loadOnePercent = 100 / countMembers;
 					for(var i = 0; i < MembersArray.length; i++){
-						getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve&account_id='+MembersArray[i]['account_id']+'&index='+i+'&type=clan', doneAccountInfo, errorAccountInfo);
+						getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve,statistics.pvp_solo,statistics.pvp_div2,statistics.pvp_div3&account_id='+MembersArray[i]['account_id']+'&index='+i+'&type=clan', doneAccountInfo, errorAccountInfo);
 					}
 				}else{
 					jQ('.timeframe').hide();
@@ -1871,8 +2117,7 @@
 			
 			MembersArray[index]['info'] = response['data'][account_id];
 			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+			getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve,pvp_solo,pvp_div2,pvp_div3&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
 		}
 		function errorAccountInfo(url){
 			var vars = getUrlVars(url);
@@ -1891,8 +2136,7 @@
 					false
 				);
 			}else if(type == 'clan'){
-				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
-				getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
+				getJson(WOWSAPI+'ships/stats/?application_id='+application_id+'&extra=pve,pvp_solo,pvp_div2,pvp_div3&account_id='+account_id+'&index='+index+'&type='+type, doneShipsStats, errorShipsStats);
 			}
 		}
 		function doneShipsStats(url, response){
@@ -1908,7 +2152,6 @@
 			
 			MembersArray[index]['ships'] = response['data'][account_id];
 			
-			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}
 			getJson(WOWSAPI+'account/achievements/?application_id='+application_id+'&account_id='+account_id+'&index='+index+'&type='+type, doneAchievements, errorAchievements);
 		}
 		function errorShipsStats(url){
@@ -2053,6 +2296,88 @@
 					MembersArray[index]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
 				}
 				if(isNaN(MembersArray[index]['info']['statistics'][type]['kill_dead'])){MembersArray[index]['info']['statistics'][type]['kill_dead'] = 0;}
+			}
+			
+			if(MembersArray[index]['info']['statistics']['pvp_div'] == undefined){
+				MembersArray[index]['info']['statistics']['pvp_div'] = [];
+				
+				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_xp']){
+					MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp_ship_id'];
+				}else{
+					MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp_ship_id'];
+				}
+				
+				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle']){
+					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_ship_id'];
+				}else{
+					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_ship_id'];
+				}
+				
+				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed']){
+					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed_ship_id'];
+				}else{
+					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed_ship_id'];
+				}
+				
+				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt']){
+					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt_ship_id'];
+				}else{
+					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt'];
+					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt_ship_id'];
+				}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['xp'] + MembersArray[index]['info']['statistics']['pvp_div3']['xp'];
+				MembersArray[index]['info']['statistics']['pvp_div']['survived_battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_battles'];
+				MembersArray[index]['info']['statistics']['pvp_div']['dropped_capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['dropped_capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['dropped_capture_points'];
+				MembersArray[index]['info']['statistics']['pvp_div']['draws'] = MembersArray[index]['info']['statistics']['pvp_div2']['draws'] + MembersArray[index]['info']['statistics']['pvp_div3']['draws'];
+				MembersArray[index]['info']['statistics']['pvp_div']['wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['wins'];
+				MembersArray[index]['info']['statistics']['pvp_div']['damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['damage_dealt'] + MembersArray[index]['info']['statistics']['pvp_div3']['damage_dealt'];
+				MembersArray[index]['info']['statistics']['pvp_div']['losses'] = MembersArray[index]['info']['statistics']['pvp_div2']['losses'] + MembersArray[index]['info']['statistics']['pvp_div3']['losses'];
+				MembersArray[index]['info']['statistics']['pvp_div']['frags'] = MembersArray[index]['info']['statistics']['pvp_div2']['frags'] + MembersArray[index]['info']['statistics']['pvp_div3']['frags'];
+				MembersArray[index]['info']['statistics']['pvp_div']['capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['capture_points'];
+				MembersArray[index]['info']['statistics']['pvp_div']['survived_wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_wins'];
+				MembersArray[index]['info']['statistics']['pvp_div']['battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['battles'];
+				MembersArray[index]['info']['statistics']['pvp_div']['planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['planes_killed'] + MembersArray[index]['info']['statistics']['pvp_div3']['planes_killed'];
+				
+				var Statistics = MembersArray[index]['info']['statistics']['pvp_div'];
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'] = Statistics['xp'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'] = Statistics['frags'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'])){MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'] = 0;}
+				
+				MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'])){MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'] = 0;}
+				
+				if(Statistics['battles'] == Statistics['survived_battles']){
+					MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = Statistics['frags']/Statistics['battles'];
+				}else{
+					MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
+				}
+				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'])){MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = 0;}
 			}
 			
 			var ships_x_level = 0;
@@ -2669,6 +2994,36 @@
 				localizationText['ru']['filters-uk'] = 'Великобритания';
 				localizationText['ru']['filters-usa'] = 'США';
 				
+				localizationText['ru']['division'] = 'Отряд';
+				localizationText['ru']['title_battles'] = 'Количество боёв';
+				localizationText['ru']['title_wins_percents'] = 'Процент побед';
+				localizationText['ru']['title_avg_xp'] = 'Средний опыт за бой';
+				localizationText['ru']['title_avg_damage_dealt'] = 'Средний нанесённый урон за бой';
+				localizationText['ru']['title_kill_dead'] = 'Отношение уничтожил / убит';
+
+				localizationText['ru']['stat-table-1'] = 'Общие результаты';
+				localizationText['ru']['battles'] = 'Бои';
+				localizationText['ru']['wins'] = 'Победы';
+				localizationText['ru']['survived_battles'] = 'Выжил в боях';
+				localizationText['ru']['damage_dealt'] = 'Нанесённый урон';
+				localizationText['ru']['frags'] = 'Уничтожено кораблей';
+				localizationText['ru']['planes_killed'] = 'Уничтожено самолётов';
+				localizationText['ru']['capture_points'] = 'Захват базы';
+				localizationText['ru']['dropped_capture_points'] = 'Защита базы';
+
+				localizationText['ru']['stat-table-2'] = 'Средние показатели за бой';
+				localizationText['ru']['avg_xp'] = 'Опыт';
+				localizationText['ru']['avg_damage_dealt'] = 'Нанесённый урон';
+				localizationText['ru']['avg_frags'] = 'Уничтожено кораблей';
+				localizationText['ru']['avg_planes_killed'] = 'Уничтожено самолётов';
+				localizationText['ru']['avg_capture_points'] = 'Захват базы';
+				localizationText['ru']['avg_dropped_capture_points'] = 'Защита базы';
+
+				localizationText['ru']['stat-table-3'] = 'Рекордные показатели';
+				localizationText['ru']['max_damage_dealt'] = 'Нанесённый урон';
+				localizationText['ru']['max_frags_battle'] = 'Уничтожено кораблей';
+				localizationText['ru']['max_planes_killed'] = 'Уничтожено самолётов';
+				
 				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
 				localizationText['ru']['battles-level-ships'] = 'Средний уровень кораблей игрока в боях';
@@ -2755,6 +3110,8 @@
 			{/* English */
 				localizationText['en'] = [];
 				
+				localizationText['en'] = jQ.extend([], localizationText['ru']);
+				
 				localizationText['en']['num-separator'] = ',';
 				localizationText['en']['num-fractional'] = '.';
 
@@ -2797,6 +3154,36 @@
 				localizationText['en']['filters-germany'] = 'Germany';
 				localizationText['en']['filters-uk'] = 'U.K.';
 				localizationText['en']['filters-usa'] = 'U.S.A.';
+				
+				localizationText['en']['division'] = 'Division';
+				localizationText['en']['title_battles'] = 'Battles Fought';
+				localizationText['en']['title_wins_percents'] = 'Victories / Battles';
+				localizationText['en']['title_avg_xp'] = 'AVERAGE EXPERIENCE PER BATTLE';
+				localizationText['en']['title_avg_damage_dealt'] = 'Average Damage Caused per Battle';
+				localizationText['en']['title_kill_dead'] = 'Kill / Death Ratio';
+
+				localizationText['en']['stat-table-1'] = 'Overall Results';
+				localizationText['en']['battles'] = 'Battles';
+				localizationText['en']['wins'] = 'Victories';
+				localizationText['en']['survived_battles'] = 'Battles survived';
+				localizationText['en']['damage_dealt'] = 'Damage caused';
+				localizationText['en']['frags'] = 'Warships destroyed';
+				localizationText['en']['planes_killed'] = 'Aircraft destroyed';
+				localizationText['en']['capture_points'] = 'Base capture';
+				localizationText['en']['dropped_capture_points'] = 'Base defense';
+
+				localizationText['en']['stat-table-2'] = 'Average Score per Battle';
+				localizationText['en']['avg_xp'] = 'Experience';
+				localizationText['en']['avg_damage_dealt'] = 'Damage caused';
+				localizationText['en']['avg_frags'] = 'Warships destroyed';
+				localizationText['en']['avg_planes_killed'] = 'Aircraft destroyed';
+				localizationText['en']['avg_capture_points'] = 'Base capture';
+				localizationText['en']['avg_dropped_capture_points'] = 'Base defense';
+
+				localizationText['en']['stat-table-3'] = 'Highest Score';
+				localizationText['en']['max_damage_dealt'] = 'Damage caused';
+				localizationText['en']['max_frags_battle'] = 'Warships destroyed';
+				localizationText['en']['max_planes_killed'] = 'Aircraft destroyed';
 				
 				localizationText['en']['additional-results'] = 'Additional Results';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
@@ -2888,6 +3275,36 @@
 				
 				localizationText['fr']['num-separator'] = ' ';
 				localizationText['fr']['num-fractional'] = ',';
+				
+				localizationText['fr']['division'] = 'Division';
+				localizationText['fr']['title_battles'] = 'Batailles menées';
+				localizationText['fr']['title_wins_percents'] = 'Taux de victoires/batailles';
+				localizationText['fr']['title_avg_xp'] = 'EXPÉRIENCE MOYENNE PAR BATAILLE';
+				localizationText['fr']['title_avg_damage_dealt'] = 'Dégâts moyens causés par bataille';
+				localizationText['fr']['title_kill_dead'] = 'Taux des tués/morts';
+
+				localizationText['fr']['stat-table-1'] = 'Résultats généraux';
+				localizationText['fr']['battles'] = 'Batailles';
+				localizationText['fr']['wins'] = 'Victoires';
+				localizationText['fr']['survived_battles'] = 'Batailles survécues';
+				localizationText['fr']['damage_dealt'] = 'Dégâts occasionnés';
+				localizationText['fr']['frags'] = 'Navires de guerre détruits';
+				localizationText['fr']['planes_killed'] = 'Avions détruits';
+				localizationText['fr']['capture_points'] = 'Points de capture';
+				localizationText['fr']['dropped_capture_points'] = 'Points de défense';
+
+				localizationText['fr']['stat-table-2'] = 'Score moyen par bataille';
+				localizationText['fr']['avg_xp'] = 'Expérience';
+				localizationText['fr']['avg_damage_dealt'] = 'Dégâts occasionnés';
+				localizationText['fr']['avg_frags'] = 'Navires de guerre détruits';
+				localizationText['fr']['avg_planes_killed'] = 'Avions détruits';
+				localizationText['fr']['avg_capture_points'] = 'Points de capture';
+				localizationText['fr']['avg_dropped_capture_points'] = 'Points de défense';
+
+				localizationText['fr']['stat-table-3'] = 'Score record';
+				localizationText['fr']['max_damage_dealt'] = 'Dégâts occasionnés';
+				localizationText['fr']['max_frags_battle'] = 'Navires de guerre détruits';
+				localizationText['fr']['max_planes_killed'] = 'Avions détruits';
 			}
 			
 			{/* Deutsch */
@@ -2897,6 +3314,36 @@
 				
 				localizationText['de']['num-separator'] = '.';
 				localizationText['de']['num-fractional'] = ',';
+				
+				localizationText['de']['division'] = 'Division';
+				localizationText['de']['title_battles'] = 'Gekämpfte Gefechte';
+				localizationText['de']['title_wins_percents'] = 'Verhältnis Siege/Gefechte';
+				localizationText['de']['title_avg_xp'] = 'MITTLERE ERFAHRUNG JE GEFECHT';
+				localizationText['de']['title_avg_damage_dealt'] = 'Mittlerer verursachter Schaden je Gefecht';
+				localizationText['de']['title_kill_dead'] = 'Verhältnis Abschüsse/Verluste';
+
+				localizationText['de']['stat-table-1'] = 'Gesamtergebnisse';
+				localizationText['de']['battles'] = 'Gefechte';
+				localizationText['de']['wins'] = 'Siege';
+				localizationText['de']['survived_battles'] = 'Überlebte Gefechte';
+				localizationText['de']['damage_dealt'] = 'Schaden verursacht';
+				localizationText['de']['frags'] = 'Zerstörte Kriegsschiffe';
+				localizationText['de']['planes_killed'] = 'Flugzeuge abgeschossen';
+				localizationText['de']['capture_points'] = 'Basiseroberung';
+				localizationText['de']['dropped_capture_points'] = 'Basisverteidigung';
+
+				localizationText['de']['stat-table-2'] = 'Mittlere Punktzahl je Gefecht';
+				localizationText['de']['avg_xp'] = 'Erfahrung';
+				localizationText['de']['avg_damage_dealt'] = 'Schaden verursacht';
+				localizationText['de']['avg_frags'] = 'Zerstörte Kriegsschiffe';
+				localizationText['de']['avg_planes_killed'] = 'Flugzeuge abgeschossen';
+				localizationText['de']['avg_capture_points'] = 'Basiseroberung';
+				localizationText['de']['avg_dropped_capture_points'] = 'Basisverteidigung';
+
+				localizationText['de']['stat-table-3'] = 'Rekordpunktzahl';
+				localizationText['de']['max_damage_dealt'] = 'Schaden verursacht';
+				localizationText['de']['max_frags_battle'] = 'Zerstörte Kriegsschiffe';
+				localizationText['de']['max_planes_killed'] = 'Flugzeuge abgeschossen';
 			}
 			
 			{/* Türkçe */
@@ -2906,15 +3353,153 @@
 				
 				localizationText['tr']['num-separator'] = '.';
 				localizationText['tr']['num-fractional'] = ',';
+				
+				localizationText['tr']['division'] = 'Bölünme';
+				localizationText['tr']['title_battles'] = 'Katılınan Savaşlar';
+				localizationText['tr']['title_wins_percents'] = 'Zaferler/Savaşlar';
+				localizationText['tr']['title_avg_xp'] = 'SAVAŞ BAŞINA ORTALAMA DENEYİM';
+				localizationText['tr']['title_avg_damage_dealt'] = 'Savaş Başına Ortalama Verilen Hasar';
+				localizationText['tr']['title_kill_dead'] = 'Yok Etme/Ölüm Oranı';
+
+				localizationText['tr']['stat-table-1'] = 'Genel Sonuçlar';
+				localizationText['tr']['battles'] = 'Savaşlar';
+				localizationText['tr']['wins'] = 'Zaferler';
+				localizationText['tr']['survived_battles'] = 'Canlı kalınan savaşlar';
+				localizationText['tr']['damage_dealt'] = 'Verilen hasar';
+				localizationText['tr']['frags'] = 'Yok edilen savaş gemileri';
+				localizationText['tr']['planes_killed'] = 'Yok edilen uçak';
+				localizationText['tr']['capture_points'] = 'Üs işgali';
+				localizationText['tr']['dropped_capture_points'] = 'Üs savunması';
+
+				localizationText['tr']['stat-table-2'] = 'Savaş Başına Ortalama Skor';
+				localizationText['tr']['avg_xp'] = 'Deneyim';
+				localizationText['tr']['avg_damage_dealt'] = 'Verilen hasar';
+				localizationText['tr']['avg_frags'] = 'Yok edilen savaş gemileri';
+				localizationText['tr']['avg_planes_killed'] = 'Yok edilen uçak';
+				localizationText['tr']['avg_capture_points'] = 'Üs işgali';
+				localizationText['tr']['avg_dropped_capture_points'] = 'Üs savunması';
+
+				localizationText['tr']['stat-table-3'] = 'En Yüksek Skor';
+				localizationText['tr']['max_damage_dealt'] = 'Verilen hasar';
+				localizationText['tr']['max_frags_battle'] = 'Yok edilen savaş gemileri';
+				localizationText['tr']['max_planes_killed'] = 'Yok edilen uçak';
 			}
 			
-			{/* Español */
+			{/* Español EU */
 				localizationText['es'] = [];
 			
 				localizationText['es'] = jQ.extend([], localizationText['en']);
 				
 				localizationText['es']['num-separator'] = '.';
 				localizationText['es']['num-fractional'] = ',';
+				
+				localizationText['es']['division'] = 'División';
+				localizationText['es']['title_battles'] = 'Batallas jugadas';
+				localizationText['es']['title_wins_percents'] = 'Victorias/batallas';
+				localizationText['es']['title_avg_xp'] = 'EXPERIENCIA MEDIA POR BATALLA';
+				localizationText['es']['title_avg_damage_dealt'] = 'Daño medio causado por batalla';
+				localizationText['es']['title_kill_dead'] = 'Tasa muertos/muertes';
+
+				localizationText['es']['stat-table-1'] = 'Resultados generales';
+				localizationText['es']['battles'] = 'Batallas';
+				localizationText['es']['wins'] = 'Victorias';
+				localizationText['es']['survived_battles'] = 'Batallas como superviviente';
+				localizationText['es']['damage_dealt'] = 'Daño causado';
+				localizationText['es']['frags'] = 'Barcos de guerra destruidos';
+				localizationText['es']['planes_killed'] = 'Aviones destruidos';
+				localizationText['es']['capture_points'] = 'Captura de base';
+				localizationText['es']['dropped_capture_points'] = 'Defensa de base';
+
+				localizationText['es']['stat-table-2'] = 'Puntuación media por batalla';
+				localizationText['es']['avg_xp'] = 'Experiencia';
+				localizationText['es']['avg_damage_dealt'] = 'Daño causado';
+				localizationText['es']['avg_frags'] = 'Barcos de guerra destruidos';
+				localizationText['es']['avg_planes_killed'] = 'Aviones destruidos';
+				localizationText['es']['avg_capture_points'] = 'Captura de base';
+				localizationText['es']['avg_dropped_capture_points'] = 'Defensa de base';
+
+				localizationText['es']['stat-table-3'] = 'En Yüksek Skor';
+				localizationText['es']['max_damage_dealt'] = 'Daño causado';
+				localizationText['es']['max_frags_battle'] = 'Barcos de guerra destruidos';
+				localizationText['es']['max_planes_killed'] = 'Aviones destruidos';
+			}
+			
+			{/* Español NA */
+				localizationText['es-mx'] = [];
+			
+				localizationText['es-mx'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['es-mx']['num-separator'] = ' ';
+				localizationText['es-mx']['num-fractional'] = '.';
+				
+				localizationText['es-mx']['division'] = 'División';
+				localizationText['es-mx']['title_battles'] = 'Batallas Luchadas';
+				localizationText['es-mx']['title_wins_percents'] = 'Victorias';
+				localizationText['es-mx']['title_avg_xp'] = 'EXPERIENCIA PROMEDIO POR BATALLA';
+				localizationText['es-mx']['title_avg_damage_dealt'] = 'Daño en Promedio Causado por Batalla';
+				localizationText['es-mx']['title_kill_dead'] = 'Radio de Destrucción / Muerte';
+
+				localizationText['es-mx']['stat-table-1'] = 'Resultados en General';
+				localizationText['es-mx']['battles'] = 'Batallas';
+				localizationText['es-mx']['wins'] = 'Victorias';
+				localizationText['es-mx']['survived_battles'] = 'Batallas sobrevividas';
+				localizationText['es-mx']['damage_dealt'] = 'Daño causado';
+				localizationText['es-mx']['frags'] = 'Barcos de guerra destruidos';
+				localizationText['es-mx']['planes_killed'] = 'Aviones destruidos';
+				localizationText['es-mx']['capture_points'] = 'Captura de base';
+				localizationText['es-mx']['dropped_capture_points'] = 'Defensa de base';
+
+				localizationText['es-mx']['stat-table-2'] = 'Resultados promedio por batalla';
+				localizationText['es-mx']['avg_xp'] = 'XP';
+				localizationText['es-mx']['avg_damage_dealt'] = 'Daño causado';
+				localizationText['es-mx']['avg_frags'] = 'Barcos de guerra destruidos';
+				localizationText['es-mx']['avg_planes_killed'] = 'Aviones destruidos';
+				localizationText['es-mx']['avg_capture_points'] = 'Captura de base';
+				localizationText['es-mx']['avg_dropped_capture_points'] = 'Defensa de base';
+
+				localizationText['es-mx']['stat-table-3'] = 'Puntaje más Alto';
+				localizationText['es-mx']['max_damage_dealt'] = 'Daño causado';
+				localizationText['es-mx']['max_frags_battle'] = 'Barcos de guerra destruidos';
+				localizationText['es-mx']['max_planes_killed'] = 'Aviones destruidos';
+			}
+			
+			{/* Português */
+				localizationText['pt-br'] = [];
+			
+				localizationText['pt-br'] = jQ.extend([], localizationText['en']);
+				
+				localizationText['pt-br']['num-separator'] = '.';
+				localizationText['pt-br']['num-fractional'] = ',';
+				
+				localizationText['pt-br']['division'] = 'Divisão';
+				localizationText['pt-br']['title_battles'] = 'Batalhas Disputadas';
+				localizationText['pt-br']['title_wins_percents'] = 'Taxa de Vitórias/Batalhas';
+				localizationText['pt-br']['title_avg_xp'] = 'EXPERIÊNCIA MÉDIA POR BATALHA';
+				localizationText['pt-br']['title_avg_damage_dealt'] = 'Dano Médio Causado por Batalha';
+				localizationText['pt-br']['title_kill_dead'] = 'Taxa de Morte/Destruição';
+
+				localizationText['pt-br']['stat-table-1'] = 'Resultados Gerais';
+				localizationText['pt-br']['battles'] = 'Batalhas';
+				localizationText['pt-br']['wins'] = 'Vitórias';
+				localizationText['pt-br']['survived_battles'] = 'Batalhas Sobrevividas';
+				localizationText['pt-br']['damage_dealt'] = 'Dano Causado';
+				localizationText['pt-br']['frags'] = 'Navios Destruídos';
+				localizationText['pt-br']['planes_killed'] = 'Aeronaves Destruídas';
+				localizationText['pt-br']['capture_points'] = 'Captura de Base';
+				localizationText['pt-br']['dropped_capture_points'] = 'Defesa de Base';
+
+				localizationText['pt-br']['stat-table-2'] = 'Pontuação Média por Batalha';
+				localizationText['pt-br']['avg_xp'] = 'Experiência';
+				localizationText['pt-br']['avg_damage_dealt'] = 'Dano Causado';
+				localizationText['pt-br']['avg_frags'] = 'Navios Destruídos';
+				localizationText['pt-br']['avg_planes_killed'] = 'Aeronaves Destruídas';
+				localizationText['pt-br']['avg_capture_points'] = 'Captura de Base';
+				localizationText['pt-br']['avg_dropped_capture_points'] = 'Defesa de Base';
+
+				localizationText['pt-br']['stat-table-3'] = 'Pontuação Recorde';
+				localizationText['pt-br']['max_damage_dealt'] = 'Dano Causado';
+				localizationText['pt-br']['max_frags_battle'] = 'Navios Destruídos';
+				localizationText['pt-br']['max_planes_killed'] = 'Aeronaves Destruídas';
 			}
 			
 			{/* Čeština */
@@ -2924,6 +3509,36 @@
 				
 				localizationText['cs']['num-separator'] = ' ';
 				localizationText['cs']['num-fractional'] = ',';
+				
+				localizationText['cs']['division'] = 'Divize';
+				localizationText['cs']['title_battles'] = 'Odehráno bitev';
+				localizationText['cs']['title_wins_percents'] = 'Poměr Vítězství/Bitev';
+				localizationText['cs']['title_avg_xp'] = 'PRŮMĚRNÉ ZKUŠENOSTI ZA BITVU';
+				localizationText['cs']['title_avg_damage_dealt'] = 'Průměrné poškození způsobené za bitvu';
+				localizationText['cs']['title_kill_dead'] = 'Poměr Zabití/Smrtí';
+
+				localizationText['cs']['stat-table-1'] = 'Celkové výsledky';
+				localizationText['cs']['battles'] = 'Bitvy';
+				localizationText['cs']['wins'] = 'Vítězství';
+				localizationText['cs']['survived_battles'] = 'Přežito bitev';
+				localizationText['cs']['damage_dealt'] = 'Způsobené poškození';
+				localizationText['cs']['frags'] = 'Lodí zničeno';
+				localizationText['cs']['planes_killed'] = 'Letadel zničeno';
+				localizationText['cs']['capture_points'] = 'Body za obsazování základny';
+				localizationText['cs']['dropped_capture_points'] = 'Body za obranu základny';
+
+				localizationText['cs']['stat-table-2'] = 'Průměrné skóre za bitvu';
+				localizationText['cs']['avg_xp'] = 'Zkušenosti';
+				localizationText['cs']['avg_damage_dealt'] = 'Způsobené poškození';
+				localizationText['cs']['avg_frags'] = 'Lodí zničeno';
+				localizationText['cs']['avg_planes_killed'] = 'Letadel zničeno';
+				localizationText['cs']['avg_capture_points'] = 'Body za obsazování základny';
+				localizationText['cs']['avg_dropped_capture_points'] = 'Body za obranu základny';
+
+				localizationText['cs']['stat-table-3'] = 'Rekordní skóre';
+				localizationText['cs']['max_damage_dealt'] = 'Způsobené poškození';
+				localizationText['cs']['max_frags_battle'] = 'Lodí zničeno';
+				localizationText['cs']['max_planes_killed'] = 'Letadel zničeno';
 			}
 			
 			{/* Polski */
@@ -2933,6 +3548,36 @@
 				
 				localizationText['pl']['num-separator'] = ' ';
 				localizationText['pl']['num-fractional'] = ',';
+				
+				localizationText['pl']['division'] = 'Podział';
+				localizationText['pl']['title_battles'] = 'Stoczone bitwy';
+				localizationText['pl']['title_wins_percents'] = 'Stosunek zwycięstw do wszystkich bitew';
+				localizationText['pl']['title_avg_xp'] = 'ŚREDNIE DOŚWIADCZENIE NA BITWĘ';
+				localizationText['pl']['title_avg_damage_dealt'] = 'Średnie uszkodzenia zadane na bitwę';
+				localizationText['pl']['title_kill_dead'] = 'Stosunek zniszczonych przeciwników/własnych zniszczeń';
+
+				localizationText['pl']['stat-table-1'] = 'Ogólne wyniki';
+				localizationText['pl']['battles'] = 'Bitwy';
+				localizationText['pl']['wins'] = 'Zwycięstwa';
+				localizationText['pl']['survived_battles'] = 'Przetrwane bitwy';
+				localizationText['pl']['damage_dealt'] = 'Zadane uszkodzenia';
+				localizationText['pl']['frags'] = 'Zniszczone okręty';
+				localizationText['pl']['planes_killed'] = 'Zniszczone samoloty';
+				localizationText['pl']['capture_points'] = 'Zajęcie bazy';
+				localizationText['pl']['dropped_capture_points'] = 'Obrona bazy';
+
+				localizationText['pl']['stat-table-2'] = 'Średnie doświadczenie w bitwie';
+				localizationText['pl']['avg_xp'] = 'Doświadczenie';
+				localizationText['pl']['avg_damage_dealt'] = 'Zadane uszkodzenia';
+				localizationText['pl']['avg_frags'] = 'Zniszczone okręty';
+				localizationText['pl']['avg_planes_killed'] = 'Zniszczone samoloty';
+				localizationText['pl']['avg_capture_points'] = 'Zajęcie bazy';
+				localizationText['pl']['avg_dropped_capture_points'] = 'Obrona bazy';
+
+				localizationText['pl']['stat-table-3'] = 'Rekordowy wynik';
+				localizationText['pl']['max_damage_dealt'] = 'Zadane uszkodzenia';
+				localizationText['pl']['max_frags_battle'] = 'Zniszczone okręty';
+				localizationText['pl']['max_planes_killed'] = 'Zniszczone samoloty';
 			}
 			
 			{/* 日本語 */
@@ -2942,6 +3587,36 @@
 				
 				localizationText['ja']['num-separator'] = '';
 				localizationText['ja']['num-fractional'] = '.';
+				
+				localizationText['ja']['division'] = '課';
+				localizationText['ja']['title_battles'] = '参加戦闘数';
+				localizationText['ja']['title_wins_percents'] = '勝利数/戦闘数';
+				localizationText['ja']['title_avg_xp'] = '1 戦あたりの平均経験値';
+				localizationText['ja']['title_avg_damage_dealt'] = '1 戦あたりの平均与ダメージ';
+				localizationText['ja']['title_kill_dead'] = 'キル/デス比';
+
+				localizationText['ja']['stat-table-1'] = '総合結果';
+				localizationText['ja']['battles'] = '戦闘数';
+				localizationText['ja']['wins'] = '勝利';
+				localizationText['ja']['survived_battles'] = '生還した戦闘数';
+				localizationText['ja']['damage_dealt'] = '与ダメージ';
+				localizationText['ja']['frags'] = '艦船撃沈';
+				localizationText['ja']['planes_killed'] = '航空機撃墜';
+				localizationText['ja']['capture_points'] = '陣地占領';
+				localizationText['ja']['dropped_capture_points'] = '陣地防衛';
+
+				localizationText['ja']['stat-table-2'] = '1 戦あたりの平均スコア';
+				localizationText['ja']['avg_xp'] = '経験値';
+				localizationText['ja']['avg_damage_dealt'] = '与ダメージ';
+				localizationText['ja']['avg_frags'] = '艦船撃沈';
+				localizationText['ja']['avg_planes_killed'] = '航空機撃墜';
+				localizationText['ja']['avg_capture_points'] = '陣地占領';
+				localizationText['ja']['avg_dropped_capture_points'] = '陣地防衛';
+
+				localizationText['ja']['stat-table-3'] = '最高スコア';
+				localizationText['ja']['max_damage_dealt'] = '与ダメージ';
+				localizationText['ja']['max_frags_battle'] = '艦船撃沈';
+				localizationText['ja']['max_planes_killed'] = '航空機撃墜';
 			}
 			
 			{/* ไทย */
@@ -2951,6 +3626,36 @@
 				
 				localizationText['th']['num-separator'] = '';
 				localizationText['th']['num-fractional'] = '.';
+				
+				localizationText['th']['division'] = 'แผนก';
+				localizationText['th']['title_battles'] = 'การรบที่เข้าร่วม';
+				localizationText['th']['title_wins_percents'] = 'อัตราชัยชนะ/การรบ';
+				localizationText['th']['title_avg_xp'] = 'ค่าประสบการณ์โดยเฉลี่ยต่อการรบ';
+				localizationText['th']['title_avg_damage_dealt'] = 'ความเสียหายที่ทำโดยเฉลี่ยต่อการรบ';
+				localizationText['th']['title_kill_dead'] = 'อัตราสังหาร/เสียชีวิต';
+
+				localizationText['th']['stat-table-1'] = 'ผลรวม';
+				localizationText['th']['battles'] = 'การรบ';
+				localizationText['th']['wins'] = 'ชัยชนะ';
+				localizationText['th']['survived_battles'] = 'จำนวนการรอดจากการรบ';
+				localizationText['th']['damage_dealt'] = 'ความเสียหายที่ทำ';
+				localizationText['th']['frags'] = 'เรือรบที่ถูกทำลาย';
+				localizationText['th']['planes_killed'] = 'เครื่องบินที่ถูกทำลาย';
+				localizationText['th']['capture_points'] = 'การยึดฐาน';
+				localizationText['th']['dropped_capture_points'] = 'การป้องกันฐาน';
+
+				localizationText['th']['stat-table-2'] = 'คะแนนเฉลี่ยต่อการรบ';
+				localizationText['th']['avg_xp'] = 'ค่าประสบการณ์';
+				localizationText['th']['avg_damage_dealt'] = 'ความเสียหายที่ทำ';
+				localizationText['th']['avg_frags'] = 'เรือรบที่ถูกทำลาย';
+				localizationText['th']['avg_planes_killed'] = 'เครื่องบินที่ถูกทำลาย';
+				localizationText['th']['avg_capture_points'] = 'การยึดฐาน';
+				localizationText['th']['avg_dropped_capture_points'] = 'การป้องกันฐาน';
+
+				localizationText['th']['stat-table-3'] = 'สถิติคะแนน';
+				localizationText['th']['max_damage_dealt'] = 'ความเสียหายที่ทำ';
+				localizationText['th']['max_frags_battle'] = 'เรือรบที่ถูกทำลาย';
+				localizationText['th']['max_planes_killed'] = 'เครื่องบินที่ถูกทำลาย';
 			}
 			
 			{/* Tiếng Việt */
@@ -2960,6 +3665,39 @@
 				
 				localizationText['vi']['num-separator'] = '';
 				localizationText['vi']['num-fractional'] = ',';
+				
+				localizationText['vi']['num-separator'] = '';
+				localizationText['vi']['num-fractional'] = '.';
+				
+				localizationText['vi']['division'] = 'Phòng';
+				localizationText['vi']['title_battles'] = 'Số trận Tham chiến';
+				localizationText['vi']['title_wins_percents'] = 'Chiến thắng / Số trận';
+				localizationText['vi']['title_avg_xp'] = 'KINH NGHIỆM TRUNG BÌNH MỖI TRẬN';
+				localizationText['vi']['title_avg_damage_dealt'] = 'Thiệt hại Gây ra Trung bình mỗi Trận';
+				localizationText['vi']['title_kill_dead'] = 'Tỷ lệ Tiêu diệt/Bị Tiêu diệt';
+
+				localizationText['vi']['stat-table-1'] = 'Kết quả Tổng quan';
+				localizationText['vi']['battles'] = 'Số trận';
+				localizationText['vi']['wins'] = 'Chiến thắng';
+				localizationText['vi']['survived_battles'] = 'Số trận sống sót';
+				localizationText['vi']['damage_dealt'] = 'Thiệt hại đã gây ra';
+				localizationText['vi']['frags'] = 'Tàu chiến đã tiêu diệt';
+				localizationText['vi']['planes_killed'] = 'Phi cơ đã tiêu diệt';
+				localizationText['vi']['capture_points'] = 'Chiếm căn cứ';
+				localizationText['vi']['dropped_capture_points'] = 'Phòng thủ căn cứ';
+
+				localizationText['vi']['stat-table-2'] = 'Điểm Trung bình mỗi Trận';
+				localizationText['vi']['avg_xp'] = 'Kinh nghiệm';
+				localizationText['vi']['avg_damage_dealt'] = 'Thiệt hại đã gây ra';
+				localizationText['vi']['avg_frags'] = 'Tàu chiến đã tiêu diệt';
+				localizationText['vi']['avg_planes_killed'] = 'Phi cơ đã tiêu diệt';
+				localizationText['vi']['avg_capture_points'] = 'Chiếm căn cứ';
+				localizationText['vi']['avg_dropped_capture_points'] = 'Phòng thủ căn cứ';
+
+				localizationText['vi']['stat-table-3'] = 'Điểm Kỷ lục';
+				localizationText['vi']['max_damage_dealt'] = 'Thiệt hại đã gây ra';
+				localizationText['vi']['max_frags_battle'] = 'Tàu chiến đã tiêu diệt';
+				localizationText['vi']['max_planes_killed'] = 'Phi cơ đã tiêu diệt';
 			}
 			
 			{/* 繁體中文 */
@@ -2969,6 +3707,36 @@
 				
 				localizationText['zh-tw']['num-separator'] = '';
 				localizationText['zh-tw']['num-fractional'] = '.';
+				
+				localizationText['zh-tw']['division'] = '司';
+				localizationText['zh-tw']['title_battles'] = '參與過戰鬥數';
+				localizationText['zh-tw']['title_wins_percents'] = '勝利數/戰鬥數比';
+				localizationText['zh-tw']['title_avg_xp'] = '平均每場經驗';
+				localizationText['zh-tw']['title_avg_damage_dealt'] = '平均每場造成的傷害';
+				localizationText['zh-tw']['title_kill_dead'] = '擊毀/死亡比';
+
+				localizationText['zh-tw']['stat-table-1'] = '整體成績';
+				localizationText['zh-tw']['battles'] = '戰鬥數';
+				localizationText['zh-tw']['wins'] = '勝利數';
+				localizationText['zh-tw']['survived_battles'] = '存活數';
+				localizationText['zh-tw']['damage_dealt'] = '造成的傷害';
+				localizationText['zh-tw']['frags'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['planes_killed'] = '擊毀飛機數';
+				localizationText['zh-tw']['capture_points'] = '佔領點數';
+				localizationText['zh-tw']['dropped_capture_points'] = '防禦點數';
+
+				localizationText['zh-tw']['stat-table-2'] = '平均每場戰鬥分數';
+				localizationText['zh-tw']['avg_xp'] = '經驗';
+				localizationText['zh-tw']['avg_damage_dealt'] = '造成的傷害';
+				localizationText['zh-tw']['avg_frags'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['avg_planes_killed'] = '擊毀飛機數';
+				localizationText['zh-tw']['avg_capture_points'] = '佔領點數';
+				localizationText['zh-tw']['avg_dropped_capture_points'] = '防禦點數';
+
+				localizationText['zh-tw']['stat-table-3'] = '紀錄分數';
+				localizationText['zh-tw']['max_damage_dealt'] = '造成的傷害';
+				localizationText['zh-tw']['max_frags_battle'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['max_planes_killed'] = '擊毀飛機數';
 			}
 			
 			return localizationText[lang];
