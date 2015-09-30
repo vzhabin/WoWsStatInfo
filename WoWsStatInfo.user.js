@@ -159,7 +159,7 @@
 		var MembersArray = [];
 		var Encyclopedia = null;
 		
-		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div2", "pvp_div3"];
+		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div", "pvp_div2", "pvp_div3"];
 		var typeShip = ["Cruiser", "AirCarrier", "Battleship", "Destroyer"];
 		
 		var color = new Array();
@@ -750,22 +750,22 @@
 						'<hr />' +
 						'<table id="main-page-script-block" style="width: 100%;">' +
 							'<tr>' +
-								'<td style="/* width: 410px; */ vertical-align: top;">' +
+								'<td style="vertical-align: top;">' +
 									'<table class="account-table">' +
 										'<thead>' +
 											'<tr>' +
 												'<th colspan="2">' +
-													'<h3 class="_title">'+localizationText['additional-results']+'</h3>' +
+													'<h3 class="_title">'+localizationText['stat-table-4']+'</h3>' +
 												'</th>' +
 											'</tr>' +
 										'</thead>' +
 										'<tbody>' +
 											'<tr>' +
 												'<td class="_name">' +
-													'<span>'+localizationText['battles-days']+'</span>' +
+													'<span>'+localizationText['battles_days']+'</span>' +
 												'</td>' +
 												'<td class="_value">' +
-													'<span>'+valueFormat((MembersArray[0]['info']['battles_days']).toFixed(0))+'</span>'+
+													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['battles_days']).toFixed(0))+'</span>'+
 												'</td>' +
 											'</tr>' +
 											'<tr>' +
@@ -775,13 +775,23 @@
 												'<td class="_value">' +
 													'<span>'+MembersArray[0]['info']['ships_x_level']+'</span>'+
 												'</td>' +
+											'</tr>' +	
+											'<tr>' +
+												'<td class="_name">' +
+													'<span>'+localizationText['max_ship_level']+'</span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span>'+
+														MembersArray[0]['info']['statistics']['pvp']['max_ship_level']+
+													'</span>' +
+												'</td>' +
 											'</tr>' +
 											'<tr>' +
 												'<td class="_name">' +
-													'<span>'+localizationText['battles-level-ships']+'</span>' +
+													'<span>'+localizationText['avg_battles_level']+'</span>' +
 												'</td>' +
 												'<td class="_value">' +
-													'<span>'+valueFormat((MembersArray[0]['info']['battles_level']).toFixed(1))+'</span>'+
+													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['avg_battles_level']).toFixed(1))+'</span>'+
 												'</td>' +
 											'</tr>' +
 											'<tr>' +
@@ -799,7 +809,7 @@
 								'</td>'+
 								'<td>'+
 								'</td>'+
-								'<td style="/* width: 470px; */ text-align: right; vertical-align: top;">'+
+								'<td style="text-align: right; vertical-align: top;">'+
 									userbar +
 								'</td>' +
 							'</tr>' +
@@ -877,8 +887,6 @@
 							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] !== undefined){
 							account_table[2].rows[4].cells[0].innerHTML += '<small class="small-max_planes_killed_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']]['name']+')</small>';
 						}
-						
-						//
 					}
 				}
 				
@@ -987,252 +995,369 @@
 					}
 				}
 				
-				var account_tab_division = tabContainer.getElementsByClassName('account-tab-division')[0];
-				if(account_tab_division == null){
-					var account_tab_ships = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
-					account_tab_ships.outerHTML += '' +
-						'<div class="account-tab-division tab-container" js-tab-cont-id="account-tab-division-pvp">' +
-							'<div class="account-main-stats">' +
-								'<div class="_bg-for-average-exp"></div>' +
-								'<div class="account-main-stats-table">' +
-									'<div class="_icons">' +
-										'<div class="_battles">' +
-											'<div></div>' +
-										'</div>' +
-										'<div class="_victories">' +
-											'<div></div>' +
-										'</div>' +
-										'<div class="_average-exp">' +
-											'<div></div>' +
-										'</div>' +
-										'<div class="_kd">' +
-											'<div></div>' +
-										'</div>' +
-										'<div class="_other">' +
-											'<div></div>' +
-										'</div>' +
-									'</div>' +
-									'<div class="_names">' +
-										'<div>'+localizationText['title_battles']+'</div>' +
-										'<div>'+localizationText['title_wins_percents']+'</div>' +
-										'<div class="_average-exp">'+localizationText['title_avg_xp']+'</div>' +
-										'<div>'+localizationText['title_avg_damage_dealt']+'</div>' +
-										'<div>'+localizationText['title_kill_dead']+'</div>' +
-									'</div>' +
-									'<div class="_values">' +
-										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['battles']).toFixed(0))+'</div>' +
-										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['wins_percents']).toFixed(2))+'%</div>' +
-										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_xp']).toFixed(0))+'</div>' +
-										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_damage_dealt']).toFixed(0))+'</div>' +
-										'<div>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['kill_dead']).toFixed(2))+'</div>' +
-									'</div>' +
-								'</div>' +
-							'</div>' +
-							'<hr />' +
-							'<div class="account-battle-stats">' +
-								'<div class="row">' +
-									'<div class="col-xs-12 col-sm-4">' +
-										'<table class="account-table _left">' +
-											'<thead>' +
-												'<tr>' +
-													'<th colspan="2">' +
-														'<h3 class="account-title">'+localizationText['stat-table-1']+'</h3>' +
-													'</th>' +
-												'</tr>' +
-											'</thead>' +
-											'<tbody>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['battles']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['battles']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['wins']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['wins']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['survived_battles']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['survived_battles']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<!--' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>Меткость</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>31%</span>' +
-													'</td>' +
-												'</tr>' +
-												'-->' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['damage_dealt']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['damage_dealt']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['frags']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['frags']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['planes_killed']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['planes_killed']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['capture_points']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['capture_points']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['dropped_capture_points']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['dropped_capture_points']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-											'</tbody>' +
-										'</table>' +
-									'</div>' +
-									'<div class="col-xs-12 col-sm-4">' +
-										'<table class="account-table _center">' +
-											'<thead>' +
-											'<tr>' +
-												'<th colspan="2">' +
-													'<h3 class="account-title">'+localizationText['stat-table-2']+'</h3>' +
-												'</th>' +
-											'</tr>' +
-											'</thead>' +
-											'<tbody>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_xp']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_xp']).toFixed(2))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_damage_dealt']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_damage_dealt']).toFixed(2))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_frags']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_frags']).toFixed(2))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_planes_killed']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_planes_killed']).toFixed(2))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_capture_points']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_capture_points']).toFixed(2))+'</span>' +
-													'</td>' +
-												'</tr>' +
-												'<tr>' +
-													'<td class="_name">' +
-														'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
-													'</td>' +
-													'<td class="_value">' +
-														'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['avg_dropped_capture_points']).toFixed(0))+'</span>' +
-													'</td>' +
-												'</tr>' +
-											'</tbody>' +
-										'</table>' +
-									'</div>' +
-									'<div class="col-xs-12 col-sm-4">' +
-										'<table class="account-table _right">' +
-											'<thead>' +
-											'<tr>' +
-												'<th colspan="2">' +
-													'<h3 class="account-title">'+localizationText['stat-table-3']+'</h3>' +
-												'</th>' +
-											'</tr>' +
-											'</thead>' +
-											'<tbody>' +
-												'<tr>' +
-												'<td class="_name">' +
-													'<span>'+localizationText['max_damage_dealt']+'</span>' +
-												'</td>' +
-												'<td class="_value">' +
-													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_damage_dealt']).toFixed(0))+'</span>' +
-												'</td>' +
-											'</tr>' +
-											'<tr>' +
-												'<td class="_name">' +
-													'<span>'+localizationText['max_frags_battle']+'</span>' +
-												'</td>' +
-												'<td class="_value">' +
-													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_frags_battle']).toFixed(0))+'</span>' +
-												'</td>' +
-											'</tr>' +
-											'<tr>' +
-												'<td class="_name">' +
-													'<span>'+localizationText['max_planes_killed']+'</span>' +
-												'</td>' +
-												'<td class="_value">' +
-													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp_div']['max_planes_killed']).toFixed(0))+'</span>' +
-												'</td>' +
-											'</tr>' +
-											'</tbody>' +
-										'</table>' +
-									'</div>' +
-								'</div>' +
-							'</div>' +
-						'</div>' +
-					'';
+				var typeStatAdd = ["pvp_div", "pvp_solo"];
+				for(var i = 0; i < typeStatAdd.length; i++){
+					var type = typeStatAdd[i];
 					
-					jQ(tabContainer).find('nav.account-tabs ul').append(''+
-						'<li class="account-tab" js-tab="" js-tab-show="account-tab-division-pvp">'+
-							'<div class="_title">'+localizationText['division']+'</div>'+
-							'<div class="_active-feature">'+
-								'<div class="_line"></div>'+
-								'<div class="_shadow"></div>'+
-							'</div>'+
-						'</li>'+
-					'');
-					jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
-						'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-division-pvp">'+localizationText['division']+'</li>' +
-					'');
+					var account_tab = tabContainer.getElementsByClassName('account-tab-'+type)[0];
+					if(account_tab == null){
+						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
+						if(account_tab_detail_stats != null){
+							account_tab_detail_stats.outerHTML += '' +
+								'<div class="account-tab-'+type+' tab-container" js-tab-cont-id="account-tab-'+type+'-pvp">' +
+									'<div class="account-main-stats">' +
+										'<div class="_bg-for-average-exp"></div>' +
+										'<div class="account-main-stats-table">' +
+											'<div class="_icons">' +
+												'<div class="_battles">' +
+													'<div></div>' +
+												'</div>' +
+												'<div class="_victories">' +
+													'<div></div>' +
+												'</div>' +
+												'<div class="_average-exp">' +
+													'<div></div>' +
+												'</div>' +
+												'<div class="_kd">' +
+													'<div></div>' +
+												'</div>' +
+												'<div class="_other">' +
+													'<div></div>' +
+												'</div>' +
+											'</div>' +
+											'<div class="_names">' +
+												'<div>'+localizationText['title_battles']+'</div>' +
+												'<div>'+localizationText['title_wins_percents']+'</div>' +
+												'<div class="_average-exp">'+localizationText['title_avg_xp']+'</div>' +
+												'<div>'+localizationText['title_avg_damage_dealt']+'</div>' +
+												'<div>'+localizationText['title_kill_dead']+'</div>' +
+											'</div>' +
+											'<div class="_values">' +
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['battles'], 'battles')+';">'+
+													valueFormat((MembersArray[0]['info']['statistics'][type]['battles']).toFixed(0))+
+												'</div>' +
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wins_percents'], 'wins_percents')+';">'+
+													valueFormat((MembersArray[0]['info']['statistics'][type]['wins_percents']).toFixed(2))+
+												'%</div>' +
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_xp'], 'avg_xp')+';">'+
+													valueFormat((MembersArray[0]['info']['statistics'][type]['avg_xp']).toFixed(0))+
+												'</div>' +
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'], 'avg_damage_dealt')+';">'+
+													valueFormat((MembersArray[0]['info']['statistics'][type]['avg_damage_dealt']).toFixed(0))+
+												'</div>' +
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['kill_dead'], 'kill_dead')+';">'+
+													valueFormat((MembersArray[0]['info']['statistics'][type]['kill_dead']).toFixed(2))+
+												'</div>' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+									'<hr />' +
+									'<div class="account-battle-stats">' +
+										'<div class="row">' +
+											'<div class="col-xs-12 col-sm-4">' +
+												'<table class="account-table _left">' +
+													'<thead>' +
+														'<tr>' +
+															'<th colspan="2">' +
+																'<h3 class="account-title">'+localizationText['stat-table-1']+'</h3>' +
+															'</th>' +
+														'</tr>' +
+													'</thead>' +
+													'<tbody>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['battles']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['battles'], 'battles')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['battles']).toFixed(0))+
+																'</span>' +
+																'<small>('+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['battles_percents']).toFixed(2))+
+																'%)</small>'+
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['wins']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['wins']).toFixed(0))+
+																'</span>' +
+																'<small style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wins_percents'], 'wins_percents')+';">('+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['wins_percents']).toFixed(2))+
+																'%)</small>'+
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['survived_battles']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['survived_battles']).toFixed(0))+
+																'</span>' +
+																'<small style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['survived_battles_percents'], 'survived_battles_percents')+';">('+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['survived_battles_percents']).toFixed(2))+
+																'%)</small>'+
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['damage_dealt']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['damage_dealt']).toFixed(0))+'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['frags']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['frags']).toFixed(0))+'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['planes_killed']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['planes_killed']).toFixed(0))+'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['capture_points']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['capture_points']).toFixed(0))+'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['dropped_capture_points']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['dropped_capture_points']).toFixed(0))+'</span>' +
+															'</td>' +
+														'</tr>' +
+													'</tbody>' +
+												'</table>' +
+											'</div>' +
+											'<div class="col-xs-12 col-sm-4">' +
+												'<table class="account-table _center">' +
+													'<thead>' +
+													'<tr>' +
+														'<th colspan="2">' +
+															'<h3 class="account-title">'+localizationText['stat-table-2']+'</h3>' +
+														'</th>' +
+													'</tr>' +
+													'</thead>' +
+													'<tbody>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_xp']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_xp'], 'avg_xp')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_xp']).toFixed(2))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_damage_dealt']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'], 'avg_damage_dealt')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_damage_dealt']).toFixed(2))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_frags']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_frags'], 'avg_frags')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_frags']).toFixed(2))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_planes_killed']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_planes_killed'], 'avg_planes_killed')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_planes_killed']).toFixed(2))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_capture_points']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_capture_points'], 'avg_capture_points')+';">'
+																	+valueFormat((MembersArray[0]['info']['statistics'][type]['avg_capture_points']).toFixed(2))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points'], 'avg_dropped_capture_points')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points']).toFixed(0))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+													'</tbody>' +
+												'</table>' +
+											'</div>' +
+											'<div class="col-xs-12 col-sm-4">' +
+												'<table class="account-table _right">' +
+													'<thead>' +
+													'<tr>' +
+														'<th colspan="2">' +
+															'<h3 class="account-title">'+localizationText['stat-table-3']+'</h3>' +
+														'</th>' +
+													'</tr>' +
+													'</thead>' +
+													'<tbody>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['max_xp']+'</span>' +
+																'<small> ('+
+																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_xp_ship_id']+'']['name']+
+																')</small>'+
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_xp'], 'max_xp')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_xp']).toFixed(0))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['max_damage_dealt']+'</span>' +
+																'<small> ('+
+																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_damage_dealt_ship_id']+'']['name']+
+																')</small>'+
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_damage_dealt'], 'max_damage_dealt')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_damage_dealt']).toFixed(0))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['max_frags_battle']+'</span>' +
+																'<small> ('+
+																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_frags_ship_id']+'']['name']+
+																')</small>'+
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_frags_battle'], 'max_frags_battle')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_frags_battle']).toFixed(0))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['max_planes_killed']+'</span>' +
+																'<small> ('+
+																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_planes_killed_ship_id']+'']['name']+
+																')</small>'+
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_planes_killed'], 'max_planes_killed')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_planes_killed']).toFixed(0))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+													'</tbody>' +
+												'</table>' +
+											'</div>' +	
+										'</div>' +
+										'<div class="row">' +
+											'<div class="col-xs-12 col-sm-4">' +
+												'<table class="account-table _left">' +
+													'<thead>' +
+													'<tr>' +
+														'<th colspan="2">' +
+															'<h3 class="account-title">'+localizationText['stat-table-4']+'</h3>' +
+														'</th>' +
+													'</tr>' +
+													'</thead>' +
+													'<tbody>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['battles_days']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+
+																	(MembersArray[0]['info']['statistics'][type]['battles_days']).toFixed(0)+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['max_ship_level']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+
+																	MembersArray[0]['info']['statistics'][type]['max_ship_level']+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['avg_battles_level']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span>'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_battles_level']).toFixed(1))+
+																'</span>' +
+															'</td>' +
+														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['wr']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wr'], 'wr')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['wr']).toFixed(2)) + 
+																'</span>'+
+															'</td>' +
+														'</tr>' +
+													'</tbody>' +
+												'</table>' +
+											'</div>' +
+										'</div>' +
+									'</div>' +
+								'</div>' +
+							'';
+							
+							jQ(tabContainer).find('nav.account-tabs ul').append(''+
+								'<li class="account-tab" js-tab="" js-tab-show="account-tab-'+type+'-pvp">'+
+									'<div class="_title">'+localizationText[type]+'</div>'+
+									'<div class="_active-feature">'+
+										'<div class="_line"></div>'+
+										'<div class="_shadow"></div>'+
+									'</div>'+
+								'</li>'+
+							'');
+							jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
+								'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-'+type+'-pvp">'+localizationText[type]+'</li>' +
+							'');
+						}
+					}
 				}				
 			}
 		}
@@ -2225,7 +2350,6 @@
 				MembersArray[index]['info']['last_battle_time'] = 0;
 				MembersArray[index]['info']['logout_at'] = 0;
 				MembersArray[index]['info']['ships_x_level'] = 0;
-				MembersArray[index]['info']['battles_level'] = 0;
 				
 				MembersArray[index]['info']['statistics'] = [];
 				MembersArray[index]['info']['statistics']['pvp'] = [];
@@ -2255,20 +2379,71 @@
 				MembersArray[index]['info']['statistics']['pvp']['wins_percents'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['survived_battles_percents'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['wr'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['avg_battles_level'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['max_ship_level'] = 0;
 				
 				return false;
 			}
 			
-			
-			var timestamp = Math.round(+new Date()/1000);
-			var created_at = MembersArray[index]['info']['created_at'];
-			var days = (timestamp - created_at)/60/60/24;
-			var battles_days = MembersArray[index]['info']['statistics']['pvp']['battles'] / days;
-			MembersArray[index]['info']['battles_days'] = battles_days;
-			
 			for(var t = 0; t < typeStat.length; t++){
 				var type = typeStat[t];
+				
+				if(type == 'pvp_div' && MembersArray[index]['info']['statistics']['pvp_div'] == undefined){
+					MembersArray[index]['info']['statistics']['pvp_div'] = [];
+					
+					if(MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_xp']){
+						MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp_ship_id'];
+					}else{
+						MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp_ship_id'];
+					}
+					
+					if(MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle']){
+						MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_ship_id'];
+					}else{
+						MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_ship_id'];
+					}
+					
+					if(MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed']){
+						MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed_ship_id'];
+					}else{
+						MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed_ship_id'];
+					}
+					
+					if(MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt']){
+						MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt_ship_id'];
+					}else{
+						MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt'];
+						MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt_ship_id'];
+					}
+					
+					MembersArray[index]['info']['statistics']['pvp_div']['xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['xp'] + MembersArray[index]['info']['statistics']['pvp_div3']['xp'];
+					MembersArray[index]['info']['statistics']['pvp_div']['survived_battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_battles'];
+					MembersArray[index]['info']['statistics']['pvp_div']['dropped_capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['dropped_capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['dropped_capture_points'];
+					MembersArray[index]['info']['statistics']['pvp_div']['draws'] = MembersArray[index]['info']['statistics']['pvp_div2']['draws'] + MembersArray[index]['info']['statistics']['pvp_div3']['draws'];
+					MembersArray[index]['info']['statistics']['pvp_div']['wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['wins'];
+					MembersArray[index]['info']['statistics']['pvp_div']['damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['damage_dealt'] + MembersArray[index]['info']['statistics']['pvp_div3']['damage_dealt'];
+					MembersArray[index]['info']['statistics']['pvp_div']['losses'] = MembersArray[index]['info']['statistics']['pvp_div2']['losses'] + MembersArray[index]['info']['statistics']['pvp_div3']['losses'];
+					MembersArray[index]['info']['statistics']['pvp_div']['frags'] = MembersArray[index]['info']['statistics']['pvp_div2']['frags'] + MembersArray[index]['info']['statistics']['pvp_div3']['frags'];
+					MembersArray[index]['info']['statistics']['pvp_div']['capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['capture_points'];
+					MembersArray[index]['info']['statistics']['pvp_div']['survived_wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_wins'];
+					MembersArray[index]['info']['statistics']['pvp_div']['battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['battles'];
+					MembersArray[index]['info']['statistics']['pvp_div']['planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['planes_killed'] + MembersArray[index]['info']['statistics']['pvp_div3']['planes_killed'];
+				}
+				
 				var Statistics = MembersArray[index]['info']['statistics'][type];
+				
+				var timestamp = Math.round(+new Date()/1000);
+				var created_at = MembersArray[index]['info']['created_at'];
+				var days = (timestamp - created_at)/60/60/24;
+				var battles_days = Statistics['battles'] / days;
+				MembersArray[index]['info']['statistics'][type]['battles_days'] = battles_days;
 				
 				MembersArray[index]['info']['statistics'][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
 				if(isNaN(MembersArray[index]['info']['statistics'][type]['avg_xp'])){MembersArray[index]['info']['statistics'][type]['avg_xp'] = 0;}
@@ -2300,126 +2475,97 @@
 					MembersArray[index]['info']['statistics'][type]['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
 				}
 				if(isNaN(MembersArray[index]['info']['statistics'][type]['kill_dead'])){MembersArray[index]['info']['statistics'][type]['kill_dead'] = 0;}
+				
+				if(type != 'pvp' && type != 'pve'){
+					var type_start = type.split('_')[0];
+					MembersArray[index]['info']['statistics'][type]['battles_percents'] = (Statistics['battles']/MembersArray[index]['info']['statistics'][type_start]['battles'])*100;
+					if(isNaN(MembersArray[index]['info']['statistics'][type]['battles_percents'])){MembersArray[index]['info']['statistics'][type]['battles_percents'] = 0;}
+				}
 			}
 			
-			if(MembersArray[index]['info']['statistics']['pvp_div'] == undefined){
-				MembersArray[index]['info']['statistics']['pvp_div'] = [];
-				
-				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_xp']){
-					MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_xp_ship_id'];
-				}else{
-					MembersArray[index]['info']['statistics']['pvp_div']['max_xp'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_xp_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_xp_ship_id'];
-				}
-				
-				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle']){
-					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_battle'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_frags_ship_id'];
-				}else{
-					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_battle'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_battle'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_frags_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_frags_ship_id'];
-				}
-				
-				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed']){
-					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_planes_killed_ship_id'];
-				}else{
-					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_planes_killed_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_planes_killed_ship_id'];
-				}
-				
-				if(MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt']){
-					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_damage_dealt_ship_id'];
-				}else{
-					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt'];
-					MembersArray[index]['info']['statistics']['pvp_div']['max_damage_dealt_ship_id'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_damage_dealt_ship_id'];
-				}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['xp'] = MembersArray[index]['info']['statistics']['pvp_div2']['xp'] + MembersArray[index]['info']['statistics']['pvp_div3']['xp'];
-				MembersArray[index]['info']['statistics']['pvp_div']['survived_battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_battles'];
-				MembersArray[index]['info']['statistics']['pvp_div']['dropped_capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['dropped_capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['dropped_capture_points'];
-				MembersArray[index]['info']['statistics']['pvp_div']['draws'] = MembersArray[index]['info']['statistics']['pvp_div2']['draws'] + MembersArray[index]['info']['statistics']['pvp_div3']['draws'];
-				MembersArray[index]['info']['statistics']['pvp_div']['wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['wins'];
-				MembersArray[index]['info']['statistics']['pvp_div']['damage_dealt'] = MembersArray[index]['info']['statistics']['pvp_div2']['damage_dealt'] + MembersArray[index]['info']['statistics']['pvp_div3']['damage_dealt'];
-				MembersArray[index]['info']['statistics']['pvp_div']['losses'] = MembersArray[index]['info']['statistics']['pvp_div2']['losses'] + MembersArray[index]['info']['statistics']['pvp_div3']['losses'];
-				MembersArray[index]['info']['statistics']['pvp_div']['frags'] = MembersArray[index]['info']['statistics']['pvp_div2']['frags'] + MembersArray[index]['info']['statistics']['pvp_div3']['frags'];
-				MembersArray[index]['info']['statistics']['pvp_div']['capture_points'] = MembersArray[index]['info']['statistics']['pvp_div2']['capture_points'] + MembersArray[index]['info']['statistics']['pvp_div3']['capture_points'];
-				MembersArray[index]['info']['statistics']['pvp_div']['survived_wins'] = MembersArray[index]['info']['statistics']['pvp_div2']['survived_wins'] + MembersArray[index]['info']['statistics']['pvp_div3']['survived_wins'];
-				MembersArray[index]['info']['statistics']['pvp_div']['battles'] = MembersArray[index]['info']['statistics']['pvp_div2']['battles'] + MembersArray[index]['info']['statistics']['pvp_div3']['battles'];
-				MembersArray[index]['info']['statistics']['pvp_div']['planes_killed'] = MembersArray[index]['info']['statistics']['pvp_div2']['planes_killed'] + MembersArray[index]['info']['statistics']['pvp_div3']['planes_killed'];
-				
-				var Statistics = MembersArray[index]['info']['statistics']['pvp_div'];
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'] = Statistics['xp'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_xp'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'] = Statistics['damage_dealt'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_damage_dealt'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'] = Statistics['frags'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_frags'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'] = Statistics['planes_killed'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_planes_killed'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'] = Statistics['capture_points'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_capture_points'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'] = Statistics['dropped_capture_points'] / Statistics['battles'];
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'])){MembersArray[index]['info']['statistics']['pvp_div']['avg_dropped_capture_points'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'] = (Statistics['wins']/Statistics['battles'])*100;
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'])){MembersArray[index]['info']['statistics']['pvp_div']['wins_percents'] = 0;}
-				
-				MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'] = (Statistics['survived_battles']/Statistics['battles'])*100;
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'])){MembersArray[index]['info']['statistics']['pvp_div']['survived_battles_percents'] = 0;}
-				
-				if(Statistics['battles'] == Statistics['survived_battles']){
-					MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = Statistics['frags']/Statistics['battles'];
-				}else{
-					MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = Statistics['frags']/(Statistics['battles']-Statistics['survived_battles']);
-				}
-				if(isNaN(MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'])){MembersArray[index]['info']['statistics']['pvp_div']['kill_dead'] = 0;}
-			}
+			MembersArray[index]['info']['ships_x_level'] = 0;
+			MembersArray[index]['info']['statistics']['pvp_div']['avg_battles_level'] = 0;
+			MembersArray[index]['info']['statistics']['pvp_div']['max_ship_level'] = 0;
 			
-			var ships_x_level = 0;
-			var battles_level = 0;
-			var StatShips = [];
-			StatShips['damage_dealt'] = 0;
-			StatShips['frags'] = 0;
-			StatShips['planes_killed'] = 0;
-			StatShips['capture_points'] = 0;
-			StatShips['dropped_capture_points'] = 0;
-			StatShips['expDamage'] = 0;
-			StatShips['expFrags'] = 0;
-			StatShips['expPlanesKilled'] = 0;
-			StatShips['expCapturePoints'] = 0;
-			StatShips['expDroppedCapturePoints'] = 0;
-			
-			var StatShipsClass = [];
-			for(var t = 0; t < typeShip.length; t++){
-				var type = typeShip[t];
-				StatShipsClass[type] = [];
-				StatShipsClass[type]['damage_dealt'] = 0;
-				StatShipsClass[type]['frags'] = 0;
-				StatShipsClass[type]['planes_killed'] = 0;
-				StatShipsClass[type]['capture_points'] = 0;
-				StatShipsClass[type]['dropped_capture_points'] = 0;
-				StatShipsClass[type]['expDamage'] = 0;
-				StatShipsClass[type]['expFrags'] = 0;
-				StatShipsClass[type]['expPlanesKilled'] = 0;
-				StatShipsClass[type]['expCapturePoints'] = 0;
-				StatShipsClass[type]['expDroppedCapturePoints'] = 0;
-			}
-			
-			for(var shipI = 0; shipI < MembersArray[index]['ships'].length; shipI++){
-				var Ship = MembersArray[index]['ships'][shipI];
-				var ship_id = Ship['ship_id'];
+			for(var t = 0; t < typeStat.length; t++){
+				var type = typeStat[t];
 				
-				for(var t = 0; t < typeStat.length; t++){
-					var type = typeStat[t];
+				MembersArray[index]['info']['statistics'][type]['avg_battles_level'] = 0;
+				MembersArray[index]['info']['statistics'][type]['max_ship_level'] = 0;
+				MembersArray[index]['info']['statistics'][type]['wr'] = 0;
+				
+				var StatShips = [];
+				StatShips['damage_dealt'] = 0;
+				StatShips['frags'] = 0;
+				StatShips['planes_killed'] = 0;
+				StatShips['capture_points'] = 0;
+				StatShips['dropped_capture_points'] = 0;
+				StatShips['expDamage'] = 0;
+				StatShips['expFrags'] = 0;
+				StatShips['expPlanesKilled'] = 0;
+				StatShips['expCapturePoints'] = 0;
+				StatShips['expDroppedCapturePoints'] = 0;
+				
+				var StatShipsClass = [];
+				for(var tS = 0; tS < typeShip.length; tS++){
+					var typeS = typeShip[tS];
+					StatShipsClass[typeS] = [];
+					StatShipsClass[typeS]['damage_dealt'] = 0;
+					StatShipsClass[typeS]['frags'] = 0;
+					StatShipsClass[typeS]['planes_killed'] = 0;
+					StatShipsClass[typeS]['capture_points'] = 0;
+					StatShipsClass[typeS]['dropped_capture_points'] = 0;
+					StatShipsClass[typeS]['expDamage'] = 0;
+					StatShipsClass[typeS]['expFrags'] = 0;
+					StatShipsClass[typeS]['expPlanesKilled'] = 0;
+					StatShipsClass[typeS]['expCapturePoints'] = 0;
+					StatShipsClass[typeS]['expDroppedCapturePoints'] = 0;
+				}
+				
+				for(var shipI = 0; shipI < MembersArray[index]['ships'].length; shipI++){
+					if(type == 'pvp_div' && MembersArray[index]['ships'][shipI]['pvp_div'] == undefined){
+						MembersArray[index]['ships'][shipI]['pvp_div'] = [];
+						
+						if(MembersArray[index]['ships'][shipI]['pvp_div2']['max_xp'] > MembersArray[index]['ships'][shipI]['pvp_div3']['max_xp']){
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_xp'] = MembersArray[index]['ships'][shipI]['pvp_div2']['max_xp'];
+						}else{
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_xp'] = MembersArray[index]['ships'][shipI]['pvp_div3']['max_xp'];
+						}
+						
+						if(MembersArray[index]['ships'][shipI]['pvp_div2']['max_frags_battle'] > MembersArray[index]['ships'][shipI]['pvp_div3']['max_frags_battle']){
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_frags_battle'] = MembersArray[index]['ships'][shipI]['pvp_div2']['max_frags_battle'];
+						}else{
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_frags_battle'] = MembersArray[index]['ships'][shipI]['pvp_div3']['max_frags_battle'];
+						}
+						
+						if(MembersArray[index]['ships'][shipI]['pvp_div2']['max_planes_killed'] > MembersArray[index]['ships'][shipI]['pvp_div3']['max_planes_killed']){
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_planes_killed'] = MembersArray[index]['ships'][shipI]['pvp_div2']['max_planes_killed'];
+						}else{
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_planes_killed'] = MembersArray[index]['ships'][shipI]['pvp_div3']['max_planes_killed'];
+						}
+						
+						if(MembersArray[index]['ships'][shipI]['pvp_div2']['max_damage_dealt'] > MembersArray[index]['ships'][shipI]['pvp_div3']['max_damage_dealt']){
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_damage_dealt'] = MembersArray[index]['ships'][shipI]['pvp_div2']['max_damage_dealt'];
+						}else{
+							MembersArray[index]['ships'][shipI]['pvp_div']['max_damage_dealt'] = MembersArray[index]['ships'][shipI]['pvp_div3']['max_damage_dealt'];
+						}
+						
+						MembersArray[index]['ships'][shipI]['pvp_div']['xp'] = MembersArray[index]['ships'][shipI]['pvp_div2']['xp'] + MembersArray[index]['ships'][shipI]['pvp_div3']['xp'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['survived_battles'] = MembersArray[index]['ships'][shipI]['pvp_div2']['survived_battles'] + MembersArray[index]['ships'][shipI]['pvp_div3']['survived_battles'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['dropped_capture_points'] = MembersArray[index]['ships'][shipI]['pvp_div2']['dropped_capture_points'] + MembersArray[index]['ships'][shipI]['pvp_div3']['dropped_capture_points'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['draws'] = MembersArray[index]['ships'][shipI]['pvp_div2']['draws'] + MembersArray[index]['ships'][shipI]['pvp_div3']['draws'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['wins'] = MembersArray[index]['ships'][shipI]['pvp_div2']['wins'] + MembersArray[index]['ships'][shipI]['pvp_div3']['wins'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['damage_dealt'] = MembersArray[index]['ships'][shipI]['pvp_div2']['damage_dealt'] + MembersArray[index]['ships'][shipI]['pvp_div3']['damage_dealt'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['losses'] = MembersArray[index]['ships'][shipI]['pvp_div2']['losses'] + MembersArray[index]['ships'][shipI]['pvp_div3']['losses'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['frags'] = MembersArray[index]['ships'][shipI]['pvp_div2']['frags'] + MembersArray[index]['ships'][shipI]['pvp_div3']['frags'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['capture_points'] = MembersArray[index]['ships'][shipI]['pvp_div2']['capture_points'] + MembersArray[index]['ships'][shipI]['pvp_div3']['capture_points'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['survived_wins'] = MembersArray[index]['ships'][shipI]['pvp_div2']['survived_wins'] + MembersArray[index]['ships'][shipI]['pvp_div3']['survived_wins'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['battles'] = MembersArray[index]['ships'][shipI]['pvp_div2']['battles'] + MembersArray[index]['ships'][shipI]['pvp_div3']['battles'];
+						MembersArray[index]['ships'][shipI]['pvp_div']['planes_killed'] = MembersArray[index]['ships'][shipI]['pvp_div2']['planes_killed'] + MembersArray[index]['ships'][shipI]['pvp_div3']['planes_killed'];
+					}
+				
+					var Ship = MembersArray[index]['ships'][shipI];
+					var ship_id = Ship['ship_id'];
 					var Statistics = Ship[type];
 					
 					MembersArray[index]['ships'][shipI][type]['avg_xp'] = Statistics['xp'] / Statistics['battles'];
@@ -2453,7 +2599,7 @@
 					}
 					if(isNaN(MembersArray[index]['ships'][shipI][type]['kill_dead'])){MembersArray[index]['ships'][shipI][type]['kill_dead'] = 0;}
 					
-					if(Encyclopedia != null && type == 'pvp'){
+					if(Encyclopedia != null){
 						var ship_type = Encyclopedia[ship_id]['type'];
 						var ship_tier = Encyclopedia[ship_id]['tier'];
 						
@@ -2504,28 +2650,40 @@
 							MembersArray[index]['ships'][shipI][type]['wr'] = 0;
 						}
 						
-
-						battles_level += ship_tier * Statistics['battles'] / MembersArray[index]['info']['statistics']['pvp']['battles'];
+						if(Statistics['battles'] > 0){
+							MembersArray[index]['info']['statistics'][type]['avg_battles_level'] += ship_tier * Statistics['battles'] / MembersArray[index]['info']['statistics'][type]['battles'];
+						}
+						
+						if(Encyclopedia[ship_id]['tier'] == 10 && type == 'pvp'){
+							MembersArray[index]['info']['ships_x_level']++;
+						}
+						
+						if(MembersArray[index]['info']['statistics'][type]['max_ship_level'] < Encyclopedia[ship_id]['tier']){
+							MembersArray[index]['info']['statistics'][type]['max_ship_level'] = Encyclopedia[ship_id]['tier'];
+						}
 					}
 				}
 				
-				if(Encyclopedia != null){
-					if(Encyclopedia[ship_id]['tier'] == 10){
-						ships_x_level++;
-					}
+				for(var tS = 0; tS < typeShip.length; tS++){
+					var typeS = typeShip[tS];
+					
+					MembersArray[index]['info']['statistics'][type]['wr_'+typeS] = calcWR(StatShipsClass[typeS]);
 				}
-			}
-			
-			MembersArray[index]['info']['ships_x_level'] = ships_x_level;
-			MembersArray[index]['info']['battles_level'] = battles_level;
-			
-			for(var t = 0; t < typeShip.length; t++){
-				var type = typeShip[t];
 				
-				MembersArray[index]['info']['statistics']['pvp']['wr_'+type] = calcWR(StatShipsClass[type]);
+				MembersArray[index]['info']['statistics'][type]['wr'] = calcWR(StatShips);
 			}
 			
-			MembersArray[index]['info']['statistics']['pvp']['wr'] = calcWR(StatShips);
+			if(MembersArray[index]['info']['statistics']['pvp_div2']['avg_battles_level'] > MembersArray[index]['info']['statistics']['pvp_div3']['avg_battles_level']){
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_battles_level'] = MembersArray[index]['info']['statistics']['pvp_div2']['avg_battles_level'];
+			}else{
+				MembersArray[index]['info']['statistics']['pvp_div']['avg_battles_level'] = MembersArray[index]['info']['statistics']['pvp_div3']['avg_battles_level'];
+			}
+			
+			if(MembersArray[index]['info']['statistics']['pvp_div2']['max_ship_level'] > MembersArray[index]['info']['statistics']['pvp_div3']['max_ship_level']){
+				MembersArray[index]['info']['statistics']['pvp_div']['max_ship_level'] = MembersArray[index]['info']['statistics']['pvp_div2']['max_ship_level'];
+			}else{
+				MembersArray[index]['info']['statistics']['pvp_div']['max_ship_level'] = MembersArray[index]['info']['statistics']['pvp_div3']['max_ship_level'];
+			}
 			
 			for(var key in MembersArray[index]['achievements']['battle']){
 				var battle = MembersArray[index]['info']['statistics']['pvp']['battles'];
@@ -2560,6 +2718,9 @@
 			}
 			
 			Encyclopedia = response['data'];
+			
+			Encyclopedia['null'] = [];
+			Encyclopedia['null']['name'] = '';
 		}
 		function errorEncyclopedia(url){
 			Encyclopedia = null;
@@ -2998,7 +3159,8 @@
 				localizationText['ru']['filters-uk'] = 'Великобритания';
 				localizationText['ru']['filters-usa'] = 'США';
 				
-				localizationText['ru']['division'] = 'Отряд';
+				localizationText['ru']['pvp_solo'] = 'Соло';
+				localizationText['ru']['pvp_div'] = 'Отряд';
 				
 				localizationText['ru']['title_battles'] = 'Количество боёв';
 				localizationText['ru']['title_wins_percents'] = 'Процент побед';
@@ -3030,10 +3192,11 @@
 				localizationText['ru']['max_frags_battle'] = 'Уничтожено кораблей';
 				localizationText['ru']['max_planes_killed'] = 'Уничтожено самолётов';
 				
-				localizationText['ru']['additional-results'] = 'Дополнительные результаты';
+				localizationText['ru']['stat-table-4'] = 'Дополнительные результаты';
+				localizationText['ru']['battles_days'] = 'Количество боев в день';
+				localizationText['ru']['max_ship_level'] = 'Максимальный уровень корабля';
+				localizationText['ru']['avg_battles_level'] = 'Средний уровень кораблей игрока в боях';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
-				localizationText['ru']['battles-level-ships'] = 'Средний уровень кораблей игрока в боях';
-				localizationText['ru']['battles-days'] = 'Количество боев в день';
 				localizationText['ru']['wr'] = 'WR';
 				
 				localizationText['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
@@ -3161,7 +3324,8 @@
 				localizationText['en']['filters-uk'] = 'U.K.';
 				localizationText['en']['filters-usa'] = 'U.S.A.';
 				
-				localizationText['en']['division'] = 'Division';
+				localizationText['en']['pvp_solo'] = 'Solo';
+				localizationText['en']['pvp_div'] = 'Division';
 				
 				localizationText['en']['title_battles'] = 'Battles Fought';
 				localizationText['en']['title_wins_percents'] = 'Victories / Battles';
@@ -3193,10 +3357,11 @@
 				localizationText['en']['max_frags_battle'] = 'Warships destroyed';
 				localizationText['en']['max_planes_killed'] = 'Aircraft destroyed';
 				
-				localizationText['en']['additional-results'] = 'Additional Results';
+				localizationText['en']['stat-table-4'] = 'Additional Results';
+				localizationText['en']['battles_days'] = 'Battles per day';
+				localizationText['en']['max_ship_level'] = 'The maximum tier of ship';
+				localizationText['en']['avg_battles_level'] = 'Average tier of warships used by player';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
-				localizationText['en']['battles-level-ships'] = 'Average tier of warships used by player';
-				localizationText['en']['battles-days'] = 'Battles per day';
 				localizationText['en']['wr'] = 'WR';
 				
 				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
@@ -3284,7 +3449,8 @@
 				localizationText['fr']['num-separator'] = ' ';
 				localizationText['fr']['num-fractional'] = ',';
 				
-				localizationText['fr']['division'] = 'Division';
+				localizationText['fr']['pvp_solo'] = 'Solo';
+				localizationText['fr']['pvp_div'] = 'Division';
 				
 				localizationText['fr']['title_battles'] = 'Batailles menées';
 				localizationText['fr']['title_wins_percents'] = 'Taux de victoires/batailles';
@@ -3315,6 +3481,11 @@
 				localizationText['fr']['max_damage_dealt'] = 'Dégâts occasionnés';
 				localizationText['fr']['max_frags_battle'] = 'Navires de guerre détruits';
 				localizationText['fr']['max_planes_killed'] = 'Avions détruits';
+				
+				localizationText['fr']['stat-table-4'] = 'Résultats supplémentaires';
+				localizationText['fr']['battles_days'] = 'Batailles par jour';
+				localizationText['fr']['max_ship_level'] = 'Le niveau maximum de navire';
+				localizationText['fr']['avg_battles_level'] = 'Niveau moyen de navires de guerre utilisée par le joueur';
 			}
 			
 			{/* Deutsch */
@@ -3325,7 +3496,8 @@
 				localizationText['de']['num-separator'] = '.';
 				localizationText['de']['num-fractional'] = ',';
 				
-				localizationText['de']['division'] = 'Division';
+				localizationText['de']['pvp_solo'] = 'Solo';
+				localizationText['de']['pvp_div'] = 'Division';
 				
 				localizationText['de']['title_battles'] = 'Gekämpfte Gefechte';
 				localizationText['de']['title_wins_percents'] = 'Verhältnis Siege/Gefechte';
@@ -3356,6 +3528,11 @@
 				localizationText['de']['max_damage_dealt'] = 'Schaden verursacht';
 				localizationText['de']['max_frags_battle'] = 'Zerstörte Kriegsschiffe';
 				localizationText['de']['max_planes_killed'] = 'Flugzeuge abgeschossen';
+				
+				localizationText['de']['stat-table-4'] = 'Weitere Ergebnisse';
+				localizationText['de']['battles_days'] = 'Battles pro Tag';
+				localizationText['de']['max_ship_level'] = 'Die maximale Stufe der Schiffs';
+				localizationText['de']['avg_battles_level'] = 'Durchschnittliche Tier von Kriegsschiffen durch Spieler verwendet';
 			}
 			
 			{/* Türkçe */
@@ -3366,7 +3543,8 @@
 				localizationText['tr']['num-separator'] = '.';
 				localizationText['tr']['num-fractional'] = ',';
 				
-				localizationText['tr']['division'] = 'Bölünme';
+				localizationText['tr']['pvp_solo'] = 'Solo';
+				localizationText['tr']['pvp_div'] = 'Bölünme';
 				
 				localizationText['tr']['title_battles'] = 'Katılınan Savaşlar';
 				localizationText['tr']['title_wins_percents'] = 'Zaferler/Savaşlar';
@@ -3397,6 +3575,11 @@
 				localizationText['tr']['max_damage_dealt'] = 'Verilen hasar';
 				localizationText['tr']['max_frags_battle'] = 'Yok edilen savaş gemileri';
 				localizationText['tr']['max_planes_killed'] = 'Yok edilen uçak';
+				
+				localizationText['tr']['stat-table-4'] = 'Ek Sonuçlar';
+				localizationText['tr']['battles_days'] = 'Günde Savaşları';
+				localizationText['tr']['max_ship_level'] = 'Geminin maksimum katmanlı';
+				localizationText['tr']['avg_battles_level'] = 'Oyuncu tarafından kullanılan savaş gemilerinin ortalama katmanlı';
 			}
 			
 			{/* Español EU */
@@ -3407,7 +3590,8 @@
 				localizationText['es']['num-separator'] = '.';
 				localizationText['es']['num-fractional'] = ',';
 				
-				localizationText['es']['division'] = 'División';
+				localizationText['es']['pvp_solo'] = 'Solo';
+				localizationText['es']['pvp_div'] = 'División';
 				
 				localizationText['es']['title_battles'] = 'Batallas jugadas';
 				localizationText['es']['title_wins_percents'] = 'Victorias/batallas';
@@ -3438,6 +3622,11 @@
 				localizationText['es']['max_damage_dealt'] = 'Daño causado';
 				localizationText['es']['max_frags_battle'] = 'Barcos de guerra destruidos';
 				localizationText['es']['max_planes_killed'] = 'Aviones destruidos';
+				
+				localizationText['es']['stat-table-4'] = 'Resultados adicionales';
+				localizationText['es']['battles_days'] = 'Batallas por día';
+				localizationText['es']['max_ship_level'] = 'El nivel máximo de la nave';
+				localizationText['es']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 			}
 			
 			{/* Español NA */
@@ -3448,7 +3637,9 @@
 				localizationText['es-mx']['num-separator'] = ' ';
 				localizationText['es-mx']['num-fractional'] = '.';
 				
-				localizationText['es-mx']['division'] = 'División';
+				localizationText['es-mx']['pvp_solo'] = 'Solo';
+				localizationText['es-mx']['pvp_div'] = 'División';
+				
 				localizationText['es-mx']['title_battles'] = 'Batallas Luchadas';
 				localizationText['es-mx']['title_wins_percents'] = 'Victorias';
 				localizationText['es-mx']['title_avg_xp'] = 'EXPERIENCIA PROMEDIO POR BATALLA';
@@ -3478,6 +3669,11 @@
 				localizationText['es-mx']['max_damage_dealt'] = 'Daño causado';
 				localizationText['es-mx']['max_frags_battle'] = 'Barcos de guerra destruidos';
 				localizationText['es-mx']['max_planes_killed'] = 'Aviones destruidos';
+				
+				localizationText['es-mx']['stat-table-4'] = 'Resultados adicionales';
+				localizationText['es-mx']['battles_days'] = 'Batallas por día';
+				localizationText['es-mx']['max_ship_level'] = 'El nivel máximo de la nave';
+				localizationText['es-mx']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 			}
 			
 			{/* Português */
@@ -3488,7 +3684,9 @@
 				localizationText['pt-br']['num-separator'] = '.';
 				localizationText['pt-br']['num-fractional'] = ',';
 				
-				localizationText['pt-br']['division'] = 'Divisão';
+				localizationText['pt-br']['pvp_solo'] = 'Solo';
+				localizationText['pt-br']['pvp_div'] = 'Divisão';
+				
 				localizationText['pt-br']['title_battles'] = 'Batalhas Disputadas';
 				localizationText['pt-br']['title_wins_percents'] = 'Taxa de Vitórias/Batalhas';
 				localizationText['pt-br']['title_avg_xp'] = 'EXPERIÊNCIA MÉDIA POR BATALHA';
@@ -3518,6 +3716,11 @@
 				localizationText['pt-br']['max_damage_dealt'] = 'Dano Causado';
 				localizationText['pt-br']['max_frags_battle'] = 'Navios Destruídos';
 				localizationText['pt-br']['max_planes_killed'] = 'Aeronaves Destruídas';
+				
+				localizationText['pt-br']['stat-table-4'] = 'Resultados adicionais';
+				localizationText['pt-br']['battles_days'] = 'Batalhas por dia';
+				localizationText['pt-br']['max_ship_level'] = 'O nível máximo de navio';
+				localizationText['pt-br']['avg_battles_level'] = 'Nível médio de navios de guerra usados por jogador';
 			}
 			
 			{/* Čeština */
@@ -3528,7 +3731,8 @@
 				localizationText['cs']['num-separator'] = ' ';
 				localizationText['cs']['num-fractional'] = ',';
 				
-				localizationText['cs']['division'] = 'Divize';
+				localizationText['cs']['pvp_solo'] = 'Solo';
+				localizationText['cs']['pvp_div'] = 'Divize';
 				
 				localizationText['cs']['title_battles'] = 'Odehráno bitev';
 				localizationText['cs']['title_wins_percents'] = 'Poměr Vítězství/Bitev';
@@ -3559,6 +3763,11 @@
 				localizationText['cs']['max_damage_dealt'] = 'Způsobené poškození';
 				localizationText['cs']['max_frags_battle'] = 'Lodí zničeno';
 				localizationText['cs']['max_planes_killed'] = 'Letadel zničeno';
+				
+				localizationText['cs']['stat-table-4'] = 'Další výsledky';
+				localizationText['cs']['battles_days'] = 'Bitvy za den';
+				localizationText['cs']['max_ship_level'] = 'Maximální vrstva lodi';
+				localizationText['cs']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 			}
 			
 			{/* Polski */
@@ -3569,7 +3778,8 @@
 				localizationText['pl']['num-separator'] = ' ';
 				localizationText['pl']['num-fractional'] = ',';
 				
-				localizationText['pl']['division'] = 'Podział';
+				localizationText['pl']['pvp_solo'] = 'Solo';
+				localizationText['pl']['pvp_div'] = 'Podział';
 				
 				localizationText['pl']['title_battles'] = 'Stoczone bitwy';
 				localizationText['pl']['title_wins_percents'] = 'Stosunek zwycięstw do wszystkich bitew';
@@ -3600,6 +3810,11 @@
 				localizationText['pl']['max_damage_dealt'] = 'Zadane uszkodzenia';
 				localizationText['pl']['max_frags_battle'] = 'Zniszczone okręty';
 				localizationText['pl']['max_planes_killed'] = 'Zniszczone samoloty';
+				
+				localizationText['pl']['stat-table-4'] = 'Další výsledky';
+				localizationText['pl']['battles_days'] = 'Bitvy za den';
+				localizationText['pl']['max_ship_level'] = 'Maximální vrstva lodi';
+				localizationText['pl']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 			}
 			
 			{/* 日本語 */
@@ -3610,7 +3825,8 @@
 				localizationText['ja']['num-separator'] = '';
 				localizationText['ja']['num-fractional'] = '.';
 				
-				localizationText['ja']['division'] = '課';
+				localizationText['ja']['pvp_solo'] = 'ソロ';
+				localizationText['ja']['pvp_div'] = '課';
 				
 				localizationText['ja']['title_battles'] = '参加戦闘数';
 				localizationText['ja']['title_wins_percents'] = '勝利数/戦闘数';
@@ -3641,6 +3857,11 @@
 				localizationText['ja']['max_damage_dealt'] = '与ダメージ';
 				localizationText['ja']['max_frags_battle'] = '艦船撃沈';
 				localizationText['ja']['max_planes_killed'] = '航空機撃墜';
+				
+				localizationText['ja']['stat-table-4'] = '追加の結果';
+				localizationText['ja']['battles_days'] = '一日あたりの戦い';
+				localizationText['ja']['max_ship_level'] = '船の最大ティア';
+				localizationText['ja']['avg_battles_level'] = 'プレイヤーが使用する軍艦の平均ティア';
 			}
 			
 			{/* ไทย */
@@ -3651,7 +3872,8 @@
 				localizationText['th']['num-separator'] = '';
 				localizationText['th']['num-fractional'] = '.';
 				
-				localizationText['th']['division'] = 'แผนก';
+				localizationText['th']['pvp_solo'] = 'โซโล';
+				localizationText['th']['pvp_div'] = 'แผนก';
 				
 				localizationText['th']['title_battles'] = 'การรบที่เข้าร่วม';
 				localizationText['th']['title_wins_percents'] = 'อัตราชัยชนะ/การรบ';
@@ -3682,6 +3904,11 @@
 				localizationText['th']['max_damage_dealt'] = 'ความเสียหายที่ทำ';
 				localizationText['th']['max_frags_battle'] = 'เรือรบที่ถูกทำลาย';
 				localizationText['th']['max_planes_killed'] = 'เครื่องบินที่ถูกทำลาย';
+				
+				localizationText['th']['stat-table-4'] = 'ผลเพิ่มเติม';
+				localizationText['th']['battles_days'] = 'สงครามต่อวัน';
+				localizationText['th']['max_ship_level'] = 'ชั้นสูงสุดของเรือ';
+				localizationText['th']['avg_battles_level'] = 'ชั้นเฉลี่ยของเรือรบที่ใช้โดยผู้เล่น';
 			}
 			
 			{/* Tiếng Việt */
@@ -3695,7 +3922,8 @@
 				localizationText['vi']['num-separator'] = '';
 				localizationText['vi']['num-fractional'] = '.';
 				
-				localizationText['vi']['division'] = 'Phòng';
+				localizationText['vi']['pvp_solo'] = 'Solo';
+				localizationText['vi']['pvp_div'] = 'Phòng';
 				
 				localizationText['vi']['title_battles'] = 'Số trận Tham chiến';
 				localizationText['vi']['title_wins_percents'] = 'Chiến thắng / Số trận';
@@ -3726,6 +3954,11 @@
 				localizationText['vi']['max_damage_dealt'] = 'Thiệt hại đã gây ra';
 				localizationText['vi']['max_frags_battle'] = 'Tàu chiến đã tiêu diệt';
 				localizationText['vi']['max_planes_killed'] = 'Phi cơ đã tiêu diệt';
+				
+				localizationText['vi']['stat-table-4'] = 'Kết quả bổ sung';
+				localizationText['vi']['battles_days'] = 'Trận chiến mỗi ngày';
+				localizationText['vi']['max_ship_level'] = 'Cấp tối đa của tàu';
+				localizationText['vi']['avg_battles_level'] = 'Tier trung bình của các tàu chiến được sử dụng bởi người chơi';
 			}
 			
 			{/* 繁體中文 */
@@ -3736,7 +3969,8 @@
 				localizationText['zh-tw']['num-separator'] = '';
 				localizationText['zh-tw']['num-fractional'] = '.';
 				
-				localizationText['zh-tw']['division'] = '司';
+				localizationText['zh-tw']['pvp_solo'] = '獨奏的';
+				localizationText['zh-tw']['pvp_div'] = '司';
 				
 				localizationText['zh-tw']['title_battles'] = '參與過戰鬥數';
 				localizationText['zh-tw']['title_wins_percents'] = '勝利數/戰鬥數比';
@@ -3767,6 +4001,11 @@
 				localizationText['zh-tw']['max_damage_dealt'] = '造成的傷害';
 				localizationText['zh-tw']['max_frags_battle'] = '擊毀的戰艦數';
 				localizationText['zh-tw']['max_planes_killed'] = '擊毀飛機數';
+				
+				localizationText['zh-tw']['stat-table-4'] = '其他結果';
+				localizationText['zh-tw']['battles_days'] = '每天戰役';
+				localizationText['zh-tw']['max_ship_level'] = '船舶最大層';
+				localizationText['zh-tw']['avg_battles_level'] = '戰艦的平均層使用的播放器';
 			}
 			
 			return localizationText[lang];
