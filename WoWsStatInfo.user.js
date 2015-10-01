@@ -160,7 +160,7 @@
 		var Encyclopedia = null;
 		
 		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div", "pvp_div2", "pvp_div3"];
-		var typeShip = ["Cruiser", "AirCarrier", "Battleship", "Destroyer"];
+		var typeShip = ["Battleship", "AirCarrier", "Cruiser", "Destroyer"];
 		
 		var color = new Array();
 		color['very_bad'] = '#FE0E00'; // очень плохо, хуже чем у 85%
@@ -799,7 +799,7 @@
 													'<span>'+localizationText['wr']+'</span>' +
 												'</td>' +
 												'<td class="_value">' +
-													'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr'], 'wr')+';">'+
+													'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr'], 'wr', 'main')+';">'+
 														valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr']).toFixed(2)) + 
 													'</span>'+
 												'</td>' +
@@ -834,42 +834,42 @@
 					
 					var _values = tabContainer.getElementsByClassName('_values')[0];
 					var main_stat = _values.getElementsByTagName('div');
-					main_stat[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles');
-					main_stat[1].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents');
-					main_stat[2].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp');
-					main_stat[3].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt');
-					main_stat[4].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['kill_dead'], 'kill_dead');
+					main_stat[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles', 'main');
+					main_stat[1].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents', 'main');
+					main_stat[2].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp', 'main');
+					main_stat[3].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt', 'main');
+					main_stat[4].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['kill_dead'], 'kill_dead', 'main');
 					
 					var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
 					if(account_battle_stats != null){
 						var account_table = account_battle_stats.getElementsByClassName('account-table');
 						
 						//Общие результаты
-						account_table[0].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles');
+						account_table[0].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles', 'main');
 						
 						//Средние показатели за бой
-						account_table[1].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp');
-						account_table[1].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt');
-						account_table[1].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_frags'], 'avg_frags');
-						account_table[1].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_planes_killed'], 'avg_planes_killed');
-						account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points');
-						account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points');
+						account_table[1].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp', 'main');
+						account_table[1].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt', 'main');
+						account_table[1].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_frags'], 'avg_frags', 'main');
+						account_table[1].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_planes_killed'], 'avg_planes_killed', 'main');
+						account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points', 'main');
+						account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points', 'main');
 						
 						// Рекордные показатели
-						//account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp');
-						account_table[2].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt'], 'max_damage_dealt');
-						account_table[2].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_frags_battle'], 'max_frags_battle');
-						account_table[2].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_planes_killed'], 'max_planes_killed');
+						//account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp', 'main');
+						account_table[2].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt'], 'max_damage_dealt', 'main');
+						account_table[2].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_frags_battle'], 'max_frags_battle', 'main');
+						account_table[2].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_planes_killed'], 'max_planes_killed', 'main');
 						
 						//Дополнительно
-						account_table[0].rows[2].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents');
+						account_table[0].rows[2].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents', 'main');
 						if(account_table[0].rows[3].cells[1].getElementsByClassName('small-survived_battles_percents')[0] == undefined){
 							account_table[0].rows[3].cells[1].innerHTML += '<small class="small-survived_battles_percents">('+valueFormat((MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents']).toFixed(2))+'%)</small>';
-							account_table[0].rows[3].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents'], 'survived_battles_percents');
+							account_table[0].rows[3].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents'], 'survived_battles_percents', 'main');
 						}
 						if(account_table[2].rows[1].cells[1].getElementsByClassName('small-max_xp')[0] == undefined){
 							account_table[2].rows[1].cells[1].innerHTML += '<small class="small-max_xp">('+valueFormat(MembersArray[0]['info']['statistics']['pvp']['max_xp'])+')</small>';
-							account_table[2].rows[1].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp');
+							account_table[2].rows[1].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp', 'main');
 						}						
 						if(account_table[2].rows[1].cells[0].getElementsByClassName('small-max_xp_ship')[0] == undefined 
 							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] !== undefined){
@@ -918,7 +918,7 @@
 								}
 							
 								var td = document.createElement('td');
-								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class], 'wr')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class]).toFixed(0))+'</span>';
+								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class]).toFixed(0))+'</span>';
 								row.appendChild(td);
 							}
 							
@@ -929,10 +929,10 @@
 								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
 								
 								row.cells[3].setAttribute('style', 'white-space: nowrap;');
-								row.cells[3].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								row.cells[3].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
 								
 								row.cells[4].setAttribute('style', 'white-space: nowrap;');
-								row.cells[4].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+								row.cells[4].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
 							}
 							
 							continue;
@@ -955,10 +955,10 @@
 								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
 								
 								row.cells[2].setAttribute('style', 'white-space: nowrap;');
-								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
 								
 								row.cells[3].setAttribute('style', 'white-space: nowrap;');
-								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp')+';">'+valueFormat(avg_xp)+'</span>';
+								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
 							}
 							
 							continue;
@@ -976,7 +976,7 @@
 						var wr_cell = document.getElementById('wr-'+ship_id);
 						if(wr_cell != null){
 							wr_cell.setAttribute('style', 'white-space: nowrap;');
-							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
+							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
 						}
 					}
 				}
@@ -1033,19 +1033,19 @@
 												'<div>'+localizationText['title_kill_dead']+'</div>' +
 											'</div>' +
 											'<div class="_values">' +
-												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['battles'], 'battles')+';">'+
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['battles'], 'battles', 'main')+';">'+
 													valueFormat((MembersArray[0]['info']['statistics'][type]['battles']).toFixed(0))+
 												'</div>' +
-												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wins_percents'], 'wins_percents')+';">'+
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wins_percents'], 'wins_percents', 'main')+';">'+
 													valueFormat((MembersArray[0]['info']['statistics'][type]['wins_percents']).toFixed(2))+
 												'%</div>' +
-												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_xp'], 'avg_xp')+';">'+
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_xp'], 'avg_xp', 'main')+';">'+
 													valueFormat((MembersArray[0]['info']['statistics'][type]['avg_xp']).toFixed(0))+
 												'</div>' +
-												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'], 'avg_damage_dealt')+';">'+
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'], 'avg_damage_dealt', 'main')+';">'+
 													valueFormat((MembersArray[0]['info']['statistics'][type]['avg_damage_dealt']).toFixed(0))+
 												'</div>' +
-												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['kill_dead'], 'kill_dead')+';">'+
+												'<div style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['kill_dead'], 'kill_dead', 'main')+';">'+
 													valueFormat((MembersArray[0]['info']['statistics'][type]['kill_dead']).toFixed(2))+
 												'</div>' +
 											'</div>' +
@@ -1053,238 +1053,7 @@
 									'</div>' +
 									'<hr />' +
 									'<div class="account-battle-stats">' +
-										'<div class="row">' +
-											'<div class="col-xs-12 col-sm-4">' +
-												'<table class="account-table _left">' +
-													'<thead>' +
-														'<tr>' +
-															'<th colspan="2">' +
-																'<h3 class="account-title">'+localizationText['stat-table-1']+'</h3>' +
-															'</th>' +
-														'</tr>' +
-													'</thead>' +
-													'<tbody>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['battles']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['battles'], 'battles')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['battles']).toFixed(0))+
-																'</span>' +
-																'<small>('+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['battles_percents']).toFixed(2))+
-																'%)</small>'+
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['wins']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['wins']).toFixed(0))+
-																'</span>' +
-																'<small style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wins_percents'], 'wins_percents')+';">('+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['wins_percents']).toFixed(2))+
-																'%)</small>'+
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['survived_battles']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['survived_battles']).toFixed(0))+
-																'</span>' +
-																'<small style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['survived_battles_percents'], 'survived_battles_percents')+';">('+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['survived_battles_percents']).toFixed(2))+
-																'%)</small>'+
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['damage_dealt']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['damage_dealt']).toFixed(0))+'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['frags']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['frags']).toFixed(0))+'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['planes_killed']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['planes_killed']).toFixed(0))+'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['capture_points']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['capture_points']).toFixed(0))+'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['dropped_capture_points']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span>'+valueFormat((MembersArray[0]['info']['statistics'][type]['dropped_capture_points']).toFixed(0))+'</span>' +
-															'</td>' +
-														'</tr>' +
-													'</tbody>' +
-												'</table>' +
-											'</div>' +
-											'<div class="col-xs-12 col-sm-4">' +
-												'<table class="account-table _center">' +
-													'<thead>' +
-													'<tr>' +
-														'<th colspan="2">' +
-															'<h3 class="account-title">'+localizationText['stat-table-2']+'</h3>' +
-														'</th>' +
-													'</tr>' +
-													'</thead>' +
-													'<tbody>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_xp']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_xp'], 'avg_xp')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_xp']).toFixed(2))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_damage_dealt']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_damage_dealt'], 'avg_damage_dealt')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_damage_dealt']).toFixed(2))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_frags']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_frags'], 'avg_frags')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_frags']).toFixed(2))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_planes_killed']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_planes_killed'], 'avg_planes_killed')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_planes_killed']).toFixed(2))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_capture_points']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_capture_points'], 'avg_capture_points')+';">'
-																	+valueFormat((MembersArray[0]['info']['statistics'][type]['avg_capture_points']).toFixed(2))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points'], 'avg_dropped_capture_points')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['avg_dropped_capture_points']).toFixed(0))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-													'</tbody>' +
-												'</table>' +
-											'</div>' +
-											'<div class="col-xs-12 col-sm-4">' +
-												'<table class="account-table _right">' +
-													'<thead>' +
-													'<tr>' +
-														'<th colspan="2">' +
-															'<h3 class="account-title">'+localizationText['stat-table-3']+'</h3>' +
-														'</th>' +
-													'</tr>' +
-													'</thead>' +
-													'<tbody>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['max_xp']+'</span>' +
-																'<small> ('+
-																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_xp_ship_id']+'']['name']+
-																')</small>'+
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_xp'], 'max_xp')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_xp']).toFixed(0))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['max_damage_dealt']+'</span>' +
-																'<small> ('+
-																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_damage_dealt_ship_id']+'']['name']+
-																')</small>'+
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_damage_dealt'], 'max_damage_dealt')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_damage_dealt']).toFixed(0))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['max_frags_battle']+'</span>' +
-																'<small> ('+
-																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_frags_ship_id']+'']['name']+
-																')</small>'+
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_frags_battle'], 'max_frags_battle')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_frags_battle']).toFixed(0))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-														'<tr>' +
-															'<td class="_name">' +
-																'<span>'+localizationText['max_planes_killed']+'</span>' +
-																'<small> ('+
-																	Encyclopedia[''+MembersArray[0]['info']['statistics'][type]['max_planes_killed_ship_id']+'']['name']+
-																')</small>'+
-															'</td>' +
-															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['max_planes_killed'], 'max_planes_killed')+';">'+
-																	valueFormat((MembersArray[0]['info']['statistics'][type]['max_planes_killed']).toFixed(0))+
-																'</span>' +
-															'</td>' +
-														'</tr>' +
-													'</tbody>' +
-												'</table>' +
-											'</div>' +	
-										'</div>' +
+										getHTMLStat(MembersArray[0]['info']['statistics'][type], 'main')+
 										'<div class="row">' +
 											'<div class="col-xs-12 col-sm-4">' +
 												'<table class="account-table _left">' +
@@ -1331,7 +1100,7 @@
 																'<span>'+localizationText['wr']+'</span>' +
 															'</td>' +
 															'<td class="_value">' +
-																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wr'], 'wr')+';">'+
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wr'], 'wr', 'main')+';">'+
 																	valueFormat((MembersArray[0]['info']['statistics'][type]['wr']).toFixed(2)) + 
 																'</span>'+
 															'</td>' +
@@ -1340,6 +1109,38 @@
 												'</table>' +
 											'</div>' +
 										'</div>' +
+									'</div>' +
+									'<hr />' +
+									'<div class="account-tab-ships tab-container _active" js-tab-cont-id="account-tab-ships-'+type+'">' +
+										'<h3 class="account-title">'+localizationText['ships_stat']+'</h3>' +
+										'<table class="table-wows">'+
+											'<thead>'+
+												'<tr>'+
+													'<th class="_icon">'+
+														'<div class="_icon-type-of-ship"></div>'+
+													'</th>'+
+													'<th class="_name">'+
+														localizationText['title_ships']+
+													'</th>'+
+													'<th class="_value">'+
+														'<div class="_icon-battles"></div>'+
+														'<span>'+localizationText['battles']+'</span>'+
+													'</th>'+
+													'<th class="_value">'+
+														'<div class="_icon-winrate"></div>'+
+														'<span>'+localizationText['wins']+'</span>'+
+													'</th>'+
+													'<th class="_value">'+
+														'<div class="_icon-exp"></div>'+
+														'<span>'+localizationText['title_avg_xp']+'</span>'+
+													'</th>'+
+													'<th class="_value">'+
+														'<span>'+localizationText['wr']+'</span>'+
+													'</th>'+
+												'</tr>'+
+											'</thead>'+
+											getHTMLShipStat(MembersArray[0], type)+
+										'</table>'+
 									'</div>' +
 								'</div>' +
 							'';
@@ -1356,10 +1157,386 @@
 							jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
 								'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-'+type+'-pvp">'+localizationText[type]+'</li>' +
 							'');
+							
+							jQ('.ships-class-'+type).click(function(){
+								if(jQ(this).attr('open-active') == 'true'){
+									jQ(this).removeClass('_active-btn');
+									jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
+									jQ(this).attr('open-active', 'false');
+								}else{
+									jQ(this).addClass('_active-btn');
+									jQ('.'+jQ(this).attr('open-block')).addClass('_active');
+									jQ(this).attr('open-active', 'true');
+								}								
+							});
+							
+							jQ('.ship-stat-'+type).click(function(){
+								if(jQ(this).attr('open-active') == 'true'){
+									jQ(this).removeClass('_active-btn');
+									jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
+									jQ(this).attr('open-active', 'false');
+								}else{
+									jQ(this).addClass('_active-btn');
+									jQ('.'+jQ(this).attr('open-block')).addClass('_active');
+									jQ(this).attr('open-active', 'true');
+								}								
+							});
 						}
 					}
 				}				
 			}
+		}
+		function getHTMLStat(StatArray, type_stat){
+			var html = '';
+			
+			var battles_percents = '';
+			var max_xp_ship = '';
+			var max_damage_dealt_ship = '';
+			var max_frags_ship = '';
+			var max_planes_killed_ship = '';
+			if(type_stat == 'main'){
+				battles_percents = '<small>('+valueFormat((StatArray['battles_percents']).toFixed(2))+'%)</small>';
+				max_xp_ship = '<small> ('+Encyclopedia[''+StatArray['max_xp_ship_id']+'']['name']+')</small>';
+				max_damage_dealt_ship = '<small> ('+Encyclopedia[''+StatArray['max_damage_dealt_ship_id']+'']['name']+')</small>';
+				max_frags_ship = '<small> ('+Encyclopedia[''+StatArray['max_frags_ship_id']+'']['name']+')</small>';
+				max_planes_killed_ship = '<small> ('+Encyclopedia[''+StatArray['max_planes_killed_ship_id']+'']['name']+')</small>';
+			}
+			
+			html = ''+
+				'<div class="row">' +
+					'<div class="col-xs-12 col-sm-4">' +
+						'<table class="account-table _left">' +
+							'<thead>' +
+								'<tr>' +
+									'<th colspan="2">' +
+										'<h3 class="account-title">'+localizationText['stat-table-1']+'</h3>' +
+									'</th>' +
+								'</tr>' +
+							'</thead>' +
+							'<tbody>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['battles']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['battles'], 'battles', type_stat)+';">'+
+											valueFormat((StatArray['battles']).toFixed(0))+
+										'</span>' +
+										battles_percents+
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['wins']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+
+											valueFormat((StatArray['wins']).toFixed(0))+
+										'</span>' +
+										'<small style="color: '+findColorASC(StatArray['wins_percents'], 'wins_percents', type_stat)+';">('+
+											valueFormat((StatArray['wins_percents']).toFixed(2))+
+										'%)</small>'+
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['survived_battles']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+
+											valueFormat((StatArray['survived_battles']).toFixed(0))+
+										'</span>' +
+										'<small style="color: '+findColorASC(StatArray['survived_battles_percents'], 'survived_battles_percents', type_stat)+';">('+
+											valueFormat((StatArray['survived_battles_percents']).toFixed(2))+
+										'%)</small>'+
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['damage_dealt']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+valueFormat((StatArray['damage_dealt']).toFixed(0))+'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['frags']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+valueFormat((StatArray['frags']).toFixed(0))+'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['planes_killed']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+valueFormat((StatArray['planes_killed']).toFixed(0))+'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['capture_points']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+valueFormat((StatArray['capture_points']).toFixed(0))+'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['dropped_capture_points']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span>'+valueFormat((StatArray['dropped_capture_points']).toFixed(0))+'</span>' +
+									'</td>' +
+								'</tr>' +
+							'</tbody>' +
+						'</table>' +
+					'</div>' +
+					'<div class="col-xs-12 col-sm-4">' +
+						'<table class="account-table _center">' +
+							'<thead>' +
+							'<tr>' +
+								'<th colspan="2">' +
+									'<h3 class="account-title">'+localizationText['stat-table-2']+'</h3>' +
+								'</th>' +
+							'</tr>' +
+							'</thead>' +
+							'<tbody>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_xp']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_xp'], 'avg_xp', type_stat)+';">'+
+											valueFormat((StatArray['avg_xp']).toFixed(2))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_damage_dealt']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_damage_dealt'], 'avg_damage_dealt', type_stat)+';">'+
+											valueFormat((StatArray['avg_damage_dealt']).toFixed(2))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_frags']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_frags'], 'avg_frags', type_stat)+';">'+
+											valueFormat((StatArray['avg_frags']).toFixed(2))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_planes_killed']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_planes_killed'], 'avg_planes_killed', type_stat)+';">'+
+											valueFormat((StatArray['avg_planes_killed']).toFixed(2))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_capture_points']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_capture_points'], 'avg_capture_points', type_stat)+';">'
+											+valueFormat((StatArray['avg_capture_points']).toFixed(2))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['avg_dropped_capture_points'], 'avg_dropped_capture_points', type_stat)+';">'+
+											valueFormat((StatArray['avg_dropped_capture_points']).toFixed(0))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+							'</tbody>' +
+						'</table>' +
+					'</div>' +
+					'<div class="col-xs-12 col-sm-4">' +
+						'<table class="account-table _right">' +
+							'<thead>' +
+							'<tr>' +
+								'<th colspan="2">' +
+									'<h3 class="account-title">'+localizationText['stat-table-3']+'</h3>' +
+								'</th>' +
+							'</tr>' +
+							'</thead>' +
+							'<tbody>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['max_xp']+'</span>' +
+										max_xp_ship +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['max_xp'], 'max_xp', type_stat)+';">'+
+											valueFormat((StatArray['max_xp']).toFixed(0))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['max_damage_dealt']+'</span>' +
+										max_damage_dealt_ship +
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['max_damage_dealt'], 'max_damage_dealt', type_stat)+';">'+
+											valueFormat((StatArray['max_damage_dealt']).toFixed(0))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['max_frags_battle']+'</span>' +
+										max_frags_ship+
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['max_frags_battle'], 'max_frags_battle', type_stat)+';">'+
+											valueFormat((StatArray['max_frags_battle']).toFixed(0))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td class="_name">' +
+										'<span>'+localizationText['max_planes_killed']+'</span>' +
+										max_planes_killed_ship+
+									'</td>' +
+									'<td class="_value">' +
+										'<span style="color: '+findColorASC(StatArray['max_planes_killed'], 'max_planes_killed', type_stat)+';">'+
+											valueFormat((StatArray['max_planes_killed']).toFixed(0))+
+										'</span>' +
+									'</td>' +
+								'</tr>' +
+							'</tbody>' +
+						'</table>' +
+					'</div>' +	
+				'</div>' +
+			'';
+			
+			return html;
+		}
+		function getHTMLShipStat(StatArray, type){
+			var htmlArray = [];
+			var StatClassArray = [];
+			for(var tS = 0; tS < typeShip.length; tS++){
+				htmlArray[typeShip[tS]] = '';
+				
+				StatClassArray[typeShip[tS]] = [];
+				StatClassArray[typeShip[tS]]['battles'] = 0;
+				StatClassArray[typeShip[tS]]['wins'] = 0;
+				StatClassArray[typeShip[tS]]['avg_xp'] = 0;
+				StatClassArray[typeShip[tS]]['count'] = 0;
+			}
+			
+			StatArray['ships'].sort(DESC(type+'.battles'))
+			
+			for(var sI = 0; sI < StatArray['ships'].length; sI++){
+				var Ship = StatArray['ships'][sI];
+				var ship_id = Ship['ship_id'];
+				var ship_nation = Encyclopedia[ship_id]['nation']
+				var ship_name = Encyclopedia[ship_id]['name'];
+				var ship_type = Encyclopedia[ship_id]['type'];
+				var ship_tier = Encyclopedia[ship_id]['tier'];
+				var ship_lvl = getLevelText(ship_tier);
+				var ship_img = Encyclopedia[ship_id]['images']['small'];
+				
+				var bg_nation
+				
+				if(Ship[type]['battles'] > 0){
+					StatClassArray[ship_type]['battles'] += Ship[type]['battles'];
+					StatClassArray[ship_type]['wins'] += Ship[type]['wins'];
+					StatClassArray[ship_type]['avg_xp'] += Ship[type]['avg_xp'];
+					StatClassArray[ship_type]['count']++;
+					
+					htmlArray[ship_type] += '' +
+						'<tr class="_expandable ship-stat-'+type+'" open-block="ship-'+ship_id+'-'+ship_tier+'-'+type+'" open-active="false">' +
+							'<td colspan="2" class="_name">' +
+								'<div class="_bg-nation-'+ship_nation+'"></div>' +
+								'<span class="_lvl">'+ship_lvl+'</span>' +
+								'<img class="_icon-ships img-responsive" style="width: 68px; height: 40px;" src="'+ship_img+'">' +
+								'<span class="_text">'+ship_name+'</span>' +
+							'</td>' +
+							'<td class="_value">'+valueFormat((Ship[type]['battles']).toFixed(0))+'</td>' +
+							'<td class="_value" style="white-space: nowrap;">' +
+								Ship[type]['wins']+' ' +
+								'<span style="color:'+findColorASC(Ship[type]['wins_percents'], 'wins_percents', 'main')+'">' +
+									'('+valueFormat((Ship[type]['wins_percents']).toFixed(0))+'%)' +
+								'</span>' +
+							'</td>' +
+							'<td class="_value" style="white-space: nowrap;">' +
+								'<span style="color:'+findColorASC(Ship[type]['avg_xp'], 'avg_xp', 'main')+';">' +
+									valueFormat((Ship[type]['avg_xp']).toFixed(0)) +
+								'</span>' +
+							'</td>' +
+							'<td style="white-space: nowrap;">' +
+								'<span style="color:'+findColorASC(Ship[type]['wr'], 'wr', 'main')+';">' +
+									valueFormat((Ship[type]['wr']).toFixed(0)) +
+								'</span>' +
+							'</td>' +
+						'</tr>' +
+						'<tr class="_hide _ship-entry-stat ship-'+ship_id+'-'+ship_tier+'-'+type+'">' +
+							'<td colspan="6">' +
+								getHTMLStat(Ship[type], 'ship');
+							'</td>' +
+						'</tr>'+
+					'';
+				}
+				
+			}
+			
+			var html = '';
+			
+			for(var tS = 0; tS < typeShip.length; tS++){
+				var wins_percents = (StatClassArray[typeShip[tS]]['wins']/StatClassArray[typeShip[tS]]['battles'])*100;
+				var avg_xp = StatClassArray[typeShip[tS]]['avg_xp']/StatClassArray[typeShip[tS]]['count'];
+			
+				html += '' +
+					'<tbody class="_expandable ships-class-'+type+'" open-block="ships-class-'+typeShip[tS].toLowerCase()+'-'+type+'" open-active="false">' +
+						'<tr>' +
+							'<td class="_icon"><div class="_icon-'+typeShip[tS].toLowerCase()+'"></div></td>' +
+							'<td class="_name">' +
+								localizationText[typeShip[tS].toLowerCase()]+' ('+StatClassArray[typeShip[tS]]['count']+')' +
+							'</td>' +
+							'<td class="_value">'+valueFormat((StatClassArray[typeShip[tS]]['battles']).toFixed(0))+'</td>' +
+							'<td class="_value" style="white-space: nowrap;">' +
+								valueFormat((StatClassArray[typeShip[tS]]['wins']).toFixed(0))+' ' +
+								'<span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">' +
+									'('+valueFormat((wins_percents).toFixed(0))+'%)' +
+								'</span>' +
+							'</td>' +
+							'<td class="_value" style="white-space: nowrap;"> ' +
+								'<span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">' +
+									valueFormat((avg_xp).toFixed(0)) +
+								'</span>' +
+							'</td>' +
+							'<td>' +
+								'<span style="color:'+findColorASC(StatArray['info']['statistics'][type]['wr_'+typeShip[tS]], 'wr', 'main')+';">' +
+									valueFormat((StatArray['info']['statistics'][type]['wr_'+typeShip[tS]]).toFixed(0)) +
+								'</span>' +
+							'</td>' +
+						'</tr>' +
+					'</tbody>' +
+					'<tbody class="_hide ships-class-'+typeShip[tS].toLowerCase()+'-'+type+'">' +
+						htmlArray[typeShip[tS]] +
+					'</tbody>' +
+				'';
+			}
+			
+			return html;
 		}
 		function GeneratorUserBar(){
 			var userbarbg = 'userbar';
@@ -2193,7 +2370,7 @@
 			var value_html = '';
 			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || (attr.indexOf(".max_") > -1 && attr.indexOf(".max_xp") == -1) 
 				|| attr.indexOf(".battles") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1){
-				value_html = '<font color="'+findColorASC(value, layer[layer.length - 1])+'">'+valueFormat(value)+'</font>';
+				value_html = '<font color="'+findColorASC(value, layer[layer.length - 1], 'main')+'">'+valueFormat(value)+'</font>';
 				td.setAttribute('style', 'white-space: nowrap;');
 			}else{
 				value_html = valueFormat(value);
@@ -2727,49 +2904,57 @@
 			
 			console.log('Get Encyclopedia Error');
 		}
-		function findColorASC(value, stat_type){
-			if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
-				return color['very_bad'];
-			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
-				return color['bad'];
-			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][2])){
-				return color['normal'];
-			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][3])){
-				return color['good'];
-			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][4])){
-				return color['very_good'];
-			}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][5])){
-				return color['unique'];
+		function findColorASC(value, stat_type, type){
+			if(type == 'main'){
+				if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
+					return color['very_bad'];
+				}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
+					return color['bad'];
+				}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][2])){
+					return color['normal'];
+				}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][3])){
+					return color['good'];
+				}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][4])){
+					return color['very_good'];
+				}else if(parseFloat(value) <= parseFloat(colorStat[stat_type][5])){
+					return color['unique'];
+				}else{
+					return color['very_bad'];
+				}
 			}else{
-				return color['very_bad'];
+				return '';
 			}
 		}
-		function findColorDESC(value, stat_type){
-			var return_color = color['very_bad'];
-			
-			if(isNaN(value)){
-				return_color = color['very_bad'];
+		function findColorDESC(value, stat_type, type){
+			if(type == 'main'){
+				var return_color = color['very_bad'];
+				
+				if(isNaN(value)){
+					return_color = color['very_bad'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
+					return_color = color['very_bad'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
+					return_color = color['bad'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][2])){
+					return_color = color['normal'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][3])){
+					return_color = color['good'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][4])){
+					return_color = color['very_good'];
+				}
+				if(parseFloat(value) <= parseFloat(colorStat[stat_type][5])){
+					return_color = color['unique'];
+				}
+				
+				return return_color;
+			}else{
+				return '';
 			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
-				return_color = color['very_bad'];
-			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][1])){
-				return_color = color['bad'];
-			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][2])){
-				return_color = color['normal'];
-			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][3])){
-				return_color = color['good'];
-			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][4])){
-				return_color = color['very_good'];
-			}
-			if(parseFloat(value) <= parseFloat(colorStat[stat_type][5])){
-				return_color = color['unique'];
-			}
-			
-			return return_color;
 		}
 		function ASC(a){
 			return function (b, c){
@@ -3047,29 +3232,29 @@
 			message.style.display = 'none';
 			messagebg.style.display = 'none';
 		}
-		function getLevelNumer(text){
-			if('I' == text){
-				return 1;
-			}else if('II' == text){
-				return 2;
-			}else if('III' == text){
-				return 3;
-			}else if('IV' == text){
-				return 4;
-			}else if('V' == text){
-				return 5;
-			}else if('VI' == text){
-				return 6;
-			}else if('VII' == text){
-				return 7;
-			}else if('VIII' == text){
-				return 8;
-			}else if('IX' == text){
-				return 9;
-			}else if('X' == text){
-				return 10;
+		function getLevelText(level){
+			if(1 == level){
+				return 'I';
+			}else if(2 == level){
+				return 'II';
+			}else if(3 == level){
+				return 'III';
+			}else if(4 == level){
+				return 'IV';
+			}else if(5 == level){
+				return 'V';
+			}else if(6 == level){
+				return 'VI';
+			}else if(7 == level){
+				return 'VII';
+			}else if(8 == level){
+				return 'VIII';
+			}else if(9 == level){
+				return 'IX';
+			}else if(10 == level){
+				return 'X';
 			}
-			return 0;
+			return '-';
 		}
 		// Modify JSON.stringify to allow recursive and single-level arrays
 		(function(){
@@ -3198,6 +3383,13 @@
 				localizationText['ru']['avg_battles_level'] = 'Средний уровень кораблей игрока в боях';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
 				localizationText['ru']['wr'] = 'WR';
+				
+				localizationText['ru']['ships_stat'] = 'Расширенная статистика по технике';
+				localizationText['ru']['title_ships'] = 'Корабли';
+				localizationText['ru']['battleship'] = 'Линкоры';
+				localizationText['ru']['aircarrier'] = 'Авианосцы';
+				localizationText['ru']['cruiser'] = 'Крейсеры';
+				localizationText['ru']['destroyer'] = 'Эсминцы';
 				
 				localizationText['ru']['block-link-clan-member-history'] = 'Блок "Изменений в составе клана"';
 				localizationText['ru']['link-clan-member-history'] = 'Изменения в составе клана';
@@ -3364,6 +3556,13 @@
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
 				localizationText['en']['wr'] = 'WR';
 				
+				localizationText['en']['ships_stat'] = 'Detailed Warship Statistics';
+				localizationText['en']['title_ships'] = 'Warships';
+				localizationText['en']['battleship'] = 'Battleships';
+				localizationText['en']['aircarrier'] = 'Aircraft carriers';
+				localizationText['en']['cruiser'] = 'Cruisers';
+				localizationText['en']['destroyer'] = 'Destroyers';
+				
 				localizationText['en']['block-link-clan-member-history'] = '"Changes in clan members" section';
 				localizationText['en']['link-clan-member-history'] = 'Changes in clan members';
 				localizationText['en']['member-history-clear'] = 'Clear history';
@@ -3486,6 +3685,15 @@
 				localizationText['fr']['battles_days'] = 'Batailles par jour';
 				localizationText['fr']['max_ship_level'] = 'Le niveau maximum de navire';
 				localizationText['fr']['avg_battles_level'] = 'Niveau moyen de navires de guerre utilisée par le joueur';
+				localizationText['fr']['number-ships-x'] = 'Nombre de navires X Tier';
+				localizationText['fr']['wr'] = 'WR';
+				
+				localizationText['fr']['ships_stat'] = 'Statistiques détaillées du navire';
+				localizationText['fr']['title_ships'] = 'Navires de guerre';
+				localizationText['fr']['battleship'] = 'Cuirassés';
+				localizationText['fr']['aircarrier'] = 'Porte-avions';
+				localizationText['fr']['cruiser'] = 'Croiseurs';
+				localizationText['fr']['destroyer'] = 'Destroyers';
 			}
 			
 			{/* Deutsch */
@@ -3533,6 +3741,15 @@
 				localizationText['de']['battles_days'] = 'Battles pro Tag';
 				localizationText['de']['max_ship_level'] = 'Die maximale Stufe der Schiffs';
 				localizationText['de']['avg_battles_level'] = 'Durchschnittliche Tier von Kriegsschiffen durch Spieler verwendet';
+				localizationText['de']['number-ships-x'] = 'Anzahl der X Tier Schiffe';
+				localizationText['de']['wr'] = 'WR';
+				
+				localizationText['de']['ships_stat'] = 'Detaillierte Schiffstatistik';
+				localizationText['de']['title_ships'] = 'Kriegsschiffe';
+				localizationText['de']['battleship'] = 'Schlachtschiffe';
+				localizationText['de']['aircarrier'] = 'Flugzeugträger';
+				localizationText['de']['cruiser'] = 'Kreuzer';
+				localizationText['de']['destroyer'] = 'Zerstörer';
 			}
 			
 			{/* Türkçe */
@@ -3580,6 +3797,15 @@
 				localizationText['tr']['battles_days'] = 'Günde Savaşları';
 				localizationText['tr']['max_ship_level'] = 'Geminin maksimum katmanlı';
 				localizationText['tr']['avg_battles_level'] = 'Oyuncu tarafından kullanılan savaş gemilerinin ortalama katmanlı';
+				localizationText['tr']['number-ships-x'] = 'X Tier gemilerin sayısı';
+				localizationText['tr']['wr'] = 'WR';
+				
+				localizationText['tr']['ships_stat'] = 'Detaylı Gemi İstatistikleri';
+				localizationText['tr']['title_ships'] = 'Savaş Gemileri';
+				localizationText['tr']['battleship'] = 'Zırhlılar';
+				localizationText['tr']['aircarrier'] = 'Uçak gemileri';
+				localizationText['tr']['cruiser'] = 'Kruvazörler';
+				localizationText['tr']['destroyer'] = 'Muhripler';
 			}
 			
 			{/* Español EU */
@@ -3627,6 +3853,15 @@
 				localizationText['es']['battles_days'] = 'Batallas por día';
 				localizationText['es']['max_ship_level'] = 'El nivel máximo de la nave';
 				localizationText['es']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
+				localizationText['es']['number-ships-x'] = 'Número de buques de Nivel X';
+				localizationText['es']['wr'] = 'WR';
+				
+				localizationText['es']['ships_stat'] = 'Estadísticas detalladas del barco';
+				localizationText['es']['title_ships'] = 'Barcos';
+				localizationText['es']['battleship'] = 'Acorazados';
+				localizationText['es']['aircarrier'] = 'Portaaviones';
+				localizationText['es']['cruiser'] = 'Cruceros';
+				localizationText['es']['destroyer'] = 'Destructores';
 			}
 			
 			{/* Español NA */
@@ -3674,6 +3909,15 @@
 				localizationText['es-mx']['battles_days'] = 'Batallas por día';
 				localizationText['es-mx']['max_ship_level'] = 'El nivel máximo de la nave';
 				localizationText['es-mx']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
+				localizationText['es-mx']['number-ships-x'] = 'Número de buques de Nivel X';
+				localizationText['es-mx']['wr'] = 'WR';
+				
+				localizationText['es-mx']['ships_stat'] = 'Estadísticas detalladas de los Barcos de Guerra';
+				localizationText['es-mx']['title_ships'] = 'Barcos de Guerra';
+				localizationText['es-mx']['battleship'] = 'Acorazados';
+				localizationText['es-mx']['aircarrier'] = 'Portaaviones';
+				localizationText['es-mx']['cruiser'] = 'Cruceros';
+				localizationText['es-mx']['destroyer'] = 'Destructores';
 			}
 			
 			{/* Português */
@@ -3721,6 +3965,15 @@
 				localizationText['pt-br']['battles_days'] = 'Batalhas por dia';
 				localizationText['pt-br']['max_ship_level'] = 'O nível máximo de navio';
 				localizationText['pt-br']['avg_battles_level'] = 'Nível médio de navios de guerra usados por jogador';
+				localizationText['pt-br']['number-ships-x'] = 'Número de X navios de Nível';
+				localizationText['pt-br']['wr'] = 'WR';
+				
+				localizationText['pt-br']['ships_stat'] = 'Estatísticas Detalhadas de Navios';
+				localizationText['pt-br']['title_ships'] = 'Navios';
+				localizationText['pt-br']['battleship'] = 'Encouraçados';
+				localizationText['pt-br']['aircarrier'] = 'Porta-aviões';
+				localizationText['pt-br']['cruiser'] = 'Cruzadores';
+				localizationText['pt-br']['destroyer'] = 'Contratorpedeiros';
 			}
 			
 			{/* Čeština */
@@ -3768,6 +4021,15 @@
 				localizationText['cs']['battles_days'] = 'Bitvy za den';
 				localizationText['cs']['max_ship_level'] = 'Maximální vrstva lodi';
 				localizationText['cs']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
+				localizationText['cs']['number-ships-x'] = 'Počet X Tier lodí';
+				localizationText['cs']['wr'] = 'WR';
+				
+				localizationText['cs']['ships_stat'] = 'Podrobné statistiky lodě';
+				localizationText['cs']['title_ships'] = 'Lodě';
+				localizationText['cs']['battleship'] = 'Bitevní lodě';
+				localizationText['cs']['aircarrier'] = 'Letadlové lodě';
+				localizationText['cs']['cruiser'] = 'Křižníky';
+				localizationText['cs']['destroyer'] = 'Torpédoborce';
 			}
 			
 			{/* Polski */
@@ -3815,6 +4077,15 @@
 				localizationText['pl']['battles_days'] = 'Bitvy za den';
 				localizationText['pl']['max_ship_level'] = 'Maximální vrstva lodi';
 				localizationText['pl']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
+				localizationText['pl']['number-ships-x'] = 'Ilość X statków Tier';
+				localizationText['pl']['wr'] = 'WR';
+				
+				localizationText['pl']['ships_stat'] = 'Szczegółowe statystyki okrętu';
+				localizationText['pl']['title_ships'] = 'Okręty';
+				localizationText['pl']['battleship'] = 'Pancerniki';
+				localizationText['pl']['aircarrier'] = 'Lotniskowce';
+				localizationText['pl']['cruiser'] = 'Krążowniki';
+				localizationText['pl']['destroyer'] = 'Niszczyciele';
 			}
 			
 			{/* 日本語 */
@@ -3862,6 +4133,15 @@
 				localizationText['ja']['battles_days'] = '一日あたりの戦い';
 				localizationText['ja']['max_ship_level'] = '船の最大ティア';
 				localizationText['ja']['avg_battles_level'] = 'プレイヤーが使用する軍艦の平均ティア';
+				localizationText['ja']['number-ships-x'] = 'Xティア船の数';
+				localizationText['ja']['wr'] = 'WR';
+				
+				localizationText['ja']['ships_stat'] = '艦の詳細戦績';
+				localizationText['ja']['title_ships'] = '艦';
+				localizationText['ja']['battleship'] = '戦艦';
+				localizationText['ja']['aircarrier'] = '航空母艦';
+				localizationText['ja']['cruiser'] = '巡洋艦';
+				localizationText['ja']['destroyer'] = '駆逐艦';
 			}
 			
 			{/* ไทย */
@@ -3909,6 +4189,15 @@
 				localizationText['th']['battles_days'] = 'สงครามต่อวัน';
 				localizationText['th']['max_ship_level'] = 'ชั้นสูงสุดของเรือ';
 				localizationText['th']['avg_battles_level'] = 'ชั้นเฉลี่ยของเรือรบที่ใช้โดยผู้เล่น';
+				localizationText['th']['number-ships-x'] = 'จำนวน X เรือชั้นที่';
+				localizationText['th']['wr'] = 'WR';
+				
+				localizationText['th']['ships_stat'] = 'สถิติเรือรบโดยละเอียด';
+				localizationText['th']['title_ships'] = 'เรือรบ';
+				localizationText['th']['battleship'] = 'เรือประจัญบาน';
+				localizationText['th']['aircarrier'] = 'เรือบรรทุกเครื่องบิน';
+				localizationText['th']['cruiser'] = 'เรือลาดตระเวณ';
+				localizationText['th']['destroyer'] = 'เรือพิฆาต';
 			}
 			
 			{/* Tiếng Việt */
@@ -3959,6 +4248,15 @@
 				localizationText['vi']['battles_days'] = 'Trận chiến mỗi ngày';
 				localizationText['vi']['max_ship_level'] = 'Cấp tối đa của tàu';
 				localizationText['vi']['avg_battles_level'] = 'Tier trung bình của các tàu chiến được sử dụng bởi người chơi';
+				localizationText['vi']['number-ships-x'] = 'Số tàu Tier X';
+				localizationText['vi']['wr'] = 'WR';
+				
+				localizationText['vi']['ships_stat'] = 'Thống kê Tàu chiến Chi tiết';
+				localizationText['vi']['title_ships'] = 'Tàu chiến';
+				localizationText['vi']['battleship'] = 'Thiết giáp hạm';
+				localizationText['vi']['aircarrier'] = 'Tàu sân bay';
+				localizationText['vi']['cruiser'] = 'Tuần dương hạm';
+				localizationText['vi']['destroyer'] = 'Khu trục hạm';
 			}
 			
 			{/* 繁體中文 */
@@ -4006,6 +4304,15 @@
 				localizationText['zh-tw']['battles_days'] = '每天戰役';
 				localizationText['zh-tw']['max_ship_level'] = '船舶最大層';
 				localizationText['zh-tw']['avg_battles_level'] = '戰艦的平均層使用的播放器';
+				localizationText['zh-tw']['number-ships-x'] = '第X級船舶數量';
+				localizationText['zh-tw']['wr'] = 'WR';
+				
+				localizationText['zh-tw']['ships_stat'] = '詳細艦艇統計';
+				localizationText['zh-tw']['title_ships'] = '戰艦';
+				localizationText['zh-tw']['battleship'] = '主力艦';
+				localizationText['zh-tw']['aircarrier'] = '航空母艦';
+				localizationText['zh-tw']['cruiser'] = '巡洋艦';
+				localizationText['zh-tw']['destroyer'] = '驅逐艦';
 			}
 			
 			return localizationText[lang];
