@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.0.20
+// @version 0.5.0.21
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.0.20';
+		var VersionWoWsStatInfo = '0.5.0.21';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -170,8 +170,8 @@
 		color['very_good'] = '#02C9B3'; // очень хорошо, лучше чем у 95%
 		color['unique'] = '#D042F3'; // уникально, лучше чем у 99%
 		
-		var colorStat = jQ.parseJSON('{"max_frags_battle":[4,5,6,7,8,99],"avg_planes_killed":["0.22","0.97","1.80","3.70","6.06","99.00"],"max_damage_dealt":[80110,109005,130235,164359,194463,9999999],"wr":["643.52","1005.83","1300.66","1848.33","2324.13","99999.00"],"kill_dead":["0.62","1.00","1.33","2.07","2.90","99.00"],"avg_capture_points":["0.28","0.71","1.12","1.96","2.82","99.00"],"survived_battles_percents":["16.43","26.14","33.57","45.45","54.38","100.00"],"max_xp":[1497,1916,2226,2722,3144,99999],"avg_damage_dealt":["15978.13","22996.55","28548.28","38713.42","48513.85","999999.00"],"avg_dropped_capture_points":["3.72","5.67","7.30","10.27","12.96","999.00"],"max_planes_killed":[7,20,30,47,60,999],"avg_xp":["586.13","811.28","1044.92","1554.24","2025.85","99999.00"],"avg_frags":["0.51","0.73","0.90","1.20","1.44","99.00"],"wins_percents":["43.79","47.89","50.86","55.76","60.08","100.00"],"battles":[230,336,487,869,1308,99999]}');
-		var ExpShips = jQ.parseJSON('{"4293834192":{"expDamage":19299.55,"expFrags":0.73,"expCapturePoints":0.98,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.76},"4292818736":{"expDamage":42374.21,"expFrags":0.69,"expCapturePoints":0.49,"expPlanesKilled":2.6,"expDroppedCapturePoints":2.68},"4292786160":{"expDamage":10062.57,"expFrags":0.44,"expCapturePoints":0.69,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.69},"4284430032":{"expDamage":42808.3,"expFrags":0.8,"expCapturePoints":0.8,"expPlanesKilled":1.7,"expDroppedCapturePoints":3.55},"4288559088":{"expDamage":22054.39,"expFrags":0.79,"expCapturePoints":1.52,"expPlanesKilled":0.55,"expDroppedCapturePoints":4.02},"4279220208":{"expDamage":104342.32,"expFrags":1.66,"expCapturePoints":0.43,"expPlanesKilled":22.14,"expDroppedCapturePoints":5.95},"4293834544":{"expDamage":17808.26,"expFrags":1.63,"expCapturePoints":2.26,"expPlanesKilled":0.01,"expDroppedCapturePoints":18.89},"4288624336":{"expDamage":41313.23,"expFrags":0.94,"expCapturePoints":0.94,"expPlanesKilled":1.08,"expDroppedCapturePoints":4.42},"4287542992":{"expDamage":31461.7,"expFrags":0.86,"expCapturePoints":1.09,"expPlanesKilled":2.29,"expDroppedCapturePoints":6.11},"4282365936":{"expDamage":50111.46,"expFrags":0.85,"expCapturePoints":0.38,"expPlanesKilled":30.72,"expDroppedCapturePoints":3.97},"4289607664":{"expDamage":21205.09,"expFrags":0.78,"expCapturePoints":1.15,"expPlanesKilled":0.58,"expDroppedCapturePoints":4.0},"4288558800":{"expDamage":24649.57,"expFrags":0.71,"expCapturePoints":1.73,"expPlanesKilled":0.65,"expDroppedCapturePoints":3.16},"4289607376":{"expDamage":21574.71,"expFrags":0.67,"expCapturePoints":1.49,"expPlanesKilled":0.55,"expDroppedCapturePoints":1.87},"4281284304":{"expDamage":51836.45,"expFrags":0.89,"expCapturePoints":0.89,"expPlanesKilled":4.17,"expDroppedCapturePoints":3.76},"4277057520":{"expDamage":35178.03,"expFrags":0.71,"expCapturePoints":1.35,"expPlanesKilled":5.98,"expDroppedCapturePoints":7.3},"4285511376":{"expDamage":54313.29,"expFrags":1.18,"expCapturePoints":0.29,"expPlanesKilled":6.4,"expDroppedCapturePoints":5.81},"4276041424":{"expDamage":82427.18,"expFrags":1.2,"expCapturePoints":0.68,"expPlanesKilled":8.29,"expDroppedCapturePoints":6.49},"4293801424":{"expDamage":21976.91,"expFrags":0.78,"expCapturePoints":1.09,"expPlanesKilled":0.34,"expDroppedCapturePoints":5.17},"4274927600":{"expDamage":18260.88,"expFrags":0.74,"expCapturePoints":0.77,"expPlanesKilled":0.03,"expDroppedCapturePoints":3.6},"4288657104":{"expDamage":47818.65,"expFrags":1.12,"expCapturePoints":0.31,"expPlanesKilled":6.24,"expDroppedCapturePoints":4.28},"4264441840":{"expDamage":14452.57,"expFrags":0.46,"expCapturePoints":0.97,"expPlanesKilled":0.27,"expDroppedCapturePoints":4.18},"4292753392":{"expDamage":9535.37,"expFrags":0.56,"expCapturePoints":0.52,"expPlanesKilled":0.01,"expDroppedCapturePoints":4.44},"4266538992":{"expDamage":10701.85,"expFrags":0.47,"expCapturePoints":0.49,"expPlanesKilled":0.02,"expDroppedCapturePoints":3.44},"4293867504":{"expDamage":16967.75,"expFrags":0.59,"expCapturePoints":1.06,"expPlanesKilled":0.03,"expDroppedCapturePoints":6.82},"4273911792":{"expDamage":52202.27,"expFrags":0.99,"expCapturePoints":1.18,"expPlanesKilled":5.6,"expDroppedCapturePoints":8.27},"4276041712":{"expDamage":69382.5,"expFrags":1.16,"expCapturePoints":1.0,"expPlanesKilled":8.33,"expDroppedCapturePoints":4.85},"4284397008":{"expDamage":19612.81,"expFrags":0.93,"expCapturePoints":1.18,"expPlanesKilled":0.01,"expDroppedCapturePoints":16.82},"4290655952":{"expDamage":28690.84,"expFrags":1.01,"expCapturePoints":1.23,"expPlanesKilled":0.13,"expDroppedCapturePoints":2.37},"4282333168":{"expDamage":53962.1,"expFrags":0.92,"expCapturePoints":1.06,"expPlanesKilled":7.6,"expDroppedCapturePoints":4.2},"4292753104":{"expDamage":11770.64,"expFrags":0.68,"expCapturePoints":0.71,"expPlanesKilled":0.01,"expDroppedCapturePoints":3.67},"4291737040":{"expDamage":29816.56,"expFrags":0.9,"expCapturePoints":0.86,"expPlanesKilled":1.32,"expDroppedCapturePoints":7.93},"4292851408":{"expDamage":36085.38,"expFrags":0.89,"expCapturePoints":0.31,"expPlanesKilled":5.84,"expDroppedCapturePoints":2.38},"4269717488":{"expDamage":17461.13,"expFrags":0.53,"expCapturePoints":0.57,"expPlanesKilled":0.13,"expDroppedCapturePoints":6.0},"4277122768":{"expDamage":88556.52,"expFrags":1.46,"expCapturePoints":0.33,"expPlanesKilled":18.36,"expDroppedCapturePoints":7.57},"4286527184":{"expDamage":23983.81,"expFrags":0.71,"expCapturePoints":0.86,"expPlanesKilled":0.17,"expDroppedCapturePoints":5.26},"4292785616":{"expDamage":19362.82,"expFrags":0.97,"expCapturePoints":1.21,"expPlanesKilled":0.01,"expDroppedCapturePoints":15.9},"4283414224":{"expDamage":58672.87,"expFrags":1.2,"expCapturePoints":0.35,"expPlanesKilled":12.57,"expDroppedCapturePoints":6.28},"4281284592":{"expDamage":26085.94,"expFrags":0.74,"expCapturePoints":1.12,"expPlanesKilled":0.01,"expDroppedCapturePoints":6.65},"4259231440":{"expDamage":67543.61,"expFrags":1.2,"expCapturePoints":1.09,"expPlanesKilled":4.3,"expDroppedCapturePoints":6.85},"4284463088":{"expDamage":50401.61,"expFrags":0.93,"expCapturePoints":0.27,"expPlanesKilled":16.97,"expDroppedCapturePoints":4.79},"4288591856":{"expDamage":24108.7,"expFrags":0.69,"expCapturePoints":0.93,"expPlanesKilled":3.25,"expDroppedCapturePoints":6.0},"4277090288":{"expDamage":80380.68,"expFrags":1.15,"expCapturePoints":0.98,"expPlanesKilled":9.48,"expDroppedCapturePoints":6.03},"4287543280":{"expDamage":34089.07,"expFrags":0.97,"expCapturePoints":1.12,"expPlanesKilled":3.24,"expDroppedCapturePoints":7.7},"4293834736":{"expDamage":10034.66,"expFrags":0.65,"expCapturePoints":0.79,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.18},"4289640144":{"expDamage":19515.02,"expFrags":0.57,"expCapturePoints":0.71,"expPlanesKilled":0.37,"expDroppedCapturePoints":4.66},"4290721776":{"expDamage":26069.07,"expFrags":0.73,"expCapturePoints":1.05,"expPlanesKilled":0.43,"expDroppedCapturePoints":6.36},"4267620048":{"expDamage":27026.53,"expFrags":1.0,"expCapturePoints":1.14,"expPlanesKilled":0.92,"expDroppedCapturePoints":7.41},"4288657392":{"expDamage":40600.45,"expFrags":0.79,"expCapturePoints":0.49,"expPlanesKilled":11.0,"expDroppedCapturePoints":4.41},"4280170480":{"expDamage":21087.4,"expFrags":0.8,"expCapturePoints":0.79,"expPlanesKilled":0.38,"expDroppedCapturePoints":3.8},"4286461936":{"expDamage":25890.96,"expFrags":0.81,"expCapturePoints":1.94,"expPlanesKilled":0.5,"expDroppedCapturePoints":4.73},"4256085712":{"expDamage":12517.49,"expFrags":0.93,"expCapturePoints":1.16,"expPlanesKilled":0.01,"expDroppedCapturePoints":11.21},"4259264496":{"expDamage":38103.62,"expFrags":0.88,"expCapturePoints":0.98,"expPlanesKilled":1.12,"expDroppedCapturePoints":4.77},"4255037136":{"expDamage":25751.83,"expFrags":0.5,"expCapturePoints":0.64,"expPlanesKilled":2.0,"expDroppedCapturePoints":5.03},"4248745968":{"expDamage":35324.99,"expFrags":1.07,"expCapturePoints":0.97,"expPlanesKilled":0.21,"expDroppedCapturePoints":10.95},"4258182864":{"expDamage":12988.67,"expFrags":0.57,"expCapturePoints":0.74,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.25},"4280170192":{"expDamage":16927.9,"expFrags":1.02,"expCapturePoints":1.13,"expPlanesKilled":0.01,"expDroppedCapturePoints":7.86},"4287510224":{"expDamage":27609.43,"expFrags":0.68,"expCapturePoints":1.69,"expPlanesKilled":0.52,"expDroppedCapturePoints":3.13},"4293867312":{"expDamage":24429.01,"expFrags":0.68,"expCapturePoints":0.01,"expPlanesKilled":6.18,"expDroppedCapturePoints":0.01},"4291737584":{"expDamage":12539.83,"expFrags":0.69,"expCapturePoints":1.15,"expPlanesKilled":0.01,"expDroppedCapturePoints":11.21},"4286527472":{"expDamage":36652.53,"expFrags":0.68,"expCapturePoints":0.79,"expPlanesKilled":2.43,"expDroppedCapturePoints":3.76},"4291770064":{"expDamage":19257.59,"expFrags":0.5,"expCapturePoints":0.81,"expPlanesKilled":0.41,"expDroppedCapturePoints":4.24},"4292818896":{"expDamage":31966.56,"expFrags":0.74,"expCapturePoints":1.12,"expPlanesKilled":2.18,"expDroppedCapturePoints":4.93},"4282267344":{"expDamage":52921.14,"expFrags":0.95,"expCapturePoints":2.65,"expPlanesKilled":0.6,"expDroppedCapturePoints":3.62},"4280203248":{"expDamage":33003.28,"expFrags":0.68,"expCapturePoints":1.27,"expPlanesKilled":5.29,"expDroppedCapturePoints":6.55},"4281219056":{"expDamage":46155.9,"expFrags":1.13,"expCapturePoints":1.15,"expPlanesKilled":1.59,"expDroppedCapturePoints":3.12},"4293801680":{"expDamage":17352.08,"expFrags":1.02,"expCapturePoints":0.99,"expPlanesKilled":0.01,"expDroppedCapturePoints":6.22},"4247697392":{"expDamage":36873.64,"expFrags":1.25,"expCapturePoints":1.63,"expPlanesKilled":0.25,"expDroppedCapturePoints":8.17},"4281317360":{"expDamage":88385.11,"expFrags":1.68,"expCapturePoints":0.58,"expPlanesKilled":23.41,"expDroppedCapturePoints":5.82},"4285445840":{"expDamage":46097.47,"expFrags":1.0,"expCapturePoints":1.06,"expPlanesKilled":2.95,"expDroppedCapturePoints":6.87},"4279154384":{"expDamage":17093.37,"expFrags":0.67,"expCapturePoints":0.66,"expPlanesKilled":0.04,"expDroppedCapturePoints":6.46},"4293867216":{"expDamage":17606.02,"expFrags":0.67,"expCapturePoints":1.22,"expPlanesKilled":0.06,"expDroppedCapturePoints":5.95},"4283381456":{"expDamage":13834.49,"expFrags":0.78,"expCapturePoints":1.49,"expPlanesKilled":0.01,"expDroppedCapturePoints":5.04},"4290754544":{"expDamage":20253.47,"expFrags":0.45,"expCapturePoints":0.11,"expPlanesKilled":9.4,"expDroppedCapturePoints":1.34},"4292851696":{"expDamage":26048.93,"expFrags":0.53,"expCapturePoints":0.13,"expPlanesKilled":11.86,"expDroppedCapturePoints":3.03},"4282365648":{"expDamage":62193.0,"expFrags":1.16,"expCapturePoints":0.34,"expPlanesKilled":13.16,"expDroppedCapturePoints":6.2},"4286494416":{"expDamage":40647.63,"expFrags":0.98,"expCapturePoints":1.09,"expPlanesKilled":2.75,"expDroppedCapturePoints":6.11},"4288624624":{"expDamage":28278.84,"expFrags":0.72,"expCapturePoints":0.88,"expPlanesKilled":0.65,"expDroppedCapturePoints":5.14},"4291704528":{"expDamage":20911.5,"expFrags":0.8,"expCapturePoints":0.95,"expPlanesKilled":0.09,"expDroppedCapturePoints":2.46},"4282300400":{"expDamage":27636.37,"expFrags":0.65,"expCapturePoints":0.98,"expPlanesKilled":3.22,"expDroppedCapturePoints":5.56},"4282300112":{"expDamage":44869.48,"expFrags":0.89,"expCapturePoints":1.06,"expPlanesKilled":3.75,"expDroppedCapturePoints":6.61},"4272830448":{"expDamage":35213.16,"expFrags":1.04,"expCapturePoints":2.31,"expPlanesKilled":1.0,"expDroppedCapturePoints":4.62},"4269684432":{"expDamage":14489.43,"expFrags":0.67,"expCapturePoints":0.64,"expPlanesKilled":0.02,"expDroppedCapturePoints":2.8},"4289640432":{"expDamage":29429.88,"expFrags":0.91,"expCapturePoints":0.86,"expPlanesKilled":1.18,"expDroppedCapturePoints":7.67},"4290688720":{"expDamage":18225.65,"expFrags":0.62,"expCapturePoints":0.75,"expPlanesKilled":1.51,"expDroppedCapturePoints":6.58},"4279219920":{"expDamage":79232.38,"expFrags":1.49,"expCapturePoints":0.55,"expPlanesKilled":20.33,"expDroppedCapturePoints":7.51},"4272895696":{"expDamage":56869.75,"expFrags":0.88,"expCapturePoints":0.74,"expPlanesKilled":5.51,"expDroppedCapturePoints":4.7},"4292785968":{"expDamage":24497.51,"expFrags":1.51,"expCapturePoints":0.01,"expPlanesKilled":0.01,"expDroppedCapturePoints":16.76},"4290689008":{"expDamage":19774.25,"expFrags":0.75,"expCapturePoints":1.0,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.99},"4284364496":{"expDamage":37201.85,"expFrags":0.78,"expCapturePoints":2.23,"expPlanesKilled":0.51,"expDroppedCapturePoints":4.16},"4287575760":{"expDamage":29263.14,"expFrags":0.72,"expCapturePoints":0.79,"expPlanesKilled":0.97,"expDroppedCapturePoints":4.53},"4281251536":{"expDamage":23516.66,"expFrags":0.76,"expCapturePoints":0.67,"expPlanesKilled":0.29,"expDroppedCapturePoints":6.52}}');
+		var colorStat = null;
+		var ExpShips = null;
 		
 		/* ===== Style UserScript ===== */
 		{
@@ -301,18 +301,20 @@
 			
 			console.log(error);
 			
-			if(window.location.host == 'forum.worldofwarships.'+realm_host){
-				alert(error);
-			}else{
-				error = error.split('\n').join('<br />');
-				onShowMessage(
-					localizationText['Box'],
-					error,
-					onCloseMessage,
-					localizationText['Ok'],
-					false
-				);			
-			}
+			//if(lineno < 5000){
+				if(window.location.host == 'forum.worldofwarships.'+realm_host){
+					alert(error);
+				}else{
+					error = error.split('\n').join('<br />');
+					onShowMessage(
+						localizationText['Box'],
+						error,
+						onCloseMessage,
+						localizationText['Ok'],
+						false
+					);
+				}
+			//}
 			
 			return true;
 		}
@@ -411,6 +413,7 @@
 		
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
+			checkJson();
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
 			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
@@ -423,6 +426,7 @@
 		}else if(window.location.href.indexOf("clans") > -1 && window.location.href.split('/')[4].match(/[0-9]+/) != null 
 			&& window.location.href.indexOf("players") > -1 && window.location.href.split('/').length >= 6
 		){
+			checkJson();
 			SettingsWCI = getSettingsClanPage();
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var ClanId = window.location.href.split('/')[4].match(/[0-9]+/);
@@ -447,6 +451,12 @@
 		
 		/* ===== Pages function ===== */
 		function MemberProfilePage(){
+			if(colorStat == null || ExpShips == null){
+				console.log('colorStat == null || ExpShips == null');
+				setTimeout(function(){MemberProfilePage();}, 1000);
+				return;
+			}
+			
 			var account_profile = document.getElementsByClassName('account-profile')[0];
 			if(account_profile === undefined){return;}
 			
@@ -528,6 +538,7 @@
 			for(var i = 0; i < basic_info.length; i++){
 				var ipsUserPhotoLink = basic_info[i].getElementsByClassName('ipsUserPhotoLink')[0];
 				if(undefined === ipsUserPhotoLink){continue;}
+				if(ipsUserPhotoLink.id == null){continue;}
 				if(ipsUserPhotoLink.id.indexOf('anonymous_element') > -1){
 					var linkParse = ipsUserPhotoLink.href.split('/');
 					var accountParse = linkParse[5].split('-');
@@ -548,6 +559,12 @@
 			}
 		}
 		function ClanPage(){
+			if(colorStat == null || ExpShips == null){
+				console.log('colorStat == null || ExpShips == null');
+				setTimeout(function(){ClanPage();}, 1000);
+				return;
+			}
+		
 			var view_block_history = getLocalStorage('clan-member-history', false);
 			if(view_block_history == null){view_block_history = 'hide';}
 			
@@ -1442,7 +1459,7 @@
 				StatClassArray[typeShip[tS]]['count'] = 0;
 			}
 			
-			StatArray['ships'].sort(DESC(type+'.battles'))
+			StatArray['ships'].sort(DESC(type+'.battles'));
 			
 			for(var sI = 0; sI < StatArray['ships'].length; sI++){
 				var Ship = StatArray['ships'][sI];
@@ -1453,8 +1470,6 @@
 				var ship_tier = Encyclopedia[ship_id]['tier'];
 				var ship_lvl = getLevelText(ship_tier);
 				var ship_img = Encyclopedia[ship_id]['images']['small'];
-				
-				var bg_nation
 				
 				if(Ship[type]['battles'] > 0){
 					StatClassArray[ship_type]['battles'] += Ship[type]['battles'];
@@ -1490,7 +1505,7 @@
 						'</tr>' +
 						'<tr class="_hide _ship-entry-stat ship-'+ship_id+'-'+ship_tier+'-'+type+'">' +
 							'<td colspan="6">' +
-								getHTMLStat(Ship[type], 'ship');
+								getHTMLStat(Ship[type], 'ship') +
 							'</td>' +
 						'</tr>'+
 					'';
@@ -2410,6 +2425,46 @@
 		}
 		
 		/* ===== UserScript function ===== */
+		function checkJson(){
+			var date = new Date();
+			var d = date.getDate();
+			if(d < 10){d = '0'+d;}
+			var m = date.getMonth(); m++;
+			if(m < 10){m = '0'+m;}
+			var y = date.getFullYear();
+			var numJson = y+''+m+''+d;
+			
+			if(getLocalStorage('numJson', false) < numJson){
+				setLocalStorage('numJson', numJson, false);
+				getJson(WoWsStatInfoHref+'get/color.php?'+Math.floor(Math.random()*100000001), doneColorStat, errorColorStat);
+				getJson(WoWsStatInfoHref+'get/expships.php?'+Math.floor(Math.random()*100000001), doneExpShips, errorExpShips);
+			}else{
+				getIndexedDB('ColorStat', updateColorStat, updateColorStat);
+				getIndexedDB('ExpShips', updateExpShips, updateExpShips);
+			}
+		}
+		function doneColorStat(url, response){
+			setIndexedDB('ColorStat', response, updateColorStat, updateColorStat);
+		}
+		function errorColorStat(url){}
+		function doneExpShips(url, response){
+			setIndexedDB('ExpShips', response, updateExpShips, updateExpShips);
+		}
+		function updateColorStat(response){
+			if(response == null){
+				colorStat = jQ.parseJSON('{"max_frags_battle":[4,5,6,7,8,99],"avg_planes_killed":["0.22","0.97","1.80","3.70","6.06","99.00"],"max_damage_dealt":[80110,109005,130235,164359,194463,9999999],"wr":["643.52","1005.83","1300.66","1848.33","2324.13","99999.00"],"kill_dead":["0.62","1.00","1.33","2.07","2.90","99.00"],"avg_capture_points":["0.28","0.71","1.12","1.96","2.82","99.00"],"survived_battles_percents":["16.43","26.14","33.57","45.45","54.38","100.00"],"max_xp":[1497,1916,2226,2722,3144,99999],"avg_damage_dealt":["15978.13","22996.55","28548.28","38713.42","48513.85","999999.00"],"avg_dropped_capture_points":["3.72","5.67","7.30","10.27","12.96","999.00"],"max_planes_killed":[7,20,30,47,60,999],"avg_xp":["586.13","811.28","1044.92","1554.24","2025.85","99999.00"],"avg_frags":["0.51","0.73","0.90","1.20","1.44","99.00"],"wins_percents":["43.79","47.89","50.86","55.76","60.08","100.00"],"battles":[230,336,487,869,1308,99999]}');
+			}else{
+				colorStat = response;
+			}
+		}
+		function updateExpShips(response){
+			if(response == null){
+				ExpShips = jQ.parseJSON('{"4293834192":{"expDamage":19299.55,"expFrags":0.73,"expCapturePoints":0.98,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.76},"4292818736":{"expDamage":42374.21,"expFrags":0.69,"expCapturePoints":0.49,"expPlanesKilled":2.6,"expDroppedCapturePoints":2.68},"4292786160":{"expDamage":10062.57,"expFrags":0.44,"expCapturePoints":0.69,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.69},"4284430032":{"expDamage":42808.3,"expFrags":0.8,"expCapturePoints":0.8,"expPlanesKilled":1.7,"expDroppedCapturePoints":3.55},"4288559088":{"expDamage":22054.39,"expFrags":0.79,"expCapturePoints":1.52,"expPlanesKilled":0.55,"expDroppedCapturePoints":4.02},"4279220208":{"expDamage":104342.32,"expFrags":1.66,"expCapturePoints":0.43,"expPlanesKilled":22.14,"expDroppedCapturePoints":5.95},"4293834544":{"expDamage":17808.26,"expFrags":1.63,"expCapturePoints":2.26,"expPlanesKilled":0.01,"expDroppedCapturePoints":18.89},"4288624336":{"expDamage":41313.23,"expFrags":0.94,"expCapturePoints":0.94,"expPlanesKilled":1.08,"expDroppedCapturePoints":4.42},"4287542992":{"expDamage":31461.7,"expFrags":0.86,"expCapturePoints":1.09,"expPlanesKilled":2.29,"expDroppedCapturePoints":6.11},"4282365936":{"expDamage":50111.46,"expFrags":0.85,"expCapturePoints":0.38,"expPlanesKilled":30.72,"expDroppedCapturePoints":3.97},"4289607664":{"expDamage":21205.09,"expFrags":0.78,"expCapturePoints":1.15,"expPlanesKilled":0.58,"expDroppedCapturePoints":4.0},"4288558800":{"expDamage":24649.57,"expFrags":0.71,"expCapturePoints":1.73,"expPlanesKilled":0.65,"expDroppedCapturePoints":3.16},"4289607376":{"expDamage":21574.71,"expFrags":0.67,"expCapturePoints":1.49,"expPlanesKilled":0.55,"expDroppedCapturePoints":1.87},"4281284304":{"expDamage":51836.45,"expFrags":0.89,"expCapturePoints":0.89,"expPlanesKilled":4.17,"expDroppedCapturePoints":3.76},"4277057520":{"expDamage":35178.03,"expFrags":0.71,"expCapturePoints":1.35,"expPlanesKilled":5.98,"expDroppedCapturePoints":7.3},"4285511376":{"expDamage":54313.29,"expFrags":1.18,"expCapturePoints":0.29,"expPlanesKilled":6.4,"expDroppedCapturePoints":5.81},"4276041424":{"expDamage":82427.18,"expFrags":1.2,"expCapturePoints":0.68,"expPlanesKilled":8.29,"expDroppedCapturePoints":6.49},"4293801424":{"expDamage":21976.91,"expFrags":0.78,"expCapturePoints":1.09,"expPlanesKilled":0.34,"expDroppedCapturePoints":5.17},"4274927600":{"expDamage":18260.88,"expFrags":0.74,"expCapturePoints":0.77,"expPlanesKilled":0.03,"expDroppedCapturePoints":3.6},"4288657104":{"expDamage":47818.65,"expFrags":1.12,"expCapturePoints":0.31,"expPlanesKilled":6.24,"expDroppedCapturePoints":4.28},"4264441840":{"expDamage":14452.57,"expFrags":0.46,"expCapturePoints":0.97,"expPlanesKilled":0.27,"expDroppedCapturePoints":4.18},"4292753392":{"expDamage":9535.37,"expFrags":0.56,"expCapturePoints":0.52,"expPlanesKilled":0.01,"expDroppedCapturePoints":4.44},"4266538992":{"expDamage":10701.85,"expFrags":0.47,"expCapturePoints":0.49,"expPlanesKilled":0.02,"expDroppedCapturePoints":3.44},"4293867504":{"expDamage":16967.75,"expFrags":0.59,"expCapturePoints":1.06,"expPlanesKilled":0.03,"expDroppedCapturePoints":6.82},"4273911792":{"expDamage":52202.27,"expFrags":0.99,"expCapturePoints":1.18,"expPlanesKilled":5.6,"expDroppedCapturePoints":8.27},"4276041712":{"expDamage":69382.5,"expFrags":1.16,"expCapturePoints":1.0,"expPlanesKilled":8.33,"expDroppedCapturePoints":4.85},"4284397008":{"expDamage":19612.81,"expFrags":0.93,"expCapturePoints":1.18,"expPlanesKilled":0.01,"expDroppedCapturePoints":16.82},"4290655952":{"expDamage":28690.84,"expFrags":1.01,"expCapturePoints":1.23,"expPlanesKilled":0.13,"expDroppedCapturePoints":2.37},"4282333168":{"expDamage":53962.1,"expFrags":0.92,"expCapturePoints":1.06,"expPlanesKilled":7.6,"expDroppedCapturePoints":4.2},"4292753104":{"expDamage":11770.64,"expFrags":0.68,"expCapturePoints":0.71,"expPlanesKilled":0.01,"expDroppedCapturePoints":3.67},"4291737040":{"expDamage":29816.56,"expFrags":0.9,"expCapturePoints":0.86,"expPlanesKilled":1.32,"expDroppedCapturePoints":7.93},"4292851408":{"expDamage":36085.38,"expFrags":0.89,"expCapturePoints":0.31,"expPlanesKilled":5.84,"expDroppedCapturePoints":2.38},"4269717488":{"expDamage":17461.13,"expFrags":0.53,"expCapturePoints":0.57,"expPlanesKilled":0.13,"expDroppedCapturePoints":6.0},"4277122768":{"expDamage":88556.52,"expFrags":1.46,"expCapturePoints":0.33,"expPlanesKilled":18.36,"expDroppedCapturePoints":7.57},"4286527184":{"expDamage":23983.81,"expFrags":0.71,"expCapturePoints":0.86,"expPlanesKilled":0.17,"expDroppedCapturePoints":5.26},"4292785616":{"expDamage":19362.82,"expFrags":0.97,"expCapturePoints":1.21,"expPlanesKilled":0.01,"expDroppedCapturePoints":15.9},"4283414224":{"expDamage":58672.87,"expFrags":1.2,"expCapturePoints":0.35,"expPlanesKilled":12.57,"expDroppedCapturePoints":6.28},"4281284592":{"expDamage":26085.94,"expFrags":0.74,"expCapturePoints":1.12,"expPlanesKilled":0.01,"expDroppedCapturePoints":6.65},"4259231440":{"expDamage":67543.61,"expFrags":1.2,"expCapturePoints":1.09,"expPlanesKilled":4.3,"expDroppedCapturePoints":6.85},"4284463088":{"expDamage":50401.61,"expFrags":0.93,"expCapturePoints":0.27,"expPlanesKilled":16.97,"expDroppedCapturePoints":4.79},"4288591856":{"expDamage":24108.7,"expFrags":0.69,"expCapturePoints":0.93,"expPlanesKilled":3.25,"expDroppedCapturePoints":6.0},"4277090288":{"expDamage":80380.68,"expFrags":1.15,"expCapturePoints":0.98,"expPlanesKilled":9.48,"expDroppedCapturePoints":6.03},"4287543280":{"expDamage":34089.07,"expFrags":0.97,"expCapturePoints":1.12,"expPlanesKilled":3.24,"expDroppedCapturePoints":7.7},"4293834736":{"expDamage":10034.66,"expFrags":0.65,"expCapturePoints":0.79,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.18},"4289640144":{"expDamage":19515.02,"expFrags":0.57,"expCapturePoints":0.71,"expPlanesKilled":0.37,"expDroppedCapturePoints":4.66},"4290721776":{"expDamage":26069.07,"expFrags":0.73,"expCapturePoints":1.05,"expPlanesKilled":0.43,"expDroppedCapturePoints":6.36},"4267620048":{"expDamage":27026.53,"expFrags":1.0,"expCapturePoints":1.14,"expPlanesKilled":0.92,"expDroppedCapturePoints":7.41},"4288657392":{"expDamage":40600.45,"expFrags":0.79,"expCapturePoints":0.49,"expPlanesKilled":11.0,"expDroppedCapturePoints":4.41},"4280170480":{"expDamage":21087.4,"expFrags":0.8,"expCapturePoints":0.79,"expPlanesKilled":0.38,"expDroppedCapturePoints":3.8},"4286461936":{"expDamage":25890.96,"expFrags":0.81,"expCapturePoints":1.94,"expPlanesKilled":0.5,"expDroppedCapturePoints":4.73},"4256085712":{"expDamage":12517.49,"expFrags":0.93,"expCapturePoints":1.16,"expPlanesKilled":0.01,"expDroppedCapturePoints":11.21},"4259264496":{"expDamage":38103.62,"expFrags":0.88,"expCapturePoints":0.98,"expPlanesKilled":1.12,"expDroppedCapturePoints":4.77},"4255037136":{"expDamage":25751.83,"expFrags":0.5,"expCapturePoints":0.64,"expPlanesKilled":2.0,"expDroppedCapturePoints":5.03},"4248745968":{"expDamage":35324.99,"expFrags":1.07,"expCapturePoints":0.97,"expPlanesKilled":0.21,"expDroppedCapturePoints":10.95},"4258182864":{"expDamage":12988.67,"expFrags":0.57,"expCapturePoints":0.74,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.25},"4280170192":{"expDamage":16927.9,"expFrags":1.02,"expCapturePoints":1.13,"expPlanesKilled":0.01,"expDroppedCapturePoints":7.86},"4287510224":{"expDamage":27609.43,"expFrags":0.68,"expCapturePoints":1.69,"expPlanesKilled":0.52,"expDroppedCapturePoints":3.13},"4293867312":{"expDamage":24429.01,"expFrags":0.68,"expCapturePoints":0.01,"expPlanesKilled":6.18,"expDroppedCapturePoints":0.01},"4291737584":{"expDamage":12539.83,"expFrags":0.69,"expCapturePoints":1.15,"expPlanesKilled":0.01,"expDroppedCapturePoints":11.21},"4286527472":{"expDamage":36652.53,"expFrags":0.68,"expCapturePoints":0.79,"expPlanesKilled":2.43,"expDroppedCapturePoints":3.76},"4291770064":{"expDamage":19257.59,"expFrags":0.5,"expCapturePoints":0.81,"expPlanesKilled":0.41,"expDroppedCapturePoints":4.24},"4292818896":{"expDamage":31966.56,"expFrags":0.74,"expCapturePoints":1.12,"expPlanesKilled":2.18,"expDroppedCapturePoints":4.93},"4282267344":{"expDamage":52921.14,"expFrags":0.95,"expCapturePoints":2.65,"expPlanesKilled":0.6,"expDroppedCapturePoints":3.62},"4280203248":{"expDamage":33003.28,"expFrags":0.68,"expCapturePoints":1.27,"expPlanesKilled":5.29,"expDroppedCapturePoints":6.55},"4281219056":{"expDamage":46155.9,"expFrags":1.13,"expCapturePoints":1.15,"expPlanesKilled":1.59,"expDroppedCapturePoints":3.12},"4293801680":{"expDamage":17352.08,"expFrags":1.02,"expCapturePoints":0.99,"expPlanesKilled":0.01,"expDroppedCapturePoints":6.22},"4247697392":{"expDamage":36873.64,"expFrags":1.25,"expCapturePoints":1.63,"expPlanesKilled":0.25,"expDroppedCapturePoints":8.17},"4281317360":{"expDamage":88385.11,"expFrags":1.68,"expCapturePoints":0.58,"expPlanesKilled":23.41,"expDroppedCapturePoints":5.82},"4285445840":{"expDamage":46097.47,"expFrags":1.0,"expCapturePoints":1.06,"expPlanesKilled":2.95,"expDroppedCapturePoints":6.87},"4279154384":{"expDamage":17093.37,"expFrags":0.67,"expCapturePoints":0.66,"expPlanesKilled":0.04,"expDroppedCapturePoints":6.46},"4293867216":{"expDamage":17606.02,"expFrags":0.67,"expCapturePoints":1.22,"expPlanesKilled":0.06,"expDroppedCapturePoints":5.95},"4283381456":{"expDamage":13834.49,"expFrags":0.78,"expCapturePoints":1.49,"expPlanesKilled":0.01,"expDroppedCapturePoints":5.04},"4290754544":{"expDamage":20253.47,"expFrags":0.45,"expCapturePoints":0.11,"expPlanesKilled":9.4,"expDroppedCapturePoints":1.34},"4292851696":{"expDamage":26048.93,"expFrags":0.53,"expCapturePoints":0.13,"expPlanesKilled":11.86,"expDroppedCapturePoints":3.03},"4282365648":{"expDamage":62193.0,"expFrags":1.16,"expCapturePoints":0.34,"expPlanesKilled":13.16,"expDroppedCapturePoints":6.2},"4286494416":{"expDamage":40647.63,"expFrags":0.98,"expCapturePoints":1.09,"expPlanesKilled":2.75,"expDroppedCapturePoints":6.11},"4288624624":{"expDamage":28278.84,"expFrags":0.72,"expCapturePoints":0.88,"expPlanesKilled":0.65,"expDroppedCapturePoints":5.14},"4291704528":{"expDamage":20911.5,"expFrags":0.8,"expCapturePoints":0.95,"expPlanesKilled":0.09,"expDroppedCapturePoints":2.46},"4282300400":{"expDamage":27636.37,"expFrags":0.65,"expCapturePoints":0.98,"expPlanesKilled":3.22,"expDroppedCapturePoints":5.56},"4282300112":{"expDamage":44869.48,"expFrags":0.89,"expCapturePoints":1.06,"expPlanesKilled":3.75,"expDroppedCapturePoints":6.61},"4272830448":{"expDamage":35213.16,"expFrags":1.04,"expCapturePoints":2.31,"expPlanesKilled":1.0,"expDroppedCapturePoints":4.62},"4269684432":{"expDamage":14489.43,"expFrags":0.67,"expCapturePoints":0.64,"expPlanesKilled":0.02,"expDroppedCapturePoints":2.8},"4289640432":{"expDamage":29429.88,"expFrags":0.91,"expCapturePoints":0.86,"expPlanesKilled":1.18,"expDroppedCapturePoints":7.67},"4290688720":{"expDamage":18225.65,"expFrags":0.62,"expCapturePoints":0.75,"expPlanesKilled":1.51,"expDroppedCapturePoints":6.58},"4279219920":{"expDamage":79232.38,"expFrags":1.49,"expCapturePoints":0.55,"expPlanesKilled":20.33,"expDroppedCapturePoints":7.51},"4272895696":{"expDamage":56869.75,"expFrags":0.88,"expCapturePoints":0.74,"expPlanesKilled":5.51,"expDroppedCapturePoints":4.7},"4292785968":{"expDamage":24497.51,"expFrags":1.51,"expCapturePoints":0.01,"expPlanesKilled":0.01,"expDroppedCapturePoints":16.76},"4290689008":{"expDamage":19774.25,"expFrags":0.75,"expCapturePoints":1.0,"expPlanesKilled":0.01,"expDroppedCapturePoints":9.99},"4284364496":{"expDamage":37201.85,"expFrags":0.78,"expCapturePoints":2.23,"expPlanesKilled":0.51,"expDroppedCapturePoints":4.16},"4287575760":{"expDamage":29263.14,"expFrags":0.72,"expCapturePoints":0.79,"expPlanesKilled":0.97,"expDroppedCapturePoints":4.53},"4281251536":{"expDamage":23516.66,"expFrags":0.76,"expCapturePoints":0.67,"expPlanesKilled":0.29,"expDroppedCapturePoints":6.52}}');
+			}else{
+				ExpShips = response;
+			}
+		}
+		function errorExpShips(url){}
 		function doneAccountInfo(url, response){
 			if(response.status && response.status == 'error'){
 				errorAccountInfo(url);
@@ -3197,6 +3252,70 @@
 			}
 			return c_value;
 		}		
+		var WoWsStatInfoBase;
+		function openIndexedDB(){
+			//indexedDB.deleteDatabase('WoWsStatInfoBase');
+			var openRequest = window.indexedDB.open("WoWsStatInfoBase", 1);
+			
+			openRequest.onupgradeneeded = function(e){
+				console.log('IndexedDB onupgradeneeded');
+				var thisDB = e.target.result;
+				if(!thisDB.objectStoreNames.contains("WoWsStatInfoStore")){
+					thisDB.createObjectStore("WoWsStatInfoStore");
+				}
+			};
+			openRequest.onsuccess = function(e){
+				console.log('IndexedDB onsuccess');
+				WoWsStatInfoBase = e.target.result;
+			};
+			openRequest.onerror = function(e){
+				console.log('IndexedDB onerror');
+				console.log(e);
+				WoWsStatInfoBase = null;
+			};			
+		}
+		function setIndexedDB(Key, Value, Done, Error){
+			if(WoWsStatInfoBase === undefined){
+				openIndexedDB();
+				setTimeout(function(){setIndexedDB(Key, Value, Done, Error);}, 2000);
+			}else if(WoWsStatInfoBase == null){
+				/* IndexedDB onerror */
+			}else{
+				var transaction = WoWsStatInfoBase.transaction(["WoWsStatInfoStore"], "readwrite");
+				var store = transaction.objectStore("WoWsStatInfoStore");
+				
+				var request = store.put(Value, Key);
+				request.onerror = function(e){
+					console.log('onerror setIndexedDB...Key '+Key);
+					Error(Value);
+				};
+				request.onsuccess = function(e){
+					console.log('onsuccess setIndexedDB...Key '+Key);
+					Done(Value);
+				};				
+			}
+		}
+		function getIndexedDB(Key, Done, Error){
+			if(WoWsStatInfoBase === undefined){
+				openIndexedDB();
+				setTimeout(function(){getIndexedDB(Key, Done, Error);}, 2000);
+			}else if(WoWsStatInfoBase == null){
+				/* IndexedDB onerror */
+			}else{
+				var transaction = WoWsStatInfoBase.transaction(["WoWsStatInfoStore"], "readonly");
+				var store = transaction.objectStore("WoWsStatInfoStore");
+				
+				var request = store.get(Key);
+				request.onerror = function(e){
+					console.log('onerror getIndexedDB...Key '+Key);
+					Error(null);
+				};
+				request.onsuccess = function(e){
+					console.log('onsuccess getIndexedDB...Key '+Key);
+					Done(request.result ? request.result : null);
+				};				
+			}			
+		}
 		function onShowMessage(title, content, funcOk, OkText, viewCancel){
 			var ui_dialog_title = message.getElementsByClassName("ui-dialog-title")[0];
 			ui_dialog_title.innerHTML = title;
