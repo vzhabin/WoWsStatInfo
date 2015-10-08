@@ -301,20 +301,18 @@
 			
 			console.log(error);
 			
-			//if(lineno < 5000){
-				if(window.location.host == 'forum.worldofwarships.'+realm_host){
-					alert(error);
-				}else{
-					error = error.split('\n').join('<br />');
-					onShowMessage(
-						localizationText['Box'],
-						error,
-						onCloseMessage,
-						localizationText['Ok'],
-						false
-					);
-				}
-			//}
+			if(window.location.host == 'forum.worldofwarships.'+realm_host){
+				if(lineno < 5000){alert(error);}
+			}else{
+				error = error.split('\n').join('<br />');
+				onShowMessage(
+					localizationText['Box'],
+					error,
+					onCloseMessage,
+					localizationText['Ok'],
+					false
+				);
+			}
 			
 			return true;
 		}
@@ -433,8 +431,6 @@
 			ClanPage();
 		}
 		
-		jQ('.link-block').click(function(){onViewBlock(this);});
-		
 		function doneLastVersion(url, response){
 			var data = response;
 			if(VersionWoWsStatInfo != data['version']){
@@ -504,6 +500,7 @@
 			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
 			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve,statistics.pvp_solo,statistics.pvp_div2,statistics.pvp_div3&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
+			jQ('#userscriptwowsstatinfo').click(function(){onViewBlock(this);});
 			jQ('._item').click(function(){
 				setTimeout(function(){viewMainPageProfile();}, 1000);
 			});
@@ -613,6 +610,8 @@
 					'</div>' +
 				'</div>' +
 			'';
+			jQ('#clan-member-history').click(function(){onViewBlock(this);});
+			jQ('#userscriptwowsstatinfo').click(function(){onViewBlock(this);});
 			jQ('#get-clan-statistic-block').click(function(){runGetStatisticClan();});
 			jQ('#get-settings-button').click(function(){runSettingsClanPage();});
 			
