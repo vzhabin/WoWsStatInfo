@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.0.21
+// @version 0.5.0.22
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.0.21';
+		var VersionWoWsStatInfo = '0.5.0.22';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -1454,7 +1454,7 @@
 				StatClassArray[typeShip[tS]] = [];
 				StatClassArray[typeShip[tS]]['battles'] = 0;
 				StatClassArray[typeShip[tS]]['wins'] = 0;
-				StatClassArray[typeShip[tS]]['avg_xp'] = 0;
+				StatClassArray[typeShip[tS]]['xp'] = 0;
 				StatClassArray[typeShip[tS]]['count'] = 0;
 			}
 			
@@ -1473,7 +1473,7 @@
 				if(Ship[type]['battles'] > 0){
 					StatClassArray[ship_type]['battles'] += Ship[type]['battles'];
 					StatClassArray[ship_type]['wins'] += Ship[type]['wins'];
-					StatClassArray[ship_type]['avg_xp'] += Ship[type]['avg_xp'];
+					StatClassArray[ship_type]['xp'] += Ship[type]['xp'];
 					StatClassArray[ship_type]['count']++;
 					
 					htmlArray[ship_type] += '' +
@@ -1516,7 +1516,7 @@
 			
 			for(var tS = 0; tS < typeShip.length; tS++){
 				var wins_percents = (StatClassArray[typeShip[tS]]['wins']/StatClassArray[typeShip[tS]]['battles'])*100;
-				var avg_xp = StatClassArray[typeShip[tS]]['avg_xp']/StatClassArray[typeShip[tS]]['count'];
+				var avg_xp = StatClassArray[typeShip[tS]]['xp']/StatClassArray[typeShip[tS]]['battles'];
 			
 				html += '' +
 					'<tbody class="_expandable ships-class-'+type+'" open-block="ships-class-'+typeShip[tS].toLowerCase()+'-'+type+'" open-active="false">' +
