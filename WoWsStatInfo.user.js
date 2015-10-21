@@ -515,10 +515,12 @@
 				var user_id = reputation__wrp.getAttribute('id').split('_')[1];
 				var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
 				ipsList_data.innerHTML += '' +
+					'<!--' +
 					'<li class="clear clearfix">' +
 						'<span class="row_title">'+localizationText['profile-wows']+':</span>' +
 						'<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
 					'</li>' +
+					'-->' +
 					'<li class="clear clearfix">' +
 						'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
 						'<span class="row_data member_'+user_id+'"></span>' +
