@@ -1802,7 +1802,7 @@
 										xmlhttp.onload = xmlhttp.onerror = function(){
 											if(this.status == 200){
 												console.log("upload-myfile success");
-												check_upload = true;
+												console.log(xmlhttp.responseText);
 												
 												var userbar_img_upload = document.getElementById('userbar-img-upload');
 												if(userbar_img_upload != null){
