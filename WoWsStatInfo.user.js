@@ -1517,8 +1517,8 @@
 			var html = '';
 			
 			for(var tS = 0; tS < typeShip.length; tS++){
-				var wins_percents = (StatClassArray[typeShip[tS]]['wins']/StatClassArray[typeShip[tS]]['battles'])*100;
-				var avg_xp = StatClassArray[typeShip[tS]]['xp']/StatClassArray[typeShip[tS]]['battles'];
+				var wins_percents = (StatClassArray[typeShip[tS]]['wins']/StatClassArray[typeShip[tS]]['battles'])*100; if(isNaN(wins_percents)){wins_percents = 0;}
+				var avg_xp = StatClassArray[typeShip[tS]]['xp']/StatClassArray[typeShip[tS]]['battles']; if(isNaN(avg_xp)){avg_xp = 0;}
 			
 				html += '' +
 					'<tbody class="_expandable ships-class-'+type+'" open-block="ships-class-'+typeShip[tS].toLowerCase()+'-'+type+'" open-active="false">' +
