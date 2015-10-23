@@ -1554,17 +1554,7 @@
 			
 			return html;
 		}
-		function GeneratorUserBar(){
-			var userbarbg = 'userbar';
-			
-			var radios = document.getElementsByName('userbar-bg');
-			for(var i = 0; i < radios.length; i++){
-				if(radios[i].checked){
-					userbarbg = radios[i].value;
-					break;
-				}
-			}
-		
+		function GeneratorUserBar(userbarbg){
 			var jsonString = 'json='+JSON.stringify(MembersArray[0])+'&type=userbar&userbarbg='+userbarbg+'&lang='+lang;
 			
 			var xmlhttp;
@@ -1706,14 +1696,152 @@
 			}
 			html += '</div>';
 			
+			html += '' +
+				'<button class="btn btn-lg btn-turqoise" id="userbar-your-background" style="margin-top: 5px; padding: 5px;">' +
+					localizationText['userbar-your-background'] +
+				'</button>' +
+			'';
+			
 			onShowMessage(
 				localizationText['userbar-bg'],
 				html,
-				function(){GeneratorUserBar(); onCloseMessage();},
+				function(){
+					var userbarbg = 'userbar';
+					
+					var radios = document.getElementsByName('userbar-bg');
+					for(var i = 0; i < radios.length; i++){
+						if(radios[i].checked){
+							userbarbg = radios[i].value;
+							break;
+						}
+					}
+				
+					GeneratorUserBar(userbarbg); 
+					
+					onCloseMessage();
+				},
 				localizationText['Ok'],
 				true
 			);
 
+			jQ('#userbar-your-background').click(function(){
+				onCloseMessage();
+				
+				var html = '' +
+					'<div id="userbar-bg-content" style="width: 488px; height: 220px;">' + 
+						'<p>'+localizationText['img-max-size']+', '+localizationText['img-max-px']+', '+localizationText['img-format']+'</p>' +
+						'<form id="upload-myfile" name="upload-myfile">' +
+							'<input type="file" name="myfile" accept="image/x-png" />' +
+							'<button type="submit" name="submit" class="btn btn-lg btn-turqoise" id="userbar-your-background" style="margin: 5px 0px; padding: 5px;">' +
+								localizationText['upload-submit'] +
+							'</button>' +
+						'</form>' +
+						'<img id="userbar-img-upload" src="'+WoWsStatInfoHref+'bg/userbar.png" userbarbg="userbar" />' +
+					'</div>'+
+				'';
+				
+				onShowMessage(
+					localizationText['userbar-bg'],
+					html,
+					function(){
+						var userbar_img_upload = document.getElementById('userbar-img-upload');
+						
+						GeneratorUserBar(userbar_img_upload.getAttribute('userbarbg'));
+						
+						onCloseMessage();
+					},
+					localizationText['Ok'],
+					true
+				);
+				
+				var img = new Image();
+				img.onload = function(){
+					var userbar_img_upload = document.getElementById('userbar-img-upload');
+					if(userbar_img_upload != null){
+						userbar_img_upload.src = WoWsStatInfoHref+'bg/user/'+MembersArray[0]['info']['account_id']+'.png'+'?'+Math.floor(Math.random()*100000001);
+						userbar_img_upload.setAttribute('userbarbg', 'user/'+MembersArray[0]['info']['account_id']);
+					}
+				}
+				img.src = WoWsStatInfoHref+'bg/user/'+MembersArray[0]['info']['account_id']+'.png'+'?'+Math.floor(Math.random()*100000001);
+				
+				document.forms["upload-myfile"].onsubmit = function(e){
+					e.preventDefault();
+					
+					function validateExtension(v){
+						var allowedExtensions = new Array(".png", ".PNG");
+						for(var ct = 0;ct < allowedExtensions.length; ct++){
+							sample = v.lastIndexOf(allowedExtensions[ct]);
+							if(sample != -1){return true;}
+						}
+						return false;
+					}
+					
+					var file_local_link = this.elements.myfile.value;
+					var file = this.elements.myfile.files[0];
+					if(file){
+						if(file.size <= 153600){
+							var _URL = window.URL || window.webkitURL;
+							var img = new Image();
+							img.onload = function (){
+								if(this.width == 468 && this.height == 100){
+									if(validateExtension(file_local_link)){
+										var xmlhttp;
+										try{
+											xmlhttp = new ActiveXObject('Msxml2.XMLHTTP');
+										}catch(e){
+											try{
+												xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
+											}catch(E){
+												xmlhttp = false;
+											}
+										}
+										if(!xmlhttp && typeof XMLHttpRequest != 'undefined'){
+											xmlhttp = new XMLHttpRequest();
+										}
+										
+										xmlhttp.onload = xmlhttp.onerror = function(){
+											if(this.status == 200){
+												console.log("upload-myfile success");
+												check_upload = true;
+												
+												var userbar_img_upload = document.getElementById('userbar-img-upload');
+												if(userbar_img_upload != null){
+													userbar_img_upload.src = WoWsStatInfoHref+'bg/user/'+MembersArray[0]['info']['account_id']+'.png'+'?'+Math.floor(Math.random()*100000001);
+													userbar_img_upload.setAttribute('userbarbg', 'user/'+MembersArray[0]['info']['account_id']);
+												}
+											}else{
+												console.log("upload-myfile error " + this.status);
+											}
+										};
+										
+										xmlhttp.upload.onprogress = function(event){
+											console.log(event.loaded + ' / ' + event.total);
+										}
+										
+										xmlhttp.open("POST", WoWsStatInfoHref+"upload-bg.php?random="+Math.floor(Math.random()*100000001), true);
+										
+										var formData = new FormData();
+										formData.append("myfile", file);
+										formData.append("account_id", MembersArray[0]['info']['account_id']);
+										
+										xmlhttp.send(formData);
+									}else{
+										alert(localizationText['img-format']);
+									}
+								}else{
+									alert(localizationText['img-max-px']);
+								}
+							};
+							img.src = _URL.createObjectURL(file);
+						}else{
+							alert(localizationText['img-max-size']);
+						}
+					}
+					
+					return false;
+				}
+			});
+			
 			jQ('#userbar-bg-filtr-types').change(function(){
 				updateUserBarBG();
 			});			
@@ -1732,7 +1860,21 @@
 			onShowMessage(
 				localizationText['userbar-bg'],
 				html,
-				function(){GeneratorUserBar(); onCloseMessage();},
+				function(){
+					var userbarbg = 'userbar';
+					
+					var radios = document.getElementsByName('userbar-bg');
+					for(var i = 0; i < radios.length; i++){
+						if(radios[i].checked){
+							userbarbg = radios[i].value;
+							break;
+						}
+					}
+					
+					GeneratorUserBar(userbarbg); 
+					
+					onCloseMessage();
+				},
 				localizationText['Ok'],
 				true
 			);
@@ -3464,6 +3606,11 @@
 				localizationText['ru']['filters-germany'] = 'Германия';
 				localizationText['ru']['filters-uk'] = 'Великобритания';
 				localizationText['ru']['filters-usa'] = 'США';
+				localizationText['ru']['userbar-your-background'] = 'Загрузить свой фон';
+				localizationText['ru']['upload-submit'] = 'Загрузить';
+				localizationText['ru']['img-max-size'] = 'Максимальный размер: 150КБ';
+				localizationText['ru']['img-max-px'] = 'Разрешение изображения: 468х100';
+				localizationText['ru']['img-format'] = 'Формат: PNG';
 				
 				localizationText['ru']['pvp_solo'] = 'Соло';
 				localizationText['ru']['pvp_div'] = 'Отряд';
@@ -3636,6 +3783,11 @@
 				localizationText['en']['filters-germany'] = 'Germany';
 				localizationText['en']['filters-uk'] = 'U.K.';
 				localizationText['en']['filters-usa'] = 'U.S.A.';
+				localizationText['en']['userbar-your-background'] = 'Upload your background';
+				localizationText['en']['upload-submit'] = 'Upload';
+				localizationText['en']['img-max-size'] = 'Maximum size: 150 KB';
+				localizationText['en']['img-max-px'] = 'Image Resolution: 468x100';
+				localizationText['en']['img-format'] = 'Format: PNG';
 				
 				localizationText['en']['pvp_solo'] = 'Solo';
 				localizationText['en']['pvp_div'] = 'Division';
