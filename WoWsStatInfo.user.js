@@ -3256,7 +3256,8 @@
 		var WoWsStatInfoBase;
 		function openIndexedDB(){
 			//indexedDB.deleteDatabase('WoWsStatInfoBase');
-			var openRequest = window.indexedDB.open("WoWsStatInfoBase", 1);
+			var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB ||  window.msIndexedDB || window.OIndexedDB;
+			var openRequest = indexedDB.open("WoWsStatInfoBase", 1);
 			
 			openRequest.onupgradeneeded = function(e){
 				console.log('IndexedDB onupgradeneeded');
