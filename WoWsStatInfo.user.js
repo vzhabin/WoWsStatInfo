@@ -134,6 +134,7 @@
 					'"info.statistics.pvp.survived_battles_percents": {"table": "2", "check": 0},' +
 					'"null_7": {"table": "spacerow", "check": 0},' + // spacerow
 					'"info.statistics.pvp.wr": {"table": "3", "check": 1},' + // col 3
+					'"info.statistics.pvp.wtr": {"table": "3", "check": 1},' +
 					'"null_8": {"table": "spacerow", "check": 0},' + // spacerow
 					'"info.ships_x_level": {"table": "3", "check": 1},' +
 					'"view_table": {' +
@@ -149,7 +150,8 @@
 							'info.statistics.pvp.avg_xp,' +
 							'info.statistics.pvp.avg_damage_dealt,' +
 							'info.statistics.pvp.kill_dead,' +
-							'info.statistics.pvp.wr' +
+							'info.statistics.pvp.wr,' +
+							'info.statistics.pvp.wtr' +
 						'"' +
 					'}' +
 				'}' +
@@ -172,6 +174,7 @@
 		
 		var colorStat = null;
 		var ExpShips = null;
+		var ExpWTR = null;
 		
 		/* ===== Style UserScript ===== */
 		{
@@ -197,68 +200,68 @@
 		if(window.location.host != 'forum.worldofwarships.'+realm_host){
 			var message = document.createElement("div");
 			message.setAttribute("id", "message-wowsstatinfo");
-			message.setAttribute("class", "ui-dialog ui-widget ui-widget-content ui-corner-all ui-front");
+			message.setAttribute("class", "wsi-ui-dialog wsi-ui-widget wsi-ui-widget-content wsi-ui-corner-all wsi-ui-front");
 			message.setAttribute("style", "display: none; z-index:9999; left: 50%; margin-left: 0px; top: 0px;");
 			message.innerHTML = '' +
 				'<style>' +
-					'.ui-dialog{box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 25px 25px rgba(0, 0, 0, 0.3);background-color: rgba(41, 41, 41, 0.8);position: absolute;top: 0;left: 0;outline: 0;padding: 23px 31px 28px;}' +
-					'.ui-widget-content{color: #b1b2b3;}' +
-					'.ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
-					'.ui-corner-all{border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border-top-right-radius: 2px;border-top-left-radius: 2px;}' +
-					'.ui-front{z-index: 250;}' +
-					'.ui-dialog:before{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_gradient.png") repeat-x;height: 162px;width: 100%;position: absolute;top: 0;left: 0;z-index: 5;}' +
-					'.ui-dialog .ui-dialog-titlebar{border-bottom: 1px solid rgba(0, 0, 0, 0.7);box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05);padding: 0 0 14px;position: relative;z-index: 10;}' +
-					'.ui-widget-header{color: #fff;font-family: "WarHeliosCondC", Arial Narrow, Tahoma, arial, sans-serif;font-size: 25px;font-weight: normal;line-height: 30px;}' +
-					'.ui-helper-clearfix{min-height: 0;support: IE7;}' +
-					'.ui-widget-content{color: #b1b2b3;}' +
-					'.ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
-					'.ui-helper-clearfix:before, .ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
-					'.ui-helper-clearfix:after{clear: both;}' +
-					'.ui-helper-clearfix:before, .ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
-					'.ui-dialog .ui-dialog-title{float: left;margin: 0;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}' +
-					'.ui-dialog .ui-dialog-titlebar-close{margin: -16px -3px 0;height: 20px;width: 20px;position: absolute;top: 50%;right: 0;}' +
-					'.ui-widget .ui-widget{font-size: 1em;}' +
-					'button.ui-button-icon-only {width: 16px;}' +
-					'.ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
-					'.ui-button{background: none;border: 0;display: inline-block;position: relative;padding: 0;line-height: normal;cursor: pointer;vertical-align: middle;text-align: center;overflow: visible;}' +
-					'.ui-button-icon-only .ui-icon{left: 50%;margin-left: -8px;}' +
-					'.ui-button-icon-only .ui-icon, .ui-button-text-icon-primary .ui-icon, .ui-button-text-icon-secondary .ui-icon, .ui-button-text-icons .ui-icon, .ui-button-icons-only .ui-icon{position: absolute;top: 50%;margin-top: -8px;}' +
-					'.ui-icon-closethick{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_close.png");}' +
-					'.ui-icon{width: 16px;height: 16px;}' +
-					'.ui-icon{display: block;text-indent: -99999px;overflow: hidden;background-repeat: no-repeat;}' +
-					'.ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
-					'.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text{padding: .4em;text-indent: -9999999px;}' +
-					'.ui-button .ui-button-text{display: block;line-height: normal;}' +
-					'.ui-dialog .ui-dialog-content{position: relative;border: 0;padding: 0;background: none;z-index: 10;}' +
-					'.ui-widget-content{color: #b1b2b3;}' +
-					'.popup{margin: 10px auto 0;font-size: 15px;transition: height .3s;}' +
-					'.popup_footer{margin-top: 20px;position: relative;}' +
-					'.button__align-middle{vertical-align: middle;}' +
-					'.button{-webkit-appearance: none;-moz-appearance: none;background: #735917;border-radius: 2px;border: none;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 1px 0 2px rgba(0, 0, 0, 0.3);display: inline-block;padding: 0 0 2px;overflow: hidden;color: #000;font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 17px;font-weight: normal;text-decoration: none;cursor: pointer;vertical-align: top;}' +
-					'.button_wrapper{background: #dbae30;background: linear-gradient(to bottom, #fff544 0%, #dbae30 100%);border-radius: 2px;display: block;padding: 1px 1px 0;position: relative;}' +
-					'.button_body{background: #e5ad2c;background: linear-gradient(to bottom, #e7b530 0%, #e5ad2c 100%);display: block;border-radius: 2px;padding: 10px 23px 11px;position: relative;text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);transition: all .2s;}' +
-					'.button_inner{display: block;position: relative;z-index: 10;white-space: nowrap;line-height: 20px;}' +
-					'.link__cancel{display: inline-block;font-size: 15px;margin-left: 18px;padding-top: 10px;}' +
-					'.link{border-bottom: 1px solid transparent;padding-bottom: 1px;color: #e5b12e;line-height: 18px;text-decoration: none;transition: all .2s;}' +
+					'.wsi-ui-dialog{box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 25px 25px rgba(0, 0, 0, 0.3);background-color: rgba(41, 41, 41, 0.8);position: absolute;top: 0;left: 0;outline: 0;padding: 23px 31px 28px;}' +
+					'.wsi-ui-widget-content{color: #b1b2b3;}' +
+					'.wsi-ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
+					'.wsi-ui-corner-all{border-bottom-right-radius: 2px;border-bottom-left-radius: 2px;border-top-right-radius: 2px;border-top-left-radius: 2px;}' +
+					'.wsi-ui-front{z-index: 250;}' +
+					'.wsi-ui-dialog:before{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_gradient.png") repeat-x;height: 162px;width: 100%;position: absolute;top: 0;left: 0;z-index: 5;}' +
+					'.wsi-ui-dialog .wsi-ui-dialog-titlebar{border-bottom: 1px solid rgba(0, 0, 0, 0.7);box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.05);padding: 0 0 14px;position: relative;z-index: 10;}' +
+					'.wsi-ui-widget-header{color: #fff;font-family: "WarHeliosCondC", Arial Narrow, Tahoma, arial, sans-serif;font-size: 25px;font-weight: normal;line-height: 30px;}' +
+					'.wsi-ui-helper-clearfix{min-height: 0;support: IE7;}' +
+					'.wsi-ui-widget-content{color: #b1b2b3;}' +
+					'.wsi-ui-widget{font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 15px;}' +
+					'.wsi-ui-helper-clearfix:before, .wsi-ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
+					'.wsi-ui-helper-clearfix:after{clear: both;}' +
+					'.wsi-ui-helper-clearfix:before, .wsi-ui-helper-clearfix:after{content: "";display: table;border-collapse: collapse;}' +
+					'.wsi-ui-dialog .wsi-ui-dialog-title{float: left;margin: 0;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}' +
+					'.wsi-ui-dialog .wsi-ui-dialog-titlebar-close{margin: -16px -3px 0;height: 20px;width: 20px;position: absolute;top: 50%;right: 0;}' +
+					'.wsi-ui-widget .wsi-ui-widget{font-size: 1em;}' +
+					'wsi-button.wsi-ui-wsi-button-icon-only {width: 16px;}' +
+					'.wsi-ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
+					'.wsi-ui-wsi-button{background: none;border: 0;display: inline-block;position: relative;padding: 0;line-height: normal;cursor: pointer;vertical-align: middle;text-align: center;overflow: visible;}' +
+					'.wsi-ui-wsi-button-icon-only .wsi-ui-icon{left: 50%;margin-left: -8px;}' +
+					'.wsi-ui-wsi-button-icon-only .wsi-ui-icon, .wsi-ui-wsi-button-text-icon-primary .wsi-ui-icon, .wsi-ui-wsi-button-text-icon-secondary .wsi-ui-icon, .wsi-ui-wsi-button-text-icons .wsi-ui-icon, .wsi-ui-wsi-button-icons-only .wsi-ui-icon{position: absolute;top: 50%;margin-top: -8px;}' +
+					'.wsi-ui-icon-closethick{background: url("http://ru.wargaming.net/clans/static/1.4.4/images/plugins/jquery-ui/dialog_close.png");}' +
+					'.wsi-ui-icon{width: 16px;height: 16px;}' +
+					'.wsi-ui-icon{display: block;text-indent: -99999px;overflow: hidden;background-repeat: no-repeat;}' +
+					'.wsi-ui-state-default{border: 1px solid transparent;color: #b1b2b3;display: inline-block;font-size: 13px;line-height: 30px;padding: 0 5px;height: 30px;width: 20px;}' +
+					'.wsi-ui-wsi-button-icon-only .wsi-ui-wsi-button-text, .wsi-ui-wsi-button-icons-only .wsi-ui-wsi-button-text{padding: .4em;text-indent: -9999999px;}' +
+					'.wsi-ui-wsi-button .wsi-ui-wsi-button-text{display: block;line-height: normal;}' +
+					'.wsi-ui-dialog .wsi-ui-dialog-content{position: relative;border: 0;padding: 0;background: none;z-index: 10;}' +
+					'.wsi-ui-widget-content{color: #b1b2b3;}' +
+					'.wsi-popup{margin: 10px auto 0;font-size: 15px;transition: height .3s;}' +
+					'.wsi-popup_footer{margin-top: 20px;position: relative;}' +
+					'.wsi-button__align-middle{vertical-align: middle;}' +
+					'.wsi-button{-webkit-appearance: none;-moz-appearance: none;background: #735917;border-radius: 2px;border: none;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 1px 0 2px rgba(0, 0, 0, 0.3);display: inline-block;padding: 0 0 2px;overflow: hidden;color: #000;font-family: Arial, "Helvetica CY", Helvetica, sans-serif;font-size: 17px;font-weight: normal;text-decoration: none;cursor: pointer;vertical-align: top;}' +
+					'.wsi-button_wrapper{background: #dbae30;background: linear-gradient(to bottom, #fff544 0%, #dbae30 100%);border-radius: 2px;display: block;padding: 1px 1px 0;position: relative;}' +
+					'.wsi-button_body{background: #e5ad2c;background: linear-gradient(to bottom, #e7b530 0%, #e5ad2c 100%);display: block;border-radius: 2px;padding: 10px 23px 11px;position: relative;text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);transition: all .2s;}' +
+					'.wsi-button_inner{display: block;position: relative;z-index: 10;white-space: nowrap;line-height: 20px;}' +
+					'.wsi-link__cancel{display: inline-block;font-size: 15px;margin-left: 18px;padding-top: 10px;}' +
+					'.wsi-link{border-bottom: 1px solid transparent;padding-bottom: 1px;color: #e5b12e;line-height: 18px;text-decoration: none;transition: all .2s;}' +
 				'</style>' +
-				'<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">' +
-					'<span class="ui-dialog-title">{%TITLE%}</span>' +
-					'<button id="userscript-message-close" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-dialog-titlebar-close" title="Close">' +
-						'<span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span>' +
-						'<span class="ui-button-text">Close</span>' +
-					'</button>' +
+				'<div class="wsi-ui-dialog-titlebar wsi-ui-widget-header wsi-ui-corner-all wsi-ui-helper-clearfix">' +
+					'<span class="wsi-ui-dialog-title">{%TITLE%}</span>' +
+					'<wsi-button id="userscript-message-close" class="wsi-ui-wsi-button wsi-ui-widget wsi-ui-state-default wsi-ui-corner-all wsi-ui-wsi-button-icon-only wsi-ui-dialog-titlebar-close" title="Close">' +
+						'<span class="wsi-ui-wsi-button-icon-primary wsi-ui-icon wsi-ui-icon-closethick"></span>' +
+						'<span class="wsi-ui-wsi-button-text">Close</span>' +
+					'</wsi-button>' +
 				'</div>' +
-				'<div class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 44px; max-height: none; height: auto;">' +
-					'<div class="popup">{%TEXT%}</div>' +
-					'<div class="popup_footer">' +
-						'<button id="userscript-message-ok" class="button button__align-middle">' +
-							'<span class="button_wrapper">' +
-								'<span class="button_body">' +
-									'<span class="button_inner">'+localizationText['Ok']+'</span>' +
+				'<div class="wsi-ui-dialog-content wsi-ui-widget-content" style="width: auto; min-height: 44px; max-height: none; height: auto;">' +
+					'<div class="wsi-popup">{%TEXT%}</div>' +
+					'<div class="wsi-popup_footer">' +
+						'<wsi-button id="userscript-message-ok" class="wsi-button wsi-button__align-middle">' +
+							'<span class="wsi-button_wrapper">' +
+								'<span class="wsi-button_body">' +
+									'<span class="wsi-button_inner">'+localizationText['Ok']+'</span>' +
 								'</span>' +
 							'</span>' +
-						'</button>' +
-						'<a id="userscript-message-cancel" class="link link__cancel" style="display: block; cursor: pointer;" >'+localizationText['Cancel']+'</a>' +
+						'</wsi-button>' +
+						'<a id="userscript-message-cancel" class="wsi-link wsi-link__cancel" style="display: block; cursor: pointer;" >'+localizationText['Cancel']+'</a>' +
 					'</div>' +
 				'</div>' +
 			'';
@@ -268,7 +271,7 @@
 			messagebg.setAttribute("id", "userscript-message-bg");
 			messagebg.setAttribute("style", "display: none; z-index:9998; background: url('http://"+realm+".wargaming.net/clans/static/0.1.0.1/images/plugins/jquery-ui/widget_overlay-pattern.png'); position: fixed; top: 0; left: 0; width: 100%; height: 100%;");
 			document.body.appendChild(messagebg);
-		}		
+		}	
 		
 		var navigatorInfo = getBrowser();
 		window.onerror = function(message, source, lineno, column, errorObj){
@@ -447,8 +450,8 @@
 		
 		/* ===== Pages function ===== */
 		function MemberProfilePage(){
-			if(colorStat == null || ExpShips == null){
-				console.log('colorStat == null || ExpShips == null');
+			if(colorStat == null || ExpShips == null || ExpWTR == null){
+				console.log('colorStat == null || ExpShips == null || ExpWTR == null');
 				setTimeout(function(){MemberProfilePage();}, 1000);
 				return;
 			}
@@ -558,8 +561,8 @@
 			}
 		}
 		function ClanPage(){
-			if(colorStat == null || ExpShips == null){
-				console.log('colorStat == null || ExpShips == null');
+			if(colorStat == null || ExpShips == null || ExpWTR == null){
+				console.log('colorStat == null || ExpShips == null || ExpWTR == null');
 				setTimeout(function(){ClanPage();}, 1000);
 				return;
 			}
@@ -822,6 +825,16 @@
 													'</span>'+
 												'</td>' +
 											'</tr>' +
+											'<tr>' +
+												'<td class="_name">' +
+													'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>' +
+												'</td>' +
+												'<td class="_value">' +
+													'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wtr'], 'wtr', 'main')+';">'+
+														valueFormat((MembersArray[0]['info']['statistics']['pvp']['wtr']).toFixed(2)) + 
+													'</span>'+
+												'</td>' +
+											'</tr>' +
 										'</tbody>' +
 									'</table>' +
 								'</td>'+
@@ -915,6 +928,11 @@
 							th.innerHTML = '<span>'+localizationText['wr']+'</span>';
 							row.appendChild(th);
 							
+							th = document.createElement('th');
+							th.setAttribute('class', '_value');
+							th.innerHTML = '<span>'+localizationText['wtr']+'</span>';
+							row.appendChild(th);
+							
 							continue;
 						}
 						
@@ -933,6 +951,10 @@
 							
 								var td = document.createElement('td');
 								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class]).toFixed(0))+'</span>';
+								row.appendChild(td);
+								
+								td = document.createElement('td');
+								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class]).toFixed(0))+'</span>';
 								row.appendChild(td);
 							}
 							
@@ -960,6 +982,11 @@
 								td.setAttribute('id', 'wr-'+ship_id);
 								td.innerHTML = '<span>0</span>';
 								row.appendChild(td);
+								
+								td = document.createElement('td');
+								td.setAttribute('id', 'wtr-'+ship_id);
+								td.innerHTML = '<span>0</span>';
+								row.appendChild(td);
 							}
 							
 							var battles = htmlParseMemberStatistic(row.cells[1]);
@@ -979,7 +1006,7 @@
 						}
 						
 						if(row.getAttribute('class').indexOf('_ship-entry-stat') > -1){
-							row.cells[0].setAttribute('colspan', '6');
+							row.cells[0].setAttribute('colspan', '7');
 							
 							continue;
 						}
@@ -991,6 +1018,12 @@
 						if(wr_cell != null){
 							wr_cell.setAttribute('style', 'white-space: nowrap;');
 							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
+						}
+						
+						var wtr_cell = document.getElementById('wtr-'+ship_id);
+						if(wtr_cell != null){
+							wtr_cell.setAttribute('style', 'white-space: nowrap;');
+							wtr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wtr'], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wtr']).toFixed(0))+'</span>';
 						}
 					}
 				}
@@ -1119,6 +1152,16 @@
 																'</span>'+
 															'</td>' +
 														'</tr>' +
+														'<tr>' +
+															'<td class="_name">' +
+																'<span>'+localizationText['wtr']+'</span>' +
+															'</td>' +
+															'<td class="_value">' +
+																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wtr'], 'wtr', 'main')+';">'+
+																	valueFormat((MembersArray[0]['info']['statistics'][type]['wtr']).toFixed(2)) + 
+																'</span>'+
+															'</td>' +
+														'</tr>' +
 													'</tbody>' +
 												'</table>' +
 											'</div>' +
@@ -1150,6 +1193,9 @@
 													'</th>'+
 													'<th class="_value">'+
 														'<span>'+localizationText['wr']+'</span>'+
+													'</th>'+
+													'<th class="_value">'+
+														'<span>'+localizationText['wtr']+'</span>'+
 													'</th>'+
 												'</tr>'+
 											'</thead>'+
@@ -1499,9 +1545,14 @@
 									valueFormat((Ship[type]['wr']).toFixed(0)) +
 								'</span>' +
 							'</td>' +
+							'<td style="white-space: nowrap;">' +
+								'<span style="color:'+findColorASC(Ship[type]['wtr'], 'wtr', 'main')+';">' +
+									valueFormat((Ship[type]['wtr']).toFixed(0)) +
+								'</span>' +
+							'</td>' +
 						'</tr>' +
 						'<tr class="_hide _ship-entry-stat ship-'+ship_id+'-'+ship_tier+'-'+type+'">' +
-							'<td colspan="6">' +
+							'<td colspan="7">' +
 								getHTMLStat(Ship[type], 'ship') +
 							'</td>' +
 						'</tr>'+
@@ -1538,6 +1589,11 @@
 							'<td>' +
 								'<span style="color:'+findColorASC(StatArray['info']['statistics'][type]['wr_'+typeShip[tS]], 'wr', 'main')+';">' +
 									valueFormat((StatArray['info']['statistics'][type]['wr_'+typeShip[tS]]).toFixed(0)) +
+								'</span>' +
+							'</td>' +
+							'<td>' +
+								'<span style="color:'+findColorASC(StatArray['info']['statistics'][type]['wtr_'+typeShip[tS]], 'wtr', 'main')+';">' +
+									valueFormat((StatArray['info']['statistics'][type]['wtr_'+typeShip[tS]]).toFixed(0)) +
 								'</span>' +
 							'</td>' +
 						'</tr>' +
@@ -2037,6 +2093,18 @@
 			html += '</tr>';
 			html += '</table>';
 			
+			html += '' +
+				'<div align="right">' +
+					'<button id="set-settings-default" class="button" style="display: block;">' +
+						'<span class="button_wrapper">' +
+							'<span style="padding: 5px;" class="button_body">' +
+								'<span class="button_inner">'+localizationText['set-settings-default']+'</span>' +
+							'</span>' +
+						'</span>' +
+					'</button>' +
+				'</div>' +
+			'';
+			
 			onShowMessage(
 				localizationText['get-settings-button'], 
 				html, 
@@ -2080,8 +2148,10 @@
 					}
 				}
 			});
-			
-			
+			jQ('#set-settings-default').click(function(){
+				window.localStorage.removeItem('SettingsWoWsStatInfo');
+				setTimeout(function(){window.location.reload();}, 2000);
+			});
 		}
 		function checkSettingsClanPage(){
 			var countCheck = 0;
@@ -2517,13 +2587,14 @@
 				return value;
 			}
 			
-			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1){
+			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1 || attr.indexOf(".wtr") > -1){
+				console.log(attr+' '+value);
 				value = (value).toFixed(2);
 			}
 			
 			var value_html = '';
 			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || (attr.indexOf(".max_") > -1 && attr.indexOf(".max_xp") == -1) 
-				|| attr.indexOf(".battles") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1){
+				|| attr.indexOf(".battles") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1 || attr.indexOf(".wtr") > -1){
 				value_html = '<font color="'+findColorASC(value, layer[layer.length - 1], 'main')+'">'+valueFormat(value)+'</font>';
 				td.setAttribute('style', 'white-space: nowrap;');
 			}else{
@@ -2577,9 +2648,11 @@
 				setLocalStorage('numJson', numJson, false);
 				getJson(WoWsStatInfoHref+'get/color.php?'+Math.floor(Math.random()*100000001), doneColorStat, errorColorStat);
 				getJson(WoWsStatInfoHref+'get/expships.php?'+Math.floor(Math.random()*100000001), doneExpShips, errorExpShips);
+				getJson(WoWsStatInfoHref+'get/expwtr.php?'+Math.floor(Math.random()*100000001), doneExpWTR, errorExpWTR);
 			}else{
 				getIndexedDB('ColorStat', updateColorStat, updateColorStat);
 				getIndexedDB('ExpShips', updateExpShips, updateExpShips);
+				getIndexedDB('ExpWTR', updateExpWTR, updateExpWTR);
 			}
 		}
 		function doneColorStat(url, response){
@@ -2588,6 +2661,9 @@
 		function errorColorStat(url){}
 		function doneExpShips(url, response){
 			setIndexedDB('ExpShips', response, updateExpShips, updateExpShips);
+		}
+		function doneExpWTR(url, response){
+			setIndexedDB('ExpWTR', response, updateExpWTR, updateExpWTR);
 		}
 		function updateColorStat(response){
 			if(response == null){
@@ -2603,7 +2679,15 @@
 				ExpShips = response;
 			}
 		}
+		function updateExpWTR(response){
+			if(response == null){
+				ExpWTR = jQ.parseJSON('{"coefficients":{"wins_weight":0.25,"damage_weight":0.5,"frags_weight":0.2,"capture_weight":0.01,"dropped_capture_weight":0.04,"ship_frags_importance_weight":10,"nominal_rating":1000},"expected":{"4184782640":{"ship_id":4184782640,"wins":0.52592593431473,"damage_dealt":31612.728515625,"frags":0.98363476991653,"capture_points":0.13815675675869,"dropped_capture_points":0.80344527959824,"planes_killed":0.25598621368408},"4185831216":{"ship_id":4185831216,"wins":0.47356376051903,"damage_dealt":15316.258789062,"frags":0.53447568416595,"capture_points":0.38606888055801,"dropped_capture_points":0.88791739940643,"planes_killed":0.035267882049084},"4293801680":{"ship_id":4293801680,"wins":0.56293708086014,"damage_dealt":13851.234375,"frags":0.80419582128525,"capture_points":0.4195804297924,"dropped_capture_points":2.1993007659912,"planes_killed":0},"4286527472":{"ship_id":4286527472,"wins":0.45775744318962,"damage_dealt":39265.4296875,"frags":0.69435507059097,"capture_points":0.49212247133255,"dropped_capture_points":2.1703751087189,"planes_killed":2.0769927501678},"4287542992":{"ship_id":4287542992,"wins":0.47378525137901,"damage_dealt":29609.48828125,"frags":0.76947408914566,"capture_points":0.7190688252449,"dropped_capture_points":3.6851255893707,"planes_killed":2.0222742557526},"4282300112":{"ship_id":4282300112,"wins":0.48199811577797,"damage_dealt":46978.55078125,"frags":0.80942505598068,"capture_points":0.47521206736565,"dropped_capture_points":4.1721019744873,"planes_killed":3.0318567752838},"4293801424":{"ship_id":4293801424,"wins":0.49987065792084,"damage_dealt":25556.3125,"frags":0.89689600467682,"capture_points":1.175297498703,"dropped_capture_points":4.3581738471985,"planes_killed":0.35566475987434},"4272895696":{"ship_id":4272895696,"wins":0.45931848883629,"damage_dealt":58039.078125,"frags":0.78824758529663,"capture_points":0.48122391104698,"dropped_capture_points":2.6112656593323,"planes_killed":4.3430109024048},"4283414224":{"ship_id":4283414224,"wins":0.51046812534332,"damage_dealt":56470.28515625,"frags":1.0890629291534,"capture_points":0.34214052557945,"dropped_capture_points":4.4137845039368,"planes_killed":14.299765586853},"4277090288":{"ship_id":4277090288,"wins":0.5150300860405,"damage_dealt":81239.4140625,"frags":1.0150300264359,"capture_points":0.83934533596039,"dropped_capture_points":2.8406813144684,"planes_killed":8.4008016586304},"4282300400":{"ship_id":4282300400,"wins":0.45996513962746,"damage_dealt":28068.349609375,"frags":0.6360365152359,"capture_points":0.70148384571075,"dropped_capture_points":3.5973055362701,"planes_killed":2.6179749965668},"4287575760":{"ship_id":4287575760,"wins":0.47902381420135,"damage_dealt":32065.04296875,"frags":0.74683594703674,"capture_points":0.63980889320374,"dropped_capture_points":3.2680985927582,"planes_killed":1.2303767204285},"4292753392":{"ship_id":4292753392,"wins":0.46990197896957,"damage_dealt":9230.5947265625,"frags":0.52227234840393,"capture_points":0.47729867696762,"dropped_capture_points":3.2528691291809,"planes_killed":0.00026434575556777},"4291770064":{"ship_id":4291770064,"wins":0.46083605289459,"damage_dealt":21021.328125,"frags":0.52245700359344,"capture_points":0.74360632896423,"dropped_capture_points":3.5488867759705,"planes_killed":0.55849862098694},"4281284304":{"ship_id":4281284304,"wins":0.49379938840866,"damage_dealt":56610.59765625,"frags":0.89749783277512,"capture_points":0.53692930936813,"dropped_capture_points":2.101624250412,"planes_killed":3.4401338100433},"4292851408":{"ship_id":4292851408,"wins":0.50814491510391,"damage_dealt":38554.94140625,"frags":0.91845279932022,"capture_points":0.32181680202484,"dropped_capture_points":2.0042214393616,"planes_killed":6.5175232887268},"4264441840":{"ship_id":4264441840,"wins":0.43440878391266,"damage_dealt":15670.805664062,"frags":0.47620102763176,"capture_points":0.98475450277328,"dropped_capture_points":3.3822016716003,"planes_killed":0.20975890755653},"4287510224":{"ship_id":4287510224,"wins":0.46719661355019,"damage_dealt":30447.34375,"frags":0.65240281820297,"capture_points":0.98833429813385,"dropped_capture_points":1.5366747379303,"planes_killed":0.44840759038925},"4290754544":{"ship_id":4290754544,"wins":0.45366483926773,"damage_dealt":23368.232421875,"frags":0.48879158496857,"capture_points":0.099995590746403,"dropped_capture_points":1.1254756450653,"planes_killed":10.726379394531},"4293834192":{"ship_id":4293834192,"wins":0.50836104154587,"damage_dealt":21661.1875,"frags":0.81071710586548,"capture_points":1.0455758571625,"dropped_capture_points":7.5878496170044,"planes_killed":0.0090402364730835},"4286527184":{"ship_id":4286527184,"wins":0.48998960852623,"damage_dealt":23990.32421875,"frags":0.68016213178635,"capture_points":0.76845121383667,"dropped_capture_points":3.983291387558,"planes_killed":0.15304760634899},"4279154384":{"ship_id":4279154384,"wins":0.47591382265091,"damage_dealt":17100.689453125,"frags":0.64688813686371,"capture_points":0.62941843271255,"dropped_capture_points":5.2607898712158,"planes_killed":0.031186603009701},"4292785968":{"ship_id":4292785968,"wins":0.51938509941101,"damage_dealt":13697.415039062,"frags":0.87303423881531,"capture_points":0.22848065197468,"dropped_capture_points":0.90053915977478,"planes_killed":0},"4280170192":{"ship_id":4280170192,"wins":0.57575756311417,"damage_dealt":18822.12109375,"frags":1,"capture_points":3.6060605049133,"dropped_capture_points":6.8181819915771,"planes_killed":0},"4279219920":{"ship_id":4279219920,"wins":0.49900278449059,"damage_dealt":87252.515625,"frags":1.3825289011002,"capture_points":0.36657360196114,"dropped_capture_points":5.3031511306763,"planes_killed":19.388511657715},"4182685488":{"ship_id":4182685488,"wins":0.52279633283615,"damage_dealt":30082.689453125,"frags":0.71732521057129,"capture_points":0,"dropped_capture_points":0.14285714924335,"planes_killed":1.6504559516907},"4255037136":{"ship_id":4255037136,"wins":0.43841215968132,"damage_dealt":29460.791015625,"frags":0.55066764354706,"capture_points":0.49974122643471,"dropped_capture_points":3.5901734828949,"planes_killed":1.6247800588608},"4181636912":{"ship_id":4181636912,"wins":0.43388429284096,"damage_dealt":31991.376953125,"frags":0.60330575704575,"capture_points":0,"dropped_capture_points":0,"planes_killed":1.4173554182053},"4183700944":{"ship_id":4183700944,"wins":0.57677900791168,"damage_dealt":24650.064453125,"frags":0.8539325594902,"capture_points":0.51310861110687,"dropped_capture_points":0.27340823411942,"planes_killed":0.28838950395584},"4180588336":{"ship_id":4180588336,"wins":0.5263158082962,"damage_dealt":25119.630859375,"frags":0.57894736528397,"capture_points":0,"dropped_capture_points":0,"planes_killed":0.36842104792595},"4273911792":{"ship_id":4273911792,"wins":0.48002618551254,"damage_dealt":55075.7890625,"frags":0.89849376678467,"capture_points":0.46889325976372,"dropped_capture_points":1.9214144945145,"planes_killed":4.6542239189148},"4293834544":{"ship_id":4293834544,"wins":0.4901539683342,"damage_dealt":8168.2626953125,"frags":0.66535657644272,"capture_points":0.13857375085354,"dropped_capture_points":0.33184763789177,"planes_killed":0.0010534846223891},"4293867504":{"ship_id":4293867504,"wins":0.47325623035431,"damage_dealt":17713.205078125,"frags":0.59716308116913,"capture_points":1.0154180526733,"dropped_capture_points":5.646981716156,"planes_killed":0.019106332212687},"3769513264":{"ship_id":3769513264,"wins":0.77777779102325,"damage_dealt":36269.609375,"frags":0.88888889551163,"capture_points":5.5555553436279,"dropped_capture_points":0,"planes_killed":0.5},"4277024464":{"ship_id":4277024464,"wins":0.56190478801727,"damage_dealt":25680.228515625,"frags":0.92761904001236,"capture_points":0.45714285969734,"dropped_capture_points":0.051428571343422,"planes_killed":0.0019047618843615},"4290688720":{"ship_id":4290688720,"wins":0.48033747076988,"damage_dealt":20745.71484375,"frags":0.6996556520462,"capture_points":0.77865016460419,"dropped_capture_points":5.57417345047,"planes_killed":1.9026515483856},"4292753104":{"ship_id":4292753104,"wins":0.51361358165741,"damage_dealt":13433.764648438,"frags":0.7557173371315,"capture_points":0.70462989807129,"dropped_capture_points":2.9809324741364,"planes_killed":0.0019681775011122},"4288657392":{"ship_id":4288657392,"wins":0.46467104554176,"damage_dealt":36917.33984375,"frags":0.69415611028671,"capture_points":0.36453831195831,"dropped_capture_points":3.067901134491,"planes_killed":11.535159111023},"4292786160":{"ship_id":4292786160,"wins":0.46880352497101,"damage_dealt":9878.837890625,"frags":0.4155732691288,"capture_points":0.65112364292145,"dropped_capture_points":6.8564743995667,"planes_killed":0.00019578347564675},"4284430032":{"ship_id":4284430032,"wins":0.48891857266426,"damage_dealt":46918.65625,"frags":0.82711762189865,"capture_points":0.47942024469376,"dropped_capture_points":2.0594778060913,"planes_killed":1.474013209343},"4286494416":{"ship_id":4286494416,"wins":0.49776110053062,"damage_dealt":37708.125,"frags":0.86123728752136,"capture_points":0.67734116315842,"dropped_capture_points":3.5809798240662,"planes_killed":2.2603902816772},"4179539760":{"ship_id":4179539760,"wins":0.5,"damage_dealt":58801.70703125,"frags":0.94117647409439,"capture_points":0,"dropped_capture_points":0,"planes_killed":1.6176470518112},"4291704528":{"ship_id":4291704528,"wins":0.49014738202095,"damage_dealt":22251.78515625,"frags":0.8242439031601,"capture_points":0.92585402727127,"dropped_capture_points":1.7193171977997,"planes_killed":0.08144748210907},"4276041712":{"ship_id":4276041712,"wins":0.51331150531769,"damage_dealt":65732.4453125,"frags":0.98013949394226,"capture_points":0.82011675834656,"dropped_capture_points":3.4923832416534,"planes_killed":6.8628988265991},"4279220208":{"ship_id":4279220208,"wins":0.67930328845978,"damage_dealt":133103.078125,"frags":2.0010244846344,"capture_points":0.42042350769043,"dropped_capture_points":4.9064207077026,"planes_killed":19.890369415283},"4289607664":{"ship_id":4289607664,"wins":0.46799504756927,"damage_dealt":18486.369140625,"frags":0.66189062595367,"capture_points":0.80240052938461,"dropped_capture_points":2.2982022762299,"planes_killed":0.49165239930153},"4274927600":{"ship_id":4274927600,"wins":0.47787588834763,"damage_dealt":18157.6328125,"frags":0.7202211022377,"capture_points":0.66781556606293,"dropped_capture_points":2.3010928630829,"planes_killed":0.016273366287351},"4288624336":{"ship_id":4288624336,"wins":0.49436178803444,"damage_dealt":43884.05078125,"frags":0.93917047977448,"capture_points":0.59349429607391,"dropped_capture_points":2.8987755775452,"planes_killed":1.0373097658157},"4182652368":{"ship_id":4182652368,"wins":0.46153846383095,"damage_dealt":37046.6171875,"frags":0.76923078298569,"capture_points":0,"dropped_capture_points":0,"planes_killed":0.76923078298569},"4180555216":{"ship_id":4180555216,"wins":0.56692916154861,"damage_dealt":29969.984375,"frags":0.99212598800659,"capture_points":0,"dropped_capture_points":0.26771652698517,"planes_killed":0.28740158677101},"4276041424":{"ship_id":4276041424,"wins":0.5583713054657,"damage_dealt":96187.484375,"frags":1.1281321048737,"capture_points":0.55410021543503,"dropped_capture_points":1.9325170516968,"planes_killed":6.7690773010254},"4292818896":{"ship_id":4292818896,"wins":0.46499371528625,"damage_dealt":35384.5546875,"frags":0.75801110267639,"capture_points":0.82779049873352,"dropped_capture_points":3.795746088028,"planes_killed":1.8076869249344},"4291737584":{"ship_id":4291737584,"wins":0.51412689685822,"damage_dealt":13240.052734375,"frags":0.74905896186829,"capture_points":1.1977769136429,"dropped_capture_points":9.443868637085,"planes_killed":0.0003542801423464},"4256085712":{"ship_id":4256085712,"wins":0.52104067802429,"damage_dealt":12518.879882812,"frags":0.93311262130737,"capture_points":1.0544208288193,"dropped_capture_points":9.013596534729,"planes_killed":0.0058587482199073},"4288559088":{"ship_id":4288559088,"wins":0.47886884212494,"damage_dealt":20292.513671875,"frags":0.6866455078125,"capture_points":0.88641679286957,"dropped_capture_points":1.8852732181549,"planes_killed":0.41711285710335},"4284397008":{"ship_id":4284397008,"wins":0.60000002384186,"damage_dealt":25422.19921875,"frags":1.5599999427795,"capture_points":1.0800000429153,"dropped_capture_points":18.280000686646,"planes_killed":0},"4292851696":{"ship_id":4292851696,"wins":0.45024010539055,"damage_dealt":23552.353515625,"frags":0.47267520427704,"capture_points":0.1076984629035,"dropped_capture_points":2.3446800708771,"planes_killed":13.15052986145},"4184749520":{"ship_id":4184749520,"wins":0.53495597839355,"damage_dealt":25701.6484375,"frags":1.0005178451538,"capture_points":0.15691351890564,"dropped_capture_points":0.62351113557816,"planes_killed":0.18177109956741},"4282365936":{"ship_id":4282365936,"wins":0.46910893917084,"damage_dealt":51620.390625,"frags":0.80449765920639,"capture_points":0.20614194869995,"dropped_capture_points":2.669326543808,"planes_killed":27.213033676147},"4285445840":{"ship_id":4285445840,"wins":0.50033515691757,"damage_dealt":45120.96484375,"frags":0.92174988985062,"capture_points":0.64752161502838,"dropped_capture_points":4.11741065979,"planes_killed":2.2254719734192},"4282365648":{"ship_id":4282365648,"wins":0.48982018232346,"damage_dealt":65844.109375,"frags":1.1017981767654,"capture_points":0.29499182105064,"dropped_capture_points":4.5271215438843,"planes_killed":14.33927822113},"4287543280":{"ship_id":4287543280,"wins":0.4853580892086,"damage_dealt":32826.1015625,"frags":0.89538484811783,"capture_points":0.84143966436386,"dropped_capture_points":5.1161866188049,"planes_killed":2.9845244884491},"4289607376":{"ship_id":4289607376,"wins":0.46696519851685,"damage_dealt":21868.205078125,"frags":0.62175005674362,"capture_points":1.1781612634659,"dropped_capture_points":1.1344187259674,"planes_killed":0.59545087814331},"4283381456":{"ship_id":4283381456,"wins":0.50134772062302,"damage_dealt":13122.91015625,"frags":0.7479784488678,"capture_points":1.105121254921,"dropped_capture_points":5.7378706932068,"planes_killed":0},"4290655952":{"ship_id":4290655952,"wins":0.49625208973885,"damage_dealt":28657.40625,"frags":0.96238595247269,"capture_points":1.1148941516876,"dropped_capture_points":1.6254979372025,"planes_killed":0.12042415142059},"4186846672":{"ship_id":4186846672,"wins":0.48919847607613,"damage_dealt":11196.858398438,"frags":0.6582105755806,"capture_points":0.23231515288353,"dropped_capture_points":0.36249822378159,"planes_killed":0.00080011296086013},"4280203248":{"ship_id":4280203248,"wins":0.47273322939873,"damage_dealt":32212.78515625,"frags":0.63680195808411,"capture_points":0.77170807123184,"dropped_capture_points":3.8327949047089,"planes_killed":3.868323802948},"4247697392":{"ship_id":4247697392,"wins":0.40625,"damage_dealt":44833.28125,"frags":1.28125,"capture_points":0,"dropped_capture_points":10.25,"planes_killed":0.28125},"4188976592":{"ship_id":4188976592,"wins":0.51277238130569,"damage_dealt":9624.9130859375,"frags":0.78564047813416,"capture_points":0.17707550525665,"dropped_capture_points":0.45769158005714,"planes_killed":0},"4269717488":{"ship_id":4269717488,"wins":0.46794638037682,"damage_dealt":19607.001953125,"frags":0.58129304647446,"capture_points":0.57705521583557,"dropped_capture_points":5.0158743858337,"planes_killed":0.14387680590153},"4285511376":{"ship_id":4285511376,"wins":0.50424748659134,"damage_dealt":49742.734375,"frags":1.0325610637665,"capture_points":0.23775498569012,"dropped_capture_points":4.3252825737,"planes_killed":7.9298429489136},"4290721776":{"ship_id":4290721776,"wins":0.48189505934715,"damage_dealt":26876.10546875,"frags":0.71375918388367,"capture_points":0.92900085449219,"dropped_capture_points":4.8400473594666,"planes_killed":0.49660456180573},"4277122768":{"ship_id":4277122768,"wins":0.66964954137802,"damage_dealt":123923.8671875,"frags":1.9962714910507,"capture_points":0.72035795450211,"dropped_capture_points":6.5592842102051,"planes_killed":19.566741943359},"4292785616":{"ship_id":4292785616,"wins":0.54562383890152,"damage_dealt":17606.919921875,"frags":0.87026691436768,"capture_points":0.65549349784851,"dropped_capture_points":5.8653011322021,"planes_killed":0},"4284463088":{"ship_id":4284463088,"wins":0.46425279974937,"damage_dealt":47135.0546875,"frags":0.8217248916626,"capture_points":0.19273321330547,"dropped_capture_points":3.2964127063751,"planes_killed":16.325874328613},"4282267344":{"ship_id":4282267344,"wins":0.49239417910576,"damage_dealt":55123.53515625,"frags":0.82738095521927,"capture_points":0.88558202981949,"dropped_capture_points":1.740740776062,"planes_killed":0.49537035822868},"4277057520":{"ship_id":4277057520,"wins":0.46782034635544,"damage_dealt":35526.18359375,"frags":0.66400933265686,"capture_points":0.9095858335495,"dropped_capture_points":4.9220299720764,"planes_killed":5.4868755340576},"4293867216":{"ship_id":4293867216,"wins":0.48870116472244,"damage_dealt":18251.16796875,"frags":0.6769854426384,"capture_points":1.1402894258499,"dropped_capture_points":5.0682911872864,"planes_killed":0.054159205406904},"4282333168":{"ship_id":4282333168,"wins":0.47996333241463,"damage_dealt":52558.39453125,"frags":0.83212596178055,"capture_points":0.56704872846603,"dropped_capture_points":2.3250496387482,"planes_killed":4.9928169250488},"4286461936":{"ship_id":4286461936,"wins":0.47202318906784,"damage_dealt":26086.296875,"frags":0.71374958753586,"capture_points":1.0046058893204,"dropped_capture_points":2.5088706016541,"planes_killed":0.30109179019928},"4186879792":{"ship_id":4186879792,"wins":0.4939591884613,"damage_dealt":16799.583984375,"frags":0.79797303676605,"capture_points":0.35535404086113,"dropped_capture_points":1.1217762231827,"planes_killed":0},"4267620048":{"ship_id":4267620048,"wins":0.55564278364182,"damage_dealt":32047.9375,"frags":1.1468106508255,"capture_points":1.2302256822586,"dropped_capture_points":6.1556429862976,"planes_killed":1.0249264240265},"4281284592":{"ship_id":4281284592,"wins":0.50278842449188,"damage_dealt":29660.548828125,"frags":0.83575963973999,"capture_points":1.156888961792,"dropped_capture_points":6.1272783279419,"planes_killed":0},"4289640144":{"ship_id":4289640144,"wins":0.45631262660027,"damage_dealt":21030.87890625,"frags":0.58957803249359,"capture_points":0.58153420686722,"dropped_capture_points":3.2527849674225,"planes_killed":0.39686983823776},"4280170480":{"ship_id":4280170480,"wins":0.46556869149208,"damage_dealt":19878.677734375,"frags":0.74185919761658,"capture_points":0.60630494356155,"dropped_capture_points":2.1454901695251,"planes_killed":0.41378608345985},"4284364496":{"ship_id":4284364496,"wins":0.45902675390244,"damage_dealt":40264.32421875,"frags":0.69896775484085,"capture_points":1.4682958126068,"dropped_capture_points":1.817147731781,"planes_killed":0.37244576215744},"4185798096":{"ship_id":4185798096,"wins":0.49885523319244,"damage_dealt":16462.791015625,"frags":0.73494946956635,"capture_points":0.32754209637642,"dropped_capture_points":0.5216161608696,"planes_killed":0.063434340059757},"4281219056":{"ship_id":4281219056,"wins":0.48123618960381,"damage_dealt":48820.3046875,"frags":0.80905079841614,"capture_points":1.3675496578217,"dropped_capture_points":1.602648973465,"planes_killed":0.7704194188118},"4187895248":{"ship_id":4187895248,"wins":0.49824532866478,"damage_dealt":7980.2094726562,"frags":0.60568434000015,"capture_points":0.11148817837238,"dropped_capture_points":0.30365198850632,"planes_killed":0.00026994716608897},"4181603792":{"ship_id":4181603792,"wins":0.5,"damage_dealt":23752.130859375,"frags":0.88043481111526,"capture_points":0,"dropped_capture_points":0,"planes_killed":0.39130434393883},"4258182864":{"ship_id":4258182864,"wins":0.50309163331985,"damage_dealt":13416.390625,"frags":0.57869702577591,"capture_points":0.71763801574707,"dropped_capture_points":6.955979347229,"planes_killed":4.5007305743638e-5},"4272830448":{"ship_id":4272830448,"wins":0.4832104742527,"damage_dealt":36352.484375,"frags":0.83005732297897,"capture_points":1.7293202877045,"dropped_capture_points":2.5036854743958,"planes_killed":0.69287467002869},"4288657104":{"ship_id":4288657104,"wins":0.51631247997284,"damage_dealt":46067.73046875,"frags":1.0405818223953,"capture_points":0.2952986061573,"dropped_capture_points":3.2650921344757,"planes_killed":6.9755072593689},"4288591856":{"ship_id":4288591856,"wins":0.44087308645248,"damage_dealt":23644.072265625,"frags":0.64709889888763,"capture_points":0.80134463310242,"dropped_capture_points":4.1659421920776,"planes_killed":2.4920427799225},"4288558800":{"ship_id":4288558800,"wins":0.47369620203972,"damage_dealt":23933.630859375,"frags":0.63081878423691,"capture_points":1.0898793935776,"dropped_capture_points":1.6261620521545,"planes_killed":0.54277759790421},"4266538992":{"ship_id":4266538992,"wins":0.467380464077,"damage_dealt":11625.115234375,"frags":0.51091760396957,"capture_points":0.4663108587265,"dropped_capture_points":2.3342337608337,"planes_killed":0.0095796827226877},"4183734064":{"ship_id":4183734064,"wins":0.52476668357849,"damage_dealt":30796.1953125,"frags":0.91098350286484,"capture_points":0.049533382058144,"dropped_capture_points":0.17516152560711,"planes_killed":0.94903087615967},"4281317360":{"ship_id":4281317360,"wins":0.52321469783783,"damage_dealt":96173.9140625,"frags":1.5090737342834,"capture_points":0.34409615397453,"dropped_capture_points":3.3641290664673,"planes_killed":19.230968475342},"4292818736":{"ship_id":4292818736,"wins":0.47048234939575,"damage_dealt":46400.22265625,"frags":0.68770176172256,"capture_points":0.30560609698296,"dropped_capture_points":1.2997945547104,"planes_killed":1.8360825777054},"4289640432":{"ship_id":4289640432,"wins":0.48559442162514,"damage_dealt":28896.80078125,"frags":0.86274784803391,"capture_points":0.72887599468231,"dropped_capture_points":5.5150151252747,"planes_killed":1.2094995975494},"4259264496":{"ship_id":4259264496,"wins":0.47403112053871,"damage_dealt":39009.09765625,"frags":0.83650970458984,"capture_points":0.65066838264465,"dropped_capture_points":3.1092858314514,"planes_killed":1.1419146060944},"4288624624":{"ship_id":4288624624,"wins":0.46251082420349,"damage_dealt":29349.455078125,"frags":0.69277763366699,"capture_points":0.69126904010773,"dropped_capture_points":3.5050740242004,"planes_killed":0.7552747130394},"4281251536":{"ship_id":4281251536,"wins":0.49023577570915,"damage_dealt":23361.00390625,"frags":0.73368358612061,"capture_points":0.62300306558609,"dropped_capture_points":4.9871253967285,"planes_killed":0.30361020565033},"4269684432":{"ship_id":4269684432,"wins":0.48812726140022,"damage_dealt":14994.051757812,"frags":0.66383707523346,"capture_points":0.64840930700302,"dropped_capture_points":2.0965147018433,"planes_killed":0.016218103468418},"4290689008":{"ship_id":4290689008,"wins":0.50197672843933,"damage_dealt":20733.2578125,"frags":0.76024401187897,"capture_points":0.97151052951813,"dropped_capture_points":8.1303443908691,"planes_killed":0.0041774837300181},"4179506640":{"ship_id":4179506640,"wins":0.47826087474823,"damage_dealt":49437,"frags":1.0869565010071,"capture_points":0,"dropped_capture_points":0,"planes_killed":0.65217393636703},"4259231440":{"ship_id":4259231440,"wins":0.54233485460281,"damage_dealt":77572.4609375,"frags":1.2123155593872,"capture_points":0.34252727031708,"dropped_capture_points":5.0962157249451,"planes_killed":4.0169982910156},"4248745968":{"ship_id":4248745968,"wins":0.56615990400314,"damage_dealt":36057.7265625,"frags":1.0940315723419,"capture_points":0.52083331346512,"dropped_capture_points":1.4265202283859,"planes_killed":0.1875},"4293866960":{"ship_id":4293866960,"wins":0.5844686627388,"damage_dealt":36904.6640625,"frags":1.1689373254776,"capture_points":0.68392372131348,"dropped_capture_points":0.87602180242538,"planes_killed":0.024523161351681},"4291737040":{"ship_id":4291737040,"wins":0.51633334159851,"damage_dealt":33772.98828125,"frags":0.99809491634369,"capture_points":0.79166024923325,"dropped_capture_points":5.7720193862915,"planes_killed":1.3288720846176},"4293834736":{"ship_id":4293834736,"wins":0.47714582085609,"damage_dealt":9723.78515625,"frags":0.63135224580765,"capture_points":0.71965450048447,"dropped_capture_points":6.9726810455322,"planes_killed":0.0037958512548357}}}');
+			}else{
+				ExpWTR = response;
+			}
+		}
 		function errorExpShips(url){}
+		function errorExpWTR(url){}
 		function doneAccountInfo(url, response){
 			if(response.status && response.status == 'error'){
 				errorAccountInfo(url);
@@ -2750,6 +2834,7 @@
 				MembersArray[index]['info']['statistics']['pvp']['wins_percents'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['survived_battles_percents'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['wr'] = 0;
+				MembersArray[index]['info']['statistics']['pvp']['wtr'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['avg_battles_level'] = 0;
 				MembersArray[index]['info']['statistics']['pvp']['max_ship_level'] = 0;
 				
@@ -2864,6 +2949,7 @@
 				MembersArray[index]['info']['statistics'][type]['avg_battles_level'] = 0;
 				MembersArray[index]['info']['statistics'][type]['max_ship_level'] = 0;
 				MembersArray[index]['info']['statistics'][type]['wr'] = 0;
+				MembersArray[index]['info']['statistics'][type]['wtr'] = 0;
 				
 				var StatShips = [];
 				StatShips['damage_dealt'] = 0;
@@ -2876,6 +2962,19 @@
 				StatShips['expPlanesKilled'] = 0;
 				StatShips['expCapturePoints'] = 0;
 				StatShips['expDroppedCapturePoints'] = 0;
+				
+				StatShips['actual.wins'] = 0;
+				StatShips['actual.damage_dealt'] = 0;
+				StatShips['actual.frags'] = 0;
+				StatShips['actual.planes_killed'] = 0;
+				StatShips['actual.capture_points'] = 0;
+				StatShips['actual.dropped_capture_points'] = 0;
+				StatShips['expected.wins'] = 0;
+				StatShips['expected.damage_dealt'] = 0;
+				StatShips['expected.frags'] = 0;
+				StatShips['expected.planes_killed'] = 0;
+				StatShips['expected.capture_points'] = 0;
+				StatShips['expected.dropped_capture_points'] = 0;
 				
 				var StatShipsClass = [];
 				for(var tS = 0; tS < typeShip.length; tS++){
@@ -2891,6 +2990,19 @@
 					StatShipsClass[typeS]['expPlanesKilled'] = 0;
 					StatShipsClass[typeS]['expCapturePoints'] = 0;
 					StatShipsClass[typeS]['expDroppedCapturePoints'] = 0;
+					
+					StatShipsClass[typeS]['actual.wins'] = 0;
+					StatShipsClass[typeS]['actual.damage_dealt'] = 0;
+					StatShipsClass[typeS]['actual.frags'] = 0;
+					StatShipsClass[typeS]['actual.planes_killed'] = 0;
+					StatShipsClass[typeS]['actual.capture_points'] = 0;
+					StatShipsClass[typeS]['actual.dropped_capture_points'] = 0;
+					StatShipsClass[typeS]['expected.wins'] = 0;
+					StatShipsClass[typeS]['expected.damage_dealt'] = 0;
+					StatShipsClass[typeS]['expected.frags'] = 0;
+					StatShipsClass[typeS]['expected.planes_killed'] = 0;
+					StatShipsClass[typeS]['expected.capture_points'] = 0;
+					StatShipsClass[typeS]['expected.dropped_capture_points'] = 0;
 				}
 				
 				for(var shipI = 0; shipI < MembersArray[index]['ships'].length; shipI++){
@@ -3021,6 +3133,60 @@
 							MembersArray[index]['ships'][shipI][type]['wr'] = 0;
 						}
 						
+						if(ExpWTR['expected'][ship_id] !== undefined){
+							var battles = Statistics['battles'];
+							var wins = Statistics['wins'];
+							var damage_dealt = Statistics['damage_dealt'];
+							var frags = Statistics['frags'];
+							var planes_killed = Statistics['planes_killed'];
+							var capture_points = Statistics['capture_points'];
+							var dropped_capture_points = Statistics['dropped_capture_points'];
+							
+							var StatShip = [];
+							StatShip['actual.wins'] = wins;
+							StatShip['actual.damage_dealt'] = damage_dealt;
+							StatShip['actual.frags'] = frags;
+							StatShip['actual.planes_killed'] = planes_killed;
+							StatShip['actual.capture_points'] = capture_points;
+							StatShip['actual.dropped_capture_points'] = dropped_capture_points;
+							StatShip['expected.wins'] = battles * ExpWTR['expected'][ship_id]['wins'];
+							StatShip['expected.damage_dealt'] = battles * ExpWTR['expected'][ship_id]['damage_dealt'];
+							StatShip['expected.frags'] = battles * ExpWTR['expected'][ship_id]['frags'];
+							StatShip['expected.planes_killed'] = battles * ExpWTR['expected'][ship_id]['planes_killed'];
+							StatShip['expected.capture_points'] = battles * ExpWTR['expected'][ship_id]['capture_points'];
+							StatShip['expected.dropped_capture_points'] = battles * ExpWTR['expected'][ship_id]['dropped_capture_points'];
+							
+							MembersArray[index]['ships'][shipI][type]['wtr'] = calcWTR(StatShip);
+							
+							StatShipsClass[ship_type]['actual.wins'] += wins;
+							StatShipsClass[ship_type]['actual.damage_dealt'] += damage_dealt;
+							StatShipsClass[ship_type]['actual.frags'] += frags;
+							StatShipsClass[ship_type]['actual.planes_killed'] += planes_killed;
+							StatShipsClass[ship_type]['actual.capture_points'] += capture_points;
+							StatShipsClass[ship_type]['actual.dropped_capture_points'] += dropped_capture_points;
+							StatShipsClass[ship_type]['expected.wins'] += StatShip['expected.wins'];
+							StatShipsClass[ship_type]['expected.damage_dealt'] += StatShip['expected.damage_dealt'];
+							StatShipsClass[ship_type]['expected.frags'] += StatShip['expected.frags'];
+							StatShipsClass[ship_type]['expected.planes_killed'] += StatShip['expected.planes_killed'];
+							StatShipsClass[ship_type]['expected.capture_points'] += StatShip['expected.capture_points'];
+							StatShipsClass[ship_type]['expected.dropped_capture_points'] += StatShip['expected.dropped_capture_points'];
+							
+							StatShips['actual.wins'] += wins;
+							StatShips['actual.damage_dealt'] += damage_dealt;
+							StatShips['actual.frags'] += frags;
+							StatShips['actual.planes_killed'] += planes_killed;
+							StatShips['actual.capture_points'] += capture_points;
+							StatShips['actual.dropped_capture_points'] += dropped_capture_points;
+							StatShips['expected.wins'] += StatShip['expected.wins'];
+							StatShips['expected.damage_dealt'] += StatShip['expected.damage_dealt'];
+							StatShips['expected.frags'] += StatShip['expected.frags'];
+							StatShips['expected.planes_killed'] += StatShip['expected.planes_killed'];
+							StatShips['expected.capture_points'] += StatShip['expected.capture_points'];
+							StatShips['expected.dropped_capture_points'] += StatShip['expected.dropped_capture_points'];
+						}else{
+							MembersArray[index]['ships'][shipI][type]['wtr'] = 0;
+						}
+						
 						if(Statistics['battles'] > 0){
 							MembersArray[index]['info']['statistics'][type]['avg_battles_level'] += ship_tier * Statistics['battles'] / MembersArray[index]['info']['statistics'][type]['battles'];
 						}
@@ -3039,9 +3205,11 @@
 					var typeS = typeShip[tS];
 					
 					MembersArray[index]['info']['statistics'][type]['wr_'+typeS] = calcWR(StatShipsClass[typeS]);
+					MembersArray[index]['info']['statistics'][type]['wtr_'+typeS] = calcWTR(StatShipsClass[typeS]);
 				}
 				
 				MembersArray[index]['info']['statistics'][type]['wr'] = calcWR(StatShips);
+				MembersArray[index]['info']['statistics'][type]['wtr'] = calcWTR(StatShips);
 			}
 			
 			if(MembersArray[index]['info']['statistics']['pvp_div2']['avg_battles_level'] > MembersArray[index]['info']['statistics']['pvp_div3']['avg_battles_level']){
@@ -3082,6 +3250,49 @@
 			
 			return wr;
 		}
+		function calcWTR(Stat){
+			var wins = Stat['actual.wins'] / Stat['expected.wins'];
+			var damage_dealt = Stat['actual.damage_dealt'] / Stat['expected.damage_dealt'];
+			var ship_frags = Stat['actual.frags'] / Stat['expected.frags'];
+			var capture_points = Stat['actual.capture_points'] / Stat['expected.capture_points'];
+			var dropped_capture_points = Stat['actual.dropped_capture_points'] / Stat['expected.dropped_capture_points'];
+			var planes_killed = Stat['actual.planes_killed'] / Stat['expected.planes_killed'];
+			var ship_frags_importance_weight = ExpWTR['coefficients']['ship_frags_importance_weight'];
+
+			var frags = 1.0; // fallback to avoid division by zero
+			if (Stat['expected.planes_killed'] + Stat['expected.frags'] > 0) { // this should be happening virtually always
+				var aircraft_frags_coef = Stat['expected.planes_killed'] / (Stat['expected.planes_killed'] + ship_frags_importance_weight * Stat['expected.frags']);
+				var ship_frags_coef = 1 - aircraft_frags_coef;
+
+				if (aircraft_frags_coef == 1) {
+					frags = planes_killed;
+				} else if (ship_frags_coef == 1) {
+					frags = ship_frags;
+				} else {
+					frags = ship_frags * ship_frags_coef + planes_killed * aircraft_frags_coef;
+				}
+			}
+
+			var wins_weight = ExpWTR['coefficients']['wins_weight'];
+			var damage_weight = ExpWTR['coefficients']['damage_weight'];
+			var frags_weight = ExpWTR['coefficients']['frags_weight'];
+			var capture_weight = ExpWTR['coefficients']['capture_weight'];
+			var dropped_capture_weight = ExpWTR['coefficients']['dropped_capture_weight'];
+
+			var wtr =
+				wins                    * wins_weight             +
+				damage_dealt            * damage_weight           +
+				frags                   * frags_weight            +
+				capture_points          * capture_weight          +
+				dropped_capture_points  * dropped_capture_weight;
+
+			var nominal_rating = ExpWTR['coefficients']['nominal_rating'];
+
+			wtr = wtr * nominal_rating;
+			if(isNaN(wtr)){wtr = 0;}
+			
+			return wtr;
+		}
 		function doneEncyclopedia(url, response){
 			if(response.status && response.status == "error"){
 				errorEncyclopedia();
@@ -3099,6 +3310,10 @@
 			console.log('Get Encyclopedia Error');
 		}
 		function findColorASC(value, stat_type, type){
+			if(colorStat[stat_type] === undefined){
+				return '';
+			}
+			
 			if(type == 'main'){
 				if(isNaN(value) || parseFloat(value) <= parseFloat(colorStat[stat_type][0])){
 					return color['very_bad'];
@@ -3457,16 +3672,16 @@
 			}			
 		}
 		function onShowMessage(title, content, funcOk, OkText, viewCancel){
-			var ui_dialog_title = message.getElementsByClassName("ui-dialog-title")[0];
+			var ui_dialog_title = message.getElementsByClassName("wsi-ui-dialog-title")[0];
 			ui_dialog_title.innerHTML = title;
 			
-			var popup = message.getElementsByClassName("popup")[0];
+			var popup = message.getElementsByClassName("wsi-popup")[0];
 			popup.innerHTML = content;
 			
-			var button_inner = message.getElementsByClassName("button_inner")[0];
+			var button_inner = message.getElementsByClassName("wsi-button_inner")[0];
 			button_inner.innerHTML = OkText;
 			
-			var link__cancel = message.getElementsByClassName("link__cancel")[0];
+			var link__cancel = message.getElementsByClassName("wsi-link__cancel")[0];
 			if(viewCancel){
 				link__cancel.style.display = 'inline';
 			}else{
@@ -3647,6 +3862,7 @@
 				localizationText['ru']['avg_battles_level'] = 'Средний уровень кораблей игрока в боях';
 				localizationText['ru']['number-ships-x'] = 'Количество кораблей 10 уровня';
 				localizationText['ru']['wr'] = 'WR';
+				localizationText['ru']['wtr'] = 'WTR';
 				
 				localizationText['ru']['ships_stat'] = 'Расширенная статистика по технике';
 				localizationText['ru']['title_ships'] = 'Корабли';
@@ -3678,6 +3894,7 @@
 				localizationText['ru']['reservist'] = 'Резервист';
 				
 				localizationText['ru']['get-settings-button'] = 'Настройка';
+				localizationText['ru']['set-settings-default'] = 'Настройки по умолчанию';
 				localizationText['ru']['table-setting-caption'] = 'Отображать в таблице "Статистика клана"';
 				localizationText['ru']['table-setting-structure'] = 'Порядок столбцов в таблице';
 				
@@ -3728,6 +3945,7 @@
 				localizationText['ru']['info.statistics.pvp.survived_battles_percents'] = 'Процент выживания';
 				
 				localizationText['ru']['info.statistics.pvp.wr'] = 'WR';
+				localizationText['ru']['info.statistics.pvp.wtr'] = 'WTR';
 				
 				localizationText['ru']['info.ships_x_level'] = '10 lvl';
 			}
@@ -3824,6 +4042,7 @@
 				localizationText['en']['avg_battles_level'] = 'Average tier of warships used by player';
 				localizationText['en']['number-ships-x'] = 'Number of X Tier ships';
 				localizationText['en']['wr'] = 'WR';
+				localizationText['en']['wtr'] = 'WTR';
 				
 				localizationText['en']['ships_stat'] = 'Detailed Warship Statistics';
 				localizationText['en']['title_ships'] = 'Warships';
@@ -3855,6 +4074,7 @@
 				localizationText['en']['reservist'] = 'Reservist';
 
 				localizationText['en']['get-settings-button'] = 'Settings';
+				localizationText['en']['set-settings-default'] = 'The default settings';
 				localizationText['en']['table-setting-caption'] = 'View column table "Clan Statistics"';
 				localizationText['en']['table-setting-structure'] = 'Sort column table';
 				
@@ -3905,6 +4125,7 @@
 				localizationText['en']['info.statistics.pvp.survived_battles_percents'] = 'Percent of survived';
 				
 				localizationText['en']['info.statistics.pvp.wr'] = 'WR';
+				localizationText['en']['info.statistics.pvp.wtr'] = 'WTR';
 				
 				localizationText['en']['info.ships_x_level'] = '10 lvl';
 			}
@@ -3956,6 +4177,7 @@
 				localizationText['fr']['avg_battles_level'] = 'Niveau moyen de navires de guerre utilisée par le joueur';
 				localizationText['fr']['number-ships-x'] = 'Nombre de navires X Tier';
 				localizationText['fr']['wr'] = 'WR';
+				localizationText['fr']['wtr'] = 'WTR';
 				
 				localizationText['fr']['ships_stat'] = 'Statistiques détaillées du navire';
 				localizationText['fr']['title_ships'] = 'Navires de guerre';
@@ -4012,6 +4234,7 @@
 				localizationText['de']['avg_battles_level'] = 'Durchschnittliche Tier von Kriegsschiffen durch Spieler verwendet';
 				localizationText['de']['number-ships-x'] = 'Anzahl der X Tier Schiffe';
 				localizationText['de']['wr'] = 'WR';
+				localizationText['de']['wtr'] = 'WTR';
 				
 				localizationText['de']['ships_stat'] = 'Detaillierte Schiffstatistik';
 				localizationText['de']['title_ships'] = 'Kriegsschiffe';
@@ -4068,6 +4291,7 @@
 				localizationText['tr']['avg_battles_level'] = 'Oyuncu tarafından kullanılan savaş gemilerinin ortalama katmanlı';
 				localizationText['tr']['number-ships-x'] = 'X Tier gemilerin sayısı';
 				localizationText['tr']['wr'] = 'WR';
+				localizationText['tr']['wtr'] = 'WTR';
 				
 				localizationText['tr']['ships_stat'] = 'Detaylı Gemi İstatistikleri';
 				localizationText['tr']['title_ships'] = 'Savaş Gemileri';
@@ -4124,6 +4348,7 @@
 				localizationText['es']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 				localizationText['es']['number-ships-x'] = 'Número de buques de Nivel X';
 				localizationText['es']['wr'] = 'WR';
+				localizationText['es']['wtr'] = 'WTR';
 				
 				localizationText['es']['ships_stat'] = 'Estadísticas detalladas del barco';
 				localizationText['es']['title_ships'] = 'Barcos';
@@ -4180,6 +4405,7 @@
 				localizationText['es-mx']['avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 				localizationText['es-mx']['number-ships-x'] = 'Número de buques de Nivel X';
 				localizationText['es-mx']['wr'] = 'WR';
+				localizationText['es-mx']['wtr'] = 'WTR';
 				
 				localizationText['es-mx']['ships_stat'] = 'Estadísticas detalladas de los Barcos de Guerra';
 				localizationText['es-mx']['title_ships'] = 'Barcos de Guerra';
@@ -4236,6 +4462,7 @@
 				localizationText['pt-br']['avg_battles_level'] = 'Nível médio de navios de guerra usados por jogador';
 				localizationText['pt-br']['number-ships-x'] = 'Número de X navios de Nível';
 				localizationText['pt-br']['wr'] = 'WR';
+				localizationText['pt-br']['wtr'] = 'WTR';
 				
 				localizationText['pt-br']['ships_stat'] = 'Estatísticas Detalhadas de Navios';
 				localizationText['pt-br']['title_ships'] = 'Navios';
@@ -4292,6 +4519,7 @@
 				localizationText['cs']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 				localizationText['cs']['number-ships-x'] = 'Počet X Tier lodí';
 				localizationText['cs']['wr'] = 'WR';
+				localizationText['cs']['wtr'] = 'WTR';
 				
 				localizationText['cs']['ships_stat'] = 'Podrobné statistiky lodě';
 				localizationText['cs']['title_ships'] = 'Lodě';
@@ -4348,6 +4576,7 @@
 				localizationText['pl']['avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 				localizationText['pl']['number-ships-x'] = 'Ilość X statków Tier';
 				localizationText['pl']['wr'] = 'WR';
+				localizationText['pl']['wtr'] = 'WTR';
 				
 				localizationText['pl']['ships_stat'] = 'Szczegółowe statystyki okrętu';
 				localizationText['pl']['title_ships'] = 'Okręty';
@@ -4404,6 +4633,7 @@
 				localizationText['ja']['avg_battles_level'] = 'プレイヤーが使用する軍艦の平均ティア';
 				localizationText['ja']['number-ships-x'] = 'Xティア船の数';
 				localizationText['ja']['wr'] = 'WR';
+				localizationText['ja']['wtr'] = 'WTR';
 				
 				localizationText['ja']['ships_stat'] = '艦の詳細戦績';
 				localizationText['ja']['title_ships'] = '艦';
@@ -4460,6 +4690,7 @@
 				localizationText['th']['avg_battles_level'] = 'ชั้นเฉลี่ยของเรือรบที่ใช้โดยผู้เล่น';
 				localizationText['th']['number-ships-x'] = 'จำนวน X เรือชั้นที่';
 				localizationText['th']['wr'] = 'WR';
+				localizationText['th']['wtr'] = 'WTR';
 				
 				localizationText['th']['ships_stat'] = 'สถิติเรือรบโดยละเอียด';
 				localizationText['th']['title_ships'] = 'เรือรบ';
@@ -4519,6 +4750,7 @@
 				localizationText['vi']['avg_battles_level'] = 'Tier trung bình của các tàu chiến được sử dụng bởi người chơi';
 				localizationText['vi']['number-ships-x'] = 'Số tàu Tier X';
 				localizationText['vi']['wr'] = 'WR';
+				localizationText['vi']['wtr'] = 'WTR';
 				
 				localizationText['vi']['ships_stat'] = 'Thống kê Tàu chiến Chi tiết';
 				localizationText['vi']['title_ships'] = 'Tàu chiến';
@@ -4574,7 +4806,7 @@
 				localizationText['zh-tw']['max_ship_level'] = '船舶最大層';
 				localizationText['zh-tw']['avg_battles_level'] = '戰艦的平均層使用的播放器';
 				localizationText['zh-tw']['number-ships-x'] = '第X級船舶數量';
-				localizationText['zh-tw']['wr'] = 'WR';
+				localizationText['zh-tw']['wtr'] = 'WTR';
 				
 				localizationText['zh-tw']['ships_stat'] = '詳細艦艇統計';
 				localizationText['zh-tw']['title_ships'] = '戰艦';
