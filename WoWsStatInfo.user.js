@@ -464,7 +464,7 @@
 			var _nick = document.getElementsByClassName('_nick')[0];
 			nickname = _nick.textContent;
 			
-			var row = document.getElementsByClassName('row')[1];
+			var row = document.getElementsByClassName('row')[2];
 			var div = document.createElement('div');
 			div.setAttribute('id', 'userscript-block-list');
 			div.setAttribute('style', 'padding: 0px 15px 20px 15px;');
@@ -930,7 +930,7 @@
 							
 							th = document.createElement('th');
 							th.setAttribute('class', '_value');
-							th.innerHTML = '<span>'+localizationText['wtr']+'</span>';
+							th.innerHTML = '<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>';
 							row.appendChild(th);
 							
 							continue;
@@ -1154,7 +1154,7 @@
 														'</tr>' +
 														'<tr>' +
 															'<td class="_name">' +
-																'<span>'+localizationText['wtr']+'</span>' +
+																'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>' +
 															'</td>' +
 															'<td class="_value">' +
 																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wtr'], 'wtr', 'main')+';">'+
@@ -1195,7 +1195,7 @@
 														'<span>'+localizationText['wr']+'</span>'+
 													'</th>'+
 													'<th class="_value">'+
-														'<span>'+localizationText['wtr']+'</span>'+
+														'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>'+
 													'</th>'+
 												'</tr>'+
 											'</thead>'+
@@ -1792,15 +1792,28 @@
 					'</div>'+
 				'';
 				
+				var check_upload = false;
+				
 				onShowMessage(
-					localizationText['userbar-bg'],
+					localizationText['upload-verification'],
 					html,
 					function(){
-						var userbar_img_upload = document.getElementById('userbar-img-upload');
-						
-						GeneratorUserBar(userbar_img_upload.getAttribute('userbarbg'));
-						
 						onCloseMessage();
+						
+						if(check_upload){
+							onShowMessage(
+								localizationText['Box'],
+								localizationText['upload-verification'], 
+								onCloseMessage,
+								localizationText['Ok'],
+								false
+							);
+						}else{
+							var userbar_img_upload = document.getElementById('userbar-img-upload');
+							if(userbar_img_upload.getAttribute('userbarbg') != 'userbar'){
+								GeneratorUserBar(userbar_img_upload.getAttribute('userbarbg'));
+							}
+						}
 					},
 					localizationText['Ok'],
 					true
@@ -1818,6 +1831,8 @@
 				
 				document.forms["upload-myfile"].onsubmit = function(e){
 					e.preventDefault();
+					
+					check_upload = true;
 					
 					function validateExtension(v){
 						var allowedExtensions = new Array(".png", ".PNG");
@@ -1858,8 +1873,8 @@
 												
 												var userbar_img_upload = document.getElementById('userbar-img-upload');
 												if(userbar_img_upload != null){
-													userbar_img_upload.src = WoWsStatInfoHref+'bg/user/'+MembersArray[0]['info']['account_id']+'.png'+'?'+Math.floor(Math.random()*100000001);
-													userbar_img_upload.setAttribute('userbarbg', 'user/'+MembersArray[0]['info']['account_id']);
+													userbar_img_upload.src = WoWsStatInfoHref+'bg/user/temp/'+MembersArray[0]['info']['account_id']+'.png'+'?'+Math.floor(Math.random()*100000001);
+													userbar_img_upload.setAttribute('userbarbg', 'userbar');
 												}
 											}else{
 												console.log("upload-myfile error " + this.status);
@@ -3822,6 +3837,7 @@
 				localizationText['ru']['img-max-size'] = 'Максимальный размер: 150КБ';
 				localizationText['ru']['img-max-px'] = 'Разрешение изображения: 468х100';
 				localizationText['ru']['img-format'] = 'Формат: PNG';
+				localizationText['ru']['upload-verification'] = 'Фон будет обновлен после проверки.';
 				
 				localizationText['ru']['pvp_solo'] = 'Соло';
 				localizationText['ru']['pvp_div'] = 'Отряд';
@@ -4002,6 +4018,7 @@
 				localizationText['en']['img-max-size'] = 'Maximum size: 150 KB';
 				localizationText['en']['img-max-px'] = 'Image Resolution: 468x100';
 				localizationText['en']['img-format'] = 'Format: PNG';
+				localizationText['en']['upload-verification'] = 'Background will be updated after verification.';
 				
 				localizationText['en']['pvp_solo'] = 'Solo';
 				localizationText['en']['pvp_div'] = 'Division';
