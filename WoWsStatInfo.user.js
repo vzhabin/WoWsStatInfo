@@ -2284,11 +2284,20 @@
 					var account_name = player_name.innerHTML.trim();
 					MembersArray[index]['account_name'] = account_name;
 					
-					var image = row.getElementsByClassName('svg-icon')[1];
-					var srcArr = image.getAttribute('src').split("/");
-					MembersArray[index]['role'] = srcArr[srcArr.length - 1].split(".")[0];
-					MembersArray[index]['role_i18n'] = getRoleText(srcArr[srcArr.length - 1].split(".")[0]);
-					MembersArray[index]['role_sort_num'] = getRoleSortNum(srcArr[srcArr.length - 1].split(".")[0]);
+					var epaulettes = row.getElementsByClassName('epaulettes')[0];
+					var epaulettesSplit = epaulettes.getAttribute('class').split(' ');
+					for(eS = 0; eS < epaulettesSplit.length; eS++){
+						if(epaulettesSplit[eS].indexOf('js-tooltip-id_js-role_') > -1){
+							var role = epaulettesSplit[eS].replace('js-tooltip-id_js-role_', '');
+							role = role.replace('-tooltip', '');
+							
+							MembersArray[index]['role'] = role;
+							MembersArray[index]['role_i18n'] = getRoleText(role);
+							MembersArray[index]['role_sort_num'] = getRoleSortNum(role);
+							
+							break;
+						}
+					}
 					
 					var colNum = (row.cells.length - 2) - 1;
 					var clan_days = row.cells[colNum].innerHTML.trim();
