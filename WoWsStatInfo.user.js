@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.1.22
+// @version 0.5.1.23
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -44,7 +44,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.1.22';
+		var VersionWoWsStatInfo = '0.5.1.23';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -518,18 +518,15 @@
 				var user_id = reputation__wrp.getAttribute('id').split('_')[1];
 				var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
 				
-				var profile = '';
-				if(realm == 'asia' || realm == 'na'){
-					profile = '' +
-						'<li class="clear clearfix">' +
-							'<span class="row_title">'+localizationText['profile-wows']+':</span>' +
-							'<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
-						'</li>' +
-					'';
-				}
+				// var profile = '' +
+					// '<li class="clear clearfix">' +
+						// '<span class="row_title">'+localizationText['profile-wows']+':</span>' +
+						// '<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
+					// '</li>' +
+				// '';
 				
 				ipsList_data.innerHTML += '' +
-					profile +
+					// profile +
 					'<li class="clear clearfix">' +
 						'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
 						'<span class="row_data member_'+user_id+'"></span>' +
@@ -823,7 +820,11 @@
 											'</tr>' +
 											'<tr>' +
 												'<td class="_name">' +
-													'<span>'+localizationText['wr']+'</span>' +
+													'<span>'+
+														'<a target="_blank" href="http://vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
+															localizationText['wr']+
+														'</a>' +
+													'</span>' +
 												'</td>' +
 												'<td class="_value">' +
 													'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr'], 'wr', 'main')+';">'+
@@ -833,7 +834,11 @@
 											'</tr>' +
 											'<tr>' +
 												'<td class="_name">' +
-													'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>' +
+													'<span>' +
+														'<a target="_blank" href="http://warships.today/player/'+MembersArray[0]['info']['account_id']+'/'+realm+'/'+MembersArray[0]['info']['nickname']+'">'+
+															localizationText['wtr'] +
+														'</a>' +
+													'</span>' +
 												'</td>' +
 												'<td class="_value">' +
 													'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wtr'], 'wtr', 'main')+';">'+
@@ -936,7 +941,7 @@
 							
 							th = document.createElement('th');
 							th.setAttribute('class', '_value');
-							th.innerHTML = '<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>';
+							th.innerHTML = '<span>'+localizationText['wtr']+'</span>';
 							row.appendChild(th);
 							
 							continue;
@@ -1042,8 +1047,8 @@
 						var js_tooltip_show = item.getAttribute('js-tooltip-show');
 						var _counter = item.getElementsByClassName('_counter')[0];
 						if(_counter != null && item.getElementsByClassName('_counter').length == 1){
-							_counter.setAttribute('style', 'left:70%; background-color:#F7882E;');
-							item.innerHTML += '<div class="_counter" style="left:30%; background-color:#AAAAAA;">'+MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle']+'</div>';
+							_counter.setAttribute('style', 'left: 70%; background-color: #F7882E; min-width: 3em;');
+							item.innerHTML += '<div class="_counter" style="left: 20%; background-color: #AAAAAA; min-width: 3em;">'+MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle']+'</div>';
 						}
 					}
 				}
@@ -1150,7 +1155,11 @@
 														'</tr>' +
 														'<tr>' +
 															'<td class="_name">' +
-																'<span>'+localizationText['wr']+'</span>' +
+																'<span>' +
+																	'<a target="_blank" href="http://vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
+																		localizationText['wr'] +
+																	'</a>' +
+																'</span>' +
 															'</td>' +
 															'<td class="_value">' +
 																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wr'], 'wr', 'main')+';">'+
@@ -1160,7 +1169,11 @@
 														'</tr>' +
 														'<tr>' +
 															'<td class="_name">' +
-																'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>' +
+																'<span>' +
+																	'<a target="_blank" href="http://warships.today/player/'+MembersArray[0]['info']['account_id']+'/'+realm+'/'+MembersArray[0]['info']['nickname']+'">' +
+																		localizationText['wtr'] +
+																	'</a>' +
+																'</span>' +
 															'</td>' +
 															'<td class="_value">' +
 																'<span style="color: '+findColorASC(MembersArray[0]['info']['statistics'][type]['wtr'], 'wtr', 'main')+';">'+
@@ -1201,7 +1214,7 @@
 														'<span>'+localizationText['wr']+'</span>'+
 													'</th>'+
 													'<th class="_value">'+
-														'<span><a target="_blank" href="http://warships.today/wiki/ru/warships_today_rating">'+localizationText['wtr']+'</a></span>'+
+														'<span>'+localizationText['wtr']+'</span>'+
 													'</th>'+
 												'</tr>'+
 											'</thead>'+
@@ -2037,8 +2050,8 @@
 			}
 		}
 		function runSettingsClanPage(){
-			var layout_spreader = document.getElementsByClassName("layout_spreader")[0];
-			countColumn = (layout_spreader.offsetWidth / 100).toFixed(0);
+			var page_header = document.getElementsByClassName("page-header")[0];
+			countColumn = (page_header.offsetWidth / 100).toFixed(0);
 			
 			var html = '';
 			html += '<table style="font-size: 14px;">';
@@ -2541,8 +2554,8 @@
 			jQ('#js-playerslist-table').hide();
 			jQ('#js-players-management').hide();
 			
-			var layout_spreader = document.getElementsByClassName("layout_spreader")[0];
-			var tableSizeWidth = layout_spreader.offsetWidth;
+			var page_header = document.getElementsByClassName("page-header")[0];
+			var tableSizeWidth = page_header.offsetWidth;
 			
 			var table = document.createElement('table');
 			table.setAttribute('id', 'table-clan-statistic');
@@ -4800,8 +4813,8 @@
 				localizationText['zh-tw']['num-separator'] = '';
 				localizationText['zh-tw']['num-fractional'] = '.';
 				
-				localizationText['zh-tw']['pvp_solo'] = '獨奏的';
-				localizationText['zh-tw']['pvp_div'] = '司';
+				localizationText['zh-tw']['pvp_solo'] = '單獨';
+				localizationText['zh-tw']['pvp_div'] = '分艦隊';
 				
 				localizationText['zh-tw']['title_battles'] = '參與過戰鬥數';
 				localizationText['zh-tw']['title_wins_percents'] = '勝利數/戰鬥數比';
@@ -4834,10 +4847,11 @@
 				localizationText['zh-tw']['max_planes_killed'] = '擊毀飛機數';
 				
 				localizationText['zh-tw']['stat-table-4'] = '其他結果';
-				localizationText['zh-tw']['battles_days'] = '每天戰役';
-				localizationText['zh-tw']['max_ship_level'] = '船舶最大層';
-				localizationText['zh-tw']['avg_battles_level'] = '戰艦的平均層使用的播放器';
-				localizationText['zh-tw']['number-ships-x'] = '第X級船舶數量';
+				localizationText['zh-tw']['battles_days'] = '每日戰鬥數';
+				localizationText['zh-tw']['max_ship_level'] = '最大艦艇階級';
+				localizationText['zh-tw']['avg_battles_level'] = '玩家所用艦艇的平均階級';
+				localizationText['zh-tw']['number-ships-x'] = '第X階艦艇數量';
+				localizationText['zh-tw']['wr'] = 'WR';
 				localizationText['zh-tw']['wtr'] = 'WTR';
 				
 				localizationText['zh-tw']['ships_stat'] = '詳細艦艇統計';
