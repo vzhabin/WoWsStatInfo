@@ -159,6 +159,7 @@
 		}
 		
 		var MembersArray = [];
+		var StatPvPMemberArray = [];
 		var Encyclopedia = null;
 		
 		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div", "pvp_div2", "pvp_div3"];
@@ -176,7 +177,7 @@
 		var ExpShips = null;
 		var ExpWTR = null;
 		
-		/* ===== Style UserScript ===== */
+		/* ===== Style and Script UserScript ===== */
 		{
 			var StyleWoWsStatInfo = '' +
 				'div.div-link-block{font-size:13px; color: #fff; text-align: right; padding-top: 10px; padding-bottom: 10px;}' +
@@ -189,12 +190,25 @@
 				'div.wowsstatinfo-stat{text-align: center; margin-top: 10px; color: white; font-size: 16px;}' +
 				'span.name-stat{color: #ffcc33;}' +
 				'table.account-table td{white-space: nowrap;}' +
-				'' +
+				'li.account-tab div._title{padding: 0 10px;}' +
+				'div.chart_div{text-align: center; width: 500px; float: left; margin-right: 40px;}' +
+				'div.ct-chart{background-color: #FFFFFF; width: 500px; height: 300px;}' +
+				'.ct-labels span{color: #000000;}' +
+				'line.ct-grid.ct-vertical{stroke: #000000;}' +
 			'';
 			var StyleWoWsStatInfoAdd = document.createElement("style");
 			StyleWoWsStatInfoAdd.textContent = StyleWoWsStatInfo.toString();
 			document.head.appendChild(StyleWoWsStatInfoAdd);
-		}		
+			
+			var StyleChart = document.createElement("link");
+			StyleChart.setAttribute("rel", "stylesheet");
+			StyleChart.setAttribute("href", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.css");
+			document.head.appendChild(StyleChart);
+			
+			var ScriptChart = document.createElement("script");
+			ScriptChart.setAttribute("src", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.js");
+			document.head.appendChild(ScriptChart);
+		}
 		
 		/* ===== Message UserScript ===== */
 		if(window.location.host != 'forum.worldofwarships.'+realm_host){
@@ -317,7 +331,7 @@
 				);
 			}
 			
-			return true;
+			return false;
 		}
 		
 		function getBrowser(){
@@ -415,6 +429,7 @@
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			checkJson();
+			getIndexedDB('StatPvPMemberArray', updateStatPvPMemberArray, updateStatPvPMemberArray);
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
 			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
@@ -757,6 +772,7 @@
 				var userbar = '';
 				if(login_name == MembersArray[0]['info']['nickname']){
 					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px; padding: 10px;">'+localizationText['generator-userbar']+'</button>';
+					onSaveStatMember();
 				}
 				userbar += '' +
 					'<br />'+
@@ -925,6 +941,7 @@
 							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']] !== undefined){
 							account_table[2].rows[4].cells[0].innerHTML += '<small class="small-max_planes_killed_ship">('+Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_planes_killed_ship_id']]['name']+')</small>';
 						}
+						
 					}
 				}
 				
@@ -2037,6 +2054,136 @@
 			
 			var userbar_bg_content = document.getElementById("userbar-bg-content");
 			userbar_bg_content.innerHTML = html;
+		}
+		function onSaveStatMember(){
+			var today = new Date();
+			
+			var day = today.getDate();
+			var d = ''; if(day < 10){d = '0'+day+'';}else{d = ''+day+'';}
+			
+			var month = today.getMonth() + 1;
+			var m = ''; if(month < 10){m = '0'+month+'';}else{m = ''+month+'';}
+			
+			var year = today.getFullYear();
+			var y = ''+year+'';
+			
+			StatPvPMemberArray[y+''+m+''+d] = MembersArray[0]['info']['statistics']['pvp'];
+			
+			var delKeys = Object.keys(StatPvPMemberArray);
+			var delCount = Object.keys(StatPvPMemberArray).length;
+			for(var i = 0; i < (delCount - 5); i++){
+				delete StatPvPMemberArray[delKeys[i]];
+			}
+			
+			setIndexedDB('StatPvPMemberArray', JSON.stringify(StatPvPMemberArray), viewStatPvPMemberArray, viewStatPvPMemberArray);
+		}
+		function viewStatPvPMemberArray(response){
+			if(response != null){
+				StatPvPMemberArray = jQ.parseJSON(response);
+				
+				if(Object.keys(StatPvPMemberArray).length < 2){
+					return;
+				}
+				
+				var tabContainer = null;
+				var tab_container = document.getElementsByClassName('tab-container');
+				for(var tc = 0; tc < tab_container.length; tc++){
+					if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
+					tabContainer = tab_container[tc];
+				}
+				
+				if(tabContainer != null){
+					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
+					if(account_tab == null){
+						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
+						if(account_tab_detail_stats != null){
+							var date = [];
+							var value = [];
+							var html_chart = '';
+							var chart_value = ['wins_percents', 'avg_xp', 'avg_damage_dealt', 'wr', 'kill_dead', 'avg_battles_level'];
+							
+							for(var key in chart_value){
+								var title = chart_value[key];
+								html_chart += '' +
+									'<div class="chart_div">' +
+										'<h3 class="_title">'+localizationText['title_'+title]+'</h3>' +
+										'<div id="chart_'+title+'" class="ct-chart ct-perfect-fourth"></div>' +
+									'</div>' +
+								'';
+								
+								value[title] = [];
+							}
+							
+							account_tab_detail_stats.outerHTML += '' +
+								'<div class="account-tab-charts tab-container" js-tab-cont-id="account-tab-charts-pvp">' +
+									'<div class="account-main-stats">' +
+										html_chart + 
+									'</div>' +
+								'</div>' +
+							'';
+						
+							for(var key_stat in StatPvPMemberArray){
+								var d = key_stat.substring(6, 8);
+								var m = key_stat.substring(4, 6);
+								date.push(d+'.'+m);
+								
+								for(var key in chart_value){
+									var title = chart_value[key];
+									value[title].push(StatPvPMemberArray[key_stat][title].toFixed(2));
+								}
+							}
+							
+							for(var key in chart_value){
+								var title = chart_value[key];
+								viewChart(title, date, value[title]);
+							}
+							
+							jQ(tabContainer).find('nav.account-tabs ul').append(''+
+								'<li class="account-tab" js-tab="" js-tab-show="account-tab-charts-pvp">'+
+									'<div class="_title">'+localizationText['charts']+'</div>'+
+									'<div class="_active-feature">'+
+										'<div class="_line"></div>'+
+										'<div class="_shadow"></div>'+
+									'</div>'+
+								'</li>'+
+							'');
+							jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
+								'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-charts-pvp">'+localizationText['charts']+'</li>' +
+							'');
+						}
+					}
+				}
+
+			}
+		}
+		function updateStatPvPMemberArray(response){
+			if(response == null){
+				StatPvPMemberArray = [];
+			}else{
+				StatPvPMemberArray = jQ.parseJSON(response);
+			}
+		}
+		function viewChart(title, date, value){
+			var options = {
+				width: '500px',
+				height: '300px',
+				fullWidth: true,
+				chartPadding:{
+					left: 30,
+					right: 50
+				},
+				axisY:{
+					type: Chartist.FixedScaleAxis,
+					ticks: value
+				}
+			};
+			
+			var data = {
+				labels: date,
+				series: [value],
+			}
+			
+			new Chartist.Line('#chart_'+title, data, options);
 		}
 		
 		/* ===== ClanPage function ===== */
@@ -3845,6 +3992,8 @@
 				localizationText['ru']['role'] = 'Должность';
 				localizationText['ru']['clan-day'] = 'Количество дней в клане';
 				
+				localizationText['ru']['charts'] = 'Диаграммы';
+				
 				localizationText['ru']['generator-userbar'] = 'Создать подпись';
 				localizationText['ru']['userbar-bg'] = 'Выберите фон:';
 				localizationText['ru']['userbar-filters'] = 'Фильтр:';
@@ -3875,6 +4024,8 @@
 				localizationText['ru']['title_avg_xp'] = 'Средний опыт за бой';
 				localizationText['ru']['title_avg_damage_dealt'] = 'Средний нанесённый урон за бой';
 				localizationText['ru']['title_kill_dead'] = 'Отношение уничтожил / убит';
+				localizationText['ru']['title_wr'] = 'WR';
+				localizationText['ru']['title_avg_battles_level'] = 'Средний уровень кораблей игрока в боях';
 
 				localizationText['ru']['stat-table-1'] = 'Общие результаты';
 				localizationText['ru']['battles'] = 'Бои';
@@ -4026,7 +4177,9 @@
 				localizationText['en']['role'] = 'Alliance rank';
 				localizationText['en']['clan-day'] = 'Days in clan';
 				
-				localizationText['en']['generator-userbar'] = 'Создать подпись';
+				localizationText['en']['charts'] = 'Charts';
+				
+				localizationText['en']['generator-userbar'] = 'Create signature';
 				localizationText['en']['userbar-bg'] = 'Choose a background:';
 				localizationText['en']['userbar-filters'] = 'Filters:';
 				localizationText['en']['filters-all'] = 'All';
@@ -4056,6 +4209,8 @@
 				localizationText['en']['title_avg_xp'] = 'AVERAGE EXPERIENCE PER BATTLE';
 				localizationText['en']['title_avg_damage_dealt'] = 'Average Damage Caused per Battle';
 				localizationText['en']['title_kill_dead'] = 'Kill / Death Ratio';
+				localizationText['en']['title_wr'] = 'WR';
+				localizationText['en']['title_avg_battles_level'] = 'Average tier of warships used by player';
 
 				localizationText['en']['stat-table-1'] = 'Overall Results';
 				localizationText['en']['battles'] = 'Battles';
@@ -4191,6 +4346,8 @@
 				localizationText['fr']['title_avg_xp'] = 'EXPÉRIENCE MOYENNE PAR BATAILLE';
 				localizationText['fr']['title_avg_damage_dealt'] = 'Dégâts moyens causés par bataille';
 				localizationText['fr']['title_kill_dead'] = 'Taux des tués/morts';
+				localizationText['fr']['title_wr'] = 'WR';
+				localizationText['fr']['title_avg_battles_level'] = 'Niveau moyen de navires de guerre utilisée par le joueur';
 
 				localizationText['fr']['stat-table-1'] = 'Résultats généraux';
 				localizationText['fr']['battles'] = 'Batailles';
@@ -4248,6 +4405,8 @@
 				localizationText['de']['title_avg_xp'] = 'MITTLERE ERFAHRUNG JE GEFECHT';
 				localizationText['de']['title_avg_damage_dealt'] = 'Mittlerer verursachter Schaden je Gefecht';
 				localizationText['de']['title_kill_dead'] = 'Verhältnis Abschüsse/Verluste';
+				localizationText['de']['title_wr'] = 'WR';
+				localizationText['de']['title_avg_battles_level'] = 'Durchschnittliche Tier von Kriegsschiffen durch Spieler verwendet';
 
 				localizationText['de']['stat-table-1'] = 'Gesamtergebnisse';
 				localizationText['de']['battles'] = 'Gefechte';
@@ -4305,6 +4464,8 @@
 				localizationText['tr']['title_avg_xp'] = 'SAVAŞ BAŞINA ORTALAMA DENEYİM';
 				localizationText['tr']['title_avg_damage_dealt'] = 'Savaş Başına Ortalama Verilen Hasar';
 				localizationText['tr']['title_kill_dead'] = 'Yok Etme/Ölüm Oranı';
+				localizationText['tr']['title_wr'] = 'WR';
+				localizationText['tr']['title_avg_battles_level'] = 'Oyuncu tarafından kullanılan savaş gemilerinin ortalama katmanlı';
 
 				localizationText['tr']['stat-table-1'] = 'Genel Sonuçlar';
 				localizationText['tr']['battles'] = 'Savaşlar';
@@ -4362,6 +4523,8 @@
 				localizationText['es']['title_avg_xp'] = 'EXPERIENCIA MEDIA POR BATALLA';
 				localizationText['es']['title_avg_damage_dealt'] = 'Daño medio causado por batalla';
 				localizationText['es']['title_kill_dead'] = 'Tasa muertos/muertes';
+				localizationText['es']['title_wr'] = 'WR';
+				localizationText['es']['title_avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 
 				localizationText['es']['stat-table-1'] = 'Resultados generales';
 				localizationText['es']['battles'] = 'Batallas';
@@ -4419,6 +4582,8 @@
 				localizationText['es-mx']['title_avg_xp'] = 'EXPERIENCIA PROMEDIO POR BATALLA';
 				localizationText['es-mx']['title_avg_damage_dealt'] = 'Daño en Promedio Causado por Batalla';
 				localizationText['es-mx']['title_kill_dead'] = 'Radio de Destrucción / Muerte';
+				localizationText['es-mx']['title_wr'] = 'WR';
+				localizationText['es-mx']['title_avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
 
 				localizationText['es-mx']['stat-table-1'] = 'Resultados en General';
 				localizationText['es-mx']['battles'] = 'Batallas';
@@ -4476,6 +4641,8 @@
 				localizationText['pt-br']['title_avg_xp'] = 'EXPERIÊNCIA MÉDIA POR BATALHA';
 				localizationText['pt-br']['title_avg_damage_dealt'] = 'Dano Médio Causado por Batalha';
 				localizationText['pt-br']['title_kill_dead'] = 'Taxa de Morte/Destruição';
+				localizationText['pt-br']['title_wr'] = 'WR';
+				localizationText['pt-br']['title_avg_battles_level'] = 'Nível médio de navios de guerra usados por jogador';
 
 				localizationText['pt-br']['stat-table-1'] = 'Resultados Gerais';
 				localizationText['pt-br']['battles'] = 'Batalhas';
@@ -4533,6 +4700,8 @@
 				localizationText['cs']['title_avg_xp'] = 'PRŮMĚRNÉ ZKUŠENOSTI ZA BITVU';
 				localizationText['cs']['title_avg_damage_dealt'] = 'Průměrné poškození způsobené za bitvu';
 				localizationText['cs']['title_kill_dead'] = 'Poměr Zabití/Smrtí';
+				localizationText['cs']['title_wr'] = 'WR';
+				localizationText['cs']['title_avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 
 				localizationText['cs']['stat-table-1'] = 'Celkové výsledky';
 				localizationText['cs']['battles'] = 'Bitvy';
@@ -4590,6 +4759,8 @@
 				localizationText['pl']['title_avg_xp'] = 'ŚREDNIE DOŚWIADCZENIE NA BITWĘ';
 				localizationText['pl']['title_avg_damage_dealt'] = 'Średnie uszkodzenia zadane na bitwę';
 				localizationText['pl']['title_kill_dead'] = 'Stosunek zniszczonych przeciwników/własnych zniszczeń';
+				localizationText['pl']['title_wr'] = 'WR';
+				localizationText['pl']['title_avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
 
 				localizationText['pl']['stat-table-1'] = 'Ogólne wyniki';
 				localizationText['pl']['battles'] = 'Bitwy';
@@ -4647,6 +4818,8 @@
 				localizationText['ja']['title_avg_xp'] = '1 戦あたりの平均経験値';
 				localizationText['ja']['title_avg_damage_dealt'] = '1 戦あたりの平均与ダメージ';
 				localizationText['ja']['title_kill_dead'] = 'キル/デス比';
+				localizationText['ja']['title_wr'] = 'WR';
+				localizationText['ja']['title_avg_battles_level'] = 'プレイヤーが使用する軍艦の平均ティア';
 
 				localizationText['ja']['stat-table-1'] = '総合結果';
 				localizationText['ja']['battles'] = '戦闘数';
@@ -4704,6 +4877,8 @@
 				localizationText['th']['title_avg_xp'] = 'ค่าประสบการณ์โดยเฉลี่ยต่อการรบ';
 				localizationText['th']['title_avg_damage_dealt'] = 'ความเสียหายที่ทำโดยเฉลี่ยต่อการรบ';
 				localizationText['th']['title_kill_dead'] = 'อัตราสังหาร/เสียชีวิต';
+				localizationText['th']['title_wr'] = 'WR';
+				localizationText['th']['title_avg_battles_level'] = 'ชั้นเฉลี่ยของเรือรบที่ใช้โดยผู้เล่น';
 
 				localizationText['th']['stat-table-1'] = 'ผลรวม';
 				localizationText['th']['battles'] = 'การรบ';
@@ -4764,6 +4939,8 @@
 				localizationText['vi']['title_avg_xp'] = 'KINH NGHIỆM TRUNG BÌNH MỖI TRẬN';
 				localizationText['vi']['title_avg_damage_dealt'] = 'Thiệt hại Gây ra Trung bình mỗi Trận';
 				localizationText['vi']['title_kill_dead'] = 'Tỷ lệ Tiêu diệt/Bị Tiêu diệt';
+				localizationText['vi']['title_wr'] = 'WR';
+				localizationText['vi']['title_avg_battles_level'] = 'Tier trung bình của các tàu chiến được sử dụng bởi người chơi';
 
 				localizationText['vi']['stat-table-1'] = 'Kết quả Tổng quan';
 				localizationText['vi']['battles'] = 'Số trận';
@@ -4821,6 +4998,8 @@
 				localizationText['zh-tw']['title_avg_xp'] = '平均每場經驗';
 				localizationText['zh-tw']['title_avg_damage_dealt'] = '平均每場造成的傷害';
 				localizationText['zh-tw']['title_kill_dead'] = '擊毀/死亡比';
+				localizationText['zh-tw']['title_wr'] = 'WR';
+				localizationText['zh-tw']['title_avg_battles_level'] = '玩家所用艦艇的平均階級';
 
 				localizationText['zh-tw']['stat-table-1'] = '整體成績';
 				localizationText['zh-tw']['battles'] = '戰鬥數';
