@@ -2092,9 +2092,55 @@
 					tabContainer = tab_container[tc];
 				}
 				
-				if(tabContainer != null){
+				if(tabContainer != null){					
 					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
 					if(account_tab == null){
+						var Keys = Object.keys(StatPvPMemberArray);
+						var IndexLast = Keys.length - 1;
+						var IndexOld = Keys.length - 2;
+						
+						var battles = StatPvPMemberArray[Keys[IndexLast]]['battles'] - StatPvPMemberArray[Keys[IndexOld]]['battles'];
+						var wins_percents = StatPvPMemberArray[Keys[IndexLast]]['wins_percents'] - StatPvPMemberArray[Keys[IndexOld]]['wins_percents'];
+						var avg_xp = StatPvPMemberArray[Keys[IndexLast]]['avg_xp'] - StatPvPMemberArray[Keys[IndexOld]]['avg_xp'];
+						var avg_damage_dealt = StatPvPMemberArray[Keys[IndexLast]]['avg_damage_dealt'] - StatPvPMemberArray[Keys[IndexOld]]['avg_damage_dealt'];
+						var kill_dead = StatPvPMemberArray[Keys[IndexLast]]['kill_dead'] - StatPvPMemberArray[Keys[IndexOld]]['kill_dead'];
+						var avg_frags = StatPvPMemberArray[Keys[IndexLast]]['avg_frags'] - StatPvPMemberArray[Keys[IndexOld]]['avg_frags'];
+						var avg_planes_killed = StatPvPMemberArray[Keys[IndexLast]]['avg_planes_killed'] - StatPvPMemberArray[Keys[IndexOld]]['avg_planes_killed'];
+						var avg_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_capture_points'];
+						var avg_dropped_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_dropped_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_dropped_capture_points'];
+						var avg_battles_level = StatPvPMemberArray[Keys[IndexLast]]['avg_battles_level'] - StatPvPMemberArray[Keys[IndexOld]]['avg_battles_level'];
+						var wr = StatPvPMemberArray[Keys[IndexLast]]['wr'] - StatPvPMemberArray[Keys[IndexOld]]['wr'];
+						var wtr = StatPvPMemberArray[Keys[IndexLast]]['wtr'] - StatPvPMemberArray[Keys[IndexOld]]['wtr'];
+						
+						var _values = tabContainer.getElementsByClassName('_values')[0];
+						var main_stat = _values.getElementsByTagName('div');
+						main_stat[0].innerHTML += getHTMLDif(battles, 0);
+						main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
+						main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
+						main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
+						main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
+						
+						var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
+						if(account_battle_stats != null){
+							var account_table = account_battle_stats.getElementsByClassName('account-table');
+							
+							account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
+							account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
+							account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
+							account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
+							account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
+							account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
+						}
+						
+						var main_page_script_block = document.getElementById('main-page-script-block');
+						if(main_page_script_block != null){
+							var account_table = main_page_script_block.getElementsByClassName('account-table');
+							
+							account_table[0].rows[4].cells[1].innerHTML  += getHTMLDif(avg_battles_level, 2);
+							account_table[0].rows[5].cells[1].innerHTML  += getHTMLDif(wr, 2);
+							account_table[0].rows[6].cells[1].innerHTML  += getHTMLDif(wtr, 2);
+						}
+					
 						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
 						if(account_tab_detail_stats != null){
 							var date = [];
@@ -2121,11 +2167,12 @@
 									'</div>' +
 								'</div>' +
 							'';
-						
+							
 							for(var key_stat in StatPvPMemberArray){
 								var d = key_stat.substring(6, 8);
 								var m = key_stat.substring(4, 6);
-								date.push(d+'.'+m);
+								var y = key_stat.substring(2, 4);
+								date.push(d+'.'+m+'.'+y);
 								
 								for(var key in chart_value){
 									var title = chart_value[key];
@@ -2174,7 +2221,6 @@
 				},
 				axisY:{
 					type: Chartist.FixedScaleAxis,
-					ticks: value
 				}
 			};
 			
@@ -2184,6 +2230,18 @@
 			}
 			
 			new Chartist.Line('#chart_'+title, data, options);
+		}
+		function getHTMLDif(value, fixed){
+			var text = valueFormat(value.toFixed(fixed));
+			var color = '#fff';
+			if(value > 0){
+				text = '+'+text;
+				color = 'green';
+			}else if(value < 0){
+				color = 'red';
+			}
+		
+			return ' <span style="color: '+color+';"><sup>'+text+'</sup></span>';
 		}
 		
 		/* ===== ClanPage function ===== */
