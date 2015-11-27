@@ -202,11 +202,13 @@
 			
 			var StyleChart = document.createElement("link");
 			StyleChart.setAttribute("rel", "stylesheet");
-			StyleChart.setAttribute("href", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.css");
+			// StyleChart.setAttribute("href", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.css");
+			StyleChart.setAttribute("href", "http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css");
 			document.head.appendChild(StyleChart);
 			
 			var ScriptChart = document.createElement("script");
-			ScriptChart.setAttribute("src", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.js");
+			// ScriptChart.setAttribute("src", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.js");
+			ScriptChart.setAttribute("src", "http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js");
 			document.head.appendChild(ScriptChart);
 		}
 		
@@ -2215,12 +2217,18 @@
 				width: '500px',
 				height: '300px',
 				fullWidth: true,
+				high: (Math.max(value) + 1).toFixed(0),
+				low: (Math.min(value) - 1).toFixed(2),
+				divisor: value.length,
+				ticks: value,
+				// showArea: true,
 				chartPadding:{
 					left: 30,
 					right: 50
 				},
 				axisY:{
 					type: Chartist.FixedScaleAxis,
+					ticks: value
 				}
 			};
 			
