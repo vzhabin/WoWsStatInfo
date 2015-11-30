@@ -193,7 +193,6 @@
 				'li.account-tab div._title{padding: 0 10px;}' +
 				'div.chart_div{text-align: center; width: 500px; float: left; margin-right: 40px;}' +
 				'div.ct-chart{background-color: #FFFFFF; width: 500px; height: 300px;}' +
-				// 'div.ct-chart text{display: none;}' +
 				'.highcharts-legend{display: none;}' +
 			'';
 			var StyleWoWsStatInfoAdd = document.createElement("style");
@@ -2182,7 +2181,7 @@
 								
 								for(var key in chart_value){
 									var title = chart_value[key];
-									value[title].push(parseFloat(StatPvPMemberArray[key_stat][title].toFixed(2)));
+									value[title].push(parseFloat(StatPvPMemberArray[key_stat][title]));
 								}
 							}
 							
@@ -2227,6 +2226,14 @@
 				yAxis: {
 					title: {
 						text: ' '
+					}
+				},
+				plotOptions: {
+					line: {
+						dataLabels: {
+							enabled: true
+						},
+						enableMouseTracking: false
 					}
 				},
 				series: [{
