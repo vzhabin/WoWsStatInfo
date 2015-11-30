@@ -319,7 +319,7 @@
 			console.log(error);
 			
 			if(window.location.host == 'forum.worldofwarships.'+realm_host){
-				if(lineno < 5000){alert(error);}
+				if(lineno < 5200){alert(error);}
 			}else{
 				error = error.split('\n').join('<br />');
 				onShowMessage(
