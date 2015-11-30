@@ -193,22 +193,21 @@
 				'li.account-tab div._title{padding: 0 10px;}' +
 				'div.chart_div{text-align: center; width: 500px; float: left; margin-right: 40px;}' +
 				'div.ct-chart{background-color: #FFFFFF; width: 500px; height: 300px;}' +
-				'.ct-labels span{color: #000000;}' +
-				'line.ct-grid.ct-vertical{stroke: #000000;}' +
+				// 'div.ct-chart text{display: none;}' +
+				'.highcharts-legend{display: none;}' +
 			'';
 			var StyleWoWsStatInfoAdd = document.createElement("style");
 			StyleWoWsStatInfoAdd.textContent = StyleWoWsStatInfo.toString();
 			document.head.appendChild(StyleWoWsStatInfoAdd);
 			
-			var StyleChart = document.createElement("link");
-			StyleChart.setAttribute("rel", "stylesheet");
-			// StyleChart.setAttribute("href", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.css");
-			StyleChart.setAttribute("href", "http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css");
-			document.head.appendChild(StyleChart);
-			
 			var ScriptChart = document.createElement("script");
-			// ScriptChart.setAttribute("src", "http://vzhabin.ru/US_WoWsStatInfo/chartist/chartist.min.js");
-			ScriptChart.setAttribute("src", "http://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js");
+			// ScriptChart.setAttribute("src", WoWsStatInfoHref+"highcharts/highcharts.js");
+			ScriptChart.setAttribute("src", "https://code.highcharts.com/highcharts.js");
+			document.head.appendChild(ScriptChart);
+			
+			ScriptChart = document.createElement("script");
+			// ScriptChart.setAttribute("src", WoWsStatInfoHref+"highcharts/exporting.js");
+			ScriptChart.setAttribute("src", "https://code.highcharts.com/modules/exporting.js");
 			document.head.appendChild(ScriptChart);
 		}
 		
@@ -2094,7 +2093,12 @@
 					tabContainer = tab_container[tc];
 				}
 				
-				if(tabContainer != null){					
+				if(tabContainer != null){
+					var account_tab_background = tabContainer.getElementsByClassName('account-tab-background');
+					for(var atb = 0; atb < account_tab_background.length; atb++){
+						account_tab_background[atb].style.zIndex = '-1';
+					}
+					
 					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
 					if(account_tab == null){
 						var Keys = Object.keys(StatPvPMemberArray);
@@ -2155,7 +2159,7 @@
 								html_chart += '' +
 									'<div class="chart_div">' +
 										'<h3 class="_title">'+localizationText['title_'+title]+'</h3>' +
-										'<div id="chart_'+title+'" class="ct-chart ct-perfect-fourth"></div>' +
+										'<div id="chart_'+title+'" class="ct-chart"></div>' +
 									'</div>' +
 								'';
 								
@@ -2178,7 +2182,7 @@
 								
 								for(var key in chart_value){
 									var title = chart_value[key];
-									value[title].push(StatPvPMemberArray[key_stat][title].toFixed(2));
+									value[title].push(parseFloat(StatPvPMemberArray[key_stat][title].toFixed(2)));
 								}
 							}
 							
@@ -2213,31 +2217,23 @@
 			}
 		}
 		function viewChart(title, date, value){
-			var options = {
-				width: '500px',
-				height: '300px',
-				fullWidth: true,
-				high: (Math.max(value) + 1).toFixed(0),
-				low: (Math.min(value) - 1).toFixed(2),
-				divisor: value.length,
-				ticks: value,
-				// showArea: true,
-				chartPadding:{
-					left: 30,
-					right: 50
+			$('#chart_'+title).highcharts({
+				title: {
+					text: ' '
 				},
-				axisY:{
-					type: Chartist.FixedScaleAxis,
-					ticks: value
-				}
-			};
-			
-			var data = {
-				labels: date,
-				series: [value],
-			}
-			
-			new Chartist.Line('#chart_'+title, data, options);
+				xAxis: {
+					categories: date
+				},
+				yAxis: {
+					title: {
+						text: ' '
+					}
+				},
+				series: [{
+					name: ' ',
+					data: value
+				}]
+			});
 		}
 		function getHTMLDif(value, fixed){
 			var text = valueFormat(value.toFixed(fixed));
