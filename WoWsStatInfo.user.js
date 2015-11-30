@@ -2615,7 +2615,7 @@
 					
 					if(type == '1'){
 						var text = localizationText['member-history-leave'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'-/">'+mName+'</a>');
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								' <font color="red">'+text+'</font>'+
@@ -2623,7 +2623,7 @@
 						'</tr>';						
 					}else if(type == '2'){
 						var text = localizationText['member-history-join'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'-/">'+mName+'</a>');					
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								' <font color="green">'+text+'</font>'+
@@ -2631,7 +2631,7 @@
 						'</tr>';						
 					}else if(type == '3'){
 						var text = localizationText['member-history-rerole'];
-						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mName+'</a>');					
+						text = text.replace('%NAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'-/">'+mName+'</a>');					
 						text = text.replace('%OLDROLE%',getRoleText(mOld));					
 						text = text.replace('%NEWROLE%',getRoleText(mNew));					
 						html +=  '<tr>'+				
@@ -2642,7 +2642,7 @@
 					}else if(type == '4'){
 						var text = localizationText['member-history-rename'];
 						text = text.replace('%OLDNAME%',mOld);						
-						text = text.replace('%NEWNAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'/">'+mNew+'</a>');						
+						text = text.replace('%NEWNAME%','<a target="_blank" href="http://worldofwarships.'+realm_host+'/community/accounts/'+mId+'-/">'+mNew+'</a>');						
 						html +=  '<tr>'+				
 							'<td class="table-default_cell" align="left" style="padding: 0px;">'+
 								text+
