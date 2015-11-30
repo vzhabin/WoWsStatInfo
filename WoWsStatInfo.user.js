@@ -2181,7 +2181,7 @@
 								
 								for(var key in chart_value){
 									var title = chart_value[key];
-									value[title].push(parseFloat(StatPvPMemberArray[key_stat][title]));
+									value[title].push(parseFloat(StatPvPMemberArray[key_stat][title].toFixed(2)));
 								}
 							}
 							
