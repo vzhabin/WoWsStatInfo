@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.1.25
+// @version 0.5.1.26
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -41,10 +41,11 @@
 // @match http://asia.wargaming.net/clans/*/players*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
-(function(window){
+
+(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии */ // сохранение рангов дельта, цвет статы при навидении, сколько осталось для следующего, попробовать замену $ на jQ
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.1.25';
+		var VersionWoWsStatInfo = '0.5.1.26';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -288,6 +289,7 @@
 		window.onerror = function(message, source, lineno, column, errorObj){
 			if(source == ''){source = window.location.href;}
 			else if(source.indexOf(".js") != -1){return false;}
+			else if(source.indexOf("prettyPrint") != -1){return false;}
 			if(message == 'Script error.' && errorObj == null){console.log('message == \'Script error.\' && errorObj == null'); return false;}
 			
 			lineno += 47;
@@ -316,16 +318,16 @@
 			console.log(error);
 			
 			if(window.location.host == 'forum.worldofwarships.'+realm_host){
-				if(lineno < 8285){alert(error);}
+				//if(lineno < 8285){alert(error);}
 			}else{
-				error = error.split('\n').join('<br />');
-				onShowMessage(
-					localizationText['Box'],
-					error,
-					onCloseMessage,
-					localizationText['Ok'],
-					false
-				);
+				// error = error.split('\n').join('<br />');
+				// onShowMessage(
+					// localizationText['Box'],
+					// error,
+					// onCloseMessage,
+					// localizationText['Ok'],
+					// false
+				// );
 			}
 			
 			return false;
@@ -426,7 +428,10 @@
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			checkJson();
-			getIndexedDB('StatPvPMemberArray', updateStatPvPMemberArray, updateStatPvPMemberArray);
+			
+			delIndexedDB('StatPvPMemberArray');
+			getStatSaveMember();
+			
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
 			localizationText = getlocalizationText(lang);
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
@@ -751,8 +756,13 @@
 		function viewMainPageProfile(){
 			if(Encyclopedia == null){console.log('Encyclopedia == null'); setTimeout(function(){viewMainPageProfile();}, 1000);return;}
 			
+			if(MembersArray[0]['info']['hidden_profile']){
+				console.log(MembersArray[0]['info']['account_id']+' hidden profile!!!');
+				return;
+			}
+			
 			if(!calcStat(0)){
-				console.log('Error calcStat '+MembersArray[0]['account_id']);
+				console.log('Error calcStat '+MembersArray[0]['info']['account_id']);
 			}
 			
 			var tabContainer = null;
@@ -1065,6 +1075,18 @@
 							item.innerHTML += '<div class="_counter" style="left: 20%; background-color: #AAAAAA; min-width: 3em;">'+MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle']+'</div>';
 						}
 					}
+					
+					achieves_block.outerHTML += '' +
+						'<div>' +
+							'<div style="width: initial; height: initial; float: initial;" class="achieve-item _big tooltip-target tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left">' +
+								'<div class="_counter" style="position: relative; background-color: #F7882E; min-width: 3em; left: 0; float: left;">12</div>' +
+								'<div> - '+localizationText['achieve_counter_1']+'</div>' +
+								'<div class="_counter" style="position: relative; background-color: #AAAAAA; min-width: 3em; left: 0; float: left;">31</div>' +
+								'<div> - '+localizationText['achieve_counter_2']+'</div>' +
+							'</div>' +
+						'</div>' +
+					'';
+
 				}
 				
 				var typeStatAdd = ["pvp_div", "pvp_solo"];
@@ -2052,6 +2074,14 @@
 			var userbar_bg_content = document.getElementById("userbar-bg-content");
 			userbar_bg_content.innerHTML = html;
 		}
+		function getStatSaveMember(){
+			var js_cm_menu__user = document.getElementsByClassName('js-cm-menu__user')[0];
+			if(js_cm_menu__user === undefined){console.log('js_cm_menu__user == undefined'); setTimeout(function(){getStatSaveMember();}, 1000); return;}
+			
+			var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
+			var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
+			getIndexedDB('StatPvPMemberArray-'+login_name, updateStatPvPMemberArray, updateStatPvPMemberArray);
+		}
 		function onSaveStatMember(){
 			var today = new Date();
 			
@@ -2072,7 +2102,9 @@
 				delete StatPvPMemberArray[delKeys[i]];
 			}
 			
-			setIndexedDB('StatPvPMemberArray', JSON.stringify(StatPvPMemberArray), viewStatPvPMemberArray, viewStatPvPMemberArray);
+			var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
+			var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
+			setIndexedDB('StatPvPMemberArray-'+login_name, JSON.stringify(StatPvPMemberArray), viewStatPvPMemberArray, viewStatPvPMemberArray);
 		}
 		function viewStatPvPMemberArray(response){
 			if(response != null){
@@ -2853,7 +2885,7 @@
 			}
 			
 			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1 || attr.indexOf(".wtr") > -1){
-				console.log(attr+' '+value);
+				//console.log(attr+' '+value);
 				value = (value).toFixed(2);
 			}
 			
@@ -3510,7 +3542,8 @@
 			var rCapturePointsc = Math.max(0, Math.min(rDamagec + 0.1, (rCapturePoints - 0.10) / (1 - 0.10)));
 			var rDroppedCapturePointsc = Math.max(0, Math.min(rDamagec + 0.1, (rDroppedCapturePoints - 0.10) / (1 - 0.10)));
 			
-			var wr = 650 * rDamagec + 150 * rFragsc * rDamagec + 50 * rFragsc * rCapturePointsc + 50 * rFragsc * rDroppedCapturePointsc + 80 * rPlanesKilledc;
+			//var wr = 650 * rDamagec + 150 * rFragsc * rDamagec + 50 * rFragsc * rCapturePointsc + 50 * rFragsc * rDroppedCapturePointsc + 80 * rPlanesKilledc;
+			var wr = 650 * rDamagec + 150 * rFragsc * rDamagec + 150 * rPlanesKilledc * rDamagec;
 			if(isNaN(wr)){wr = 0;}
 			
 			return wr;
@@ -3784,7 +3817,9 @@
 						localizationText['userscript-developer'] +
 						' <a target="_blank" style="color: #658C4C; font-weight: bold; border-bottom: 1px dotted #658C4C;" href="http://worldofwarships.ru/community/accounts/635939-/">Vov_chiK</a> ' +
 						localizationText['userscript-alliance'] +
-						' <a target="_blank" style="color: #2CA8C7; font-weight: bold; border-bottom: 1px dotted #2CA8C7;" href="http://ru.wargaming.net/clans/search/#wgsearch&offset=0&limit=10&search=Walkure">Walkure</a>.' +
+						' <a target="_blank" style="color: #2CA8C7; font-weight: bold; border-bottom: 1px dotted #2CA8C7;" href="http://ru.wargaming.net/clans/search/#wgsearch&offset=0&limit=10&search=Walkure">Walkure</a>,' +
+						' '+localizationText['userscript-support'] +
+						' <a target="_blank" href="'+WoWsStatInfoHref+'">vzhabin.ru</a>' +
 						'<br /><br />' +
 						localizationText['userscript-topic']+' '+
 						'<a target="_blank" href="'+WoWsStatInfoLink+'">' +
@@ -3936,6 +3971,19 @@
 				};				
 			}			
 		}
+		function delIndexedDB(Key){
+			if(WoWsStatInfoBase === undefined){
+				openIndexedDB();
+				setTimeout(function(){delIndexedDB(Key);}, 2000);
+			}else if(WoWsStatInfoBase == null){
+				/* IndexedDB onerror */
+			}else{
+				var transaction = WoWsStatInfoBase.transaction(["WoWsStatInfoStore"], "readwrite");
+				var store = transaction.objectStore("WoWsStatInfoStore");
+				store.delete(Key);
+				console.log('delIndexedDB...Key '+Key);
+			}
+		}
 		function onShowMessage(title, content, funcOk, OkText, viewCancel){
 			var ui_dialog_title = message.getElementsByClassName("wsi-ui-dialog-title")[0];
 			ui_dialog_title.innerHTML = title;
@@ -4056,6 +4104,7 @@
 				
 				localizationText['ru']['userscript-developer'] = 'Разработчик UserScript WoWsStatInfo:';
 				localizationText['ru']['userscript-alliance'] = 'член альянса';
+				localizationText['ru']['userscript-support'] = 'при поддержки проекта';
 				localizationText['ru']['userscript-topic'] = 'Тема на форуме:';
 				localizationText['ru']['userscript-developer-support'] = 'Поддержать автора скрипта:';
 				
@@ -4218,6 +4267,9 @@
 				localizationText['ru']['info.statistics.pvp.wtr'] = 'WTR';
 				
 				localizationText['ru']['info.ships_x_level'] = '10 lvl';
+				
+				localizationText['ru']['achieve_counter_1'] = 'количество полученных наград';
+				localizationText['ru']['achieve_counter_2'] = 'частота получения наград, количество боев необходимых для получения награды';
 			}
 			
 			{/* English */
@@ -4241,6 +4293,7 @@
 				
 				localizationText['en']['userscript-developer'] = 'Developer - UserScript WoWsStatInfo:';
 				localizationText['en']['userscript-alliance'] = 'аlliance member';
+				localizationText['en']['userscript-support'] = 'with the support of';
 				localizationText['en']['userscript-topic'] = 'Forum topic:';
 				localizationText['en']['userscript-developer-support'] = 'Ways to support the developer:';
 				
@@ -4403,6 +4456,9 @@
 				localizationText['en']['info.statistics.pvp.wtr'] = 'WTR';
 				
 				localizationText['en']['info.ships_x_level'] = '10 lvl';
+				
+				localizationText['en']['achieve_counter_1'] = 'the number of awards received';
+				localizationText['en']['achieve_counter_2'] = 'the frequency of receiving awards, the number of battles needed for award';
 			}
 			
 			{/* Français */
