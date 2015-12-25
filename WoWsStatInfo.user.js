@@ -42,7 +42,7 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии */ // сохранение рангов дельта, цвет статы при навидении, сколько осталось для следующего, попробовать замену $ на jQ
+(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии */ // сохранение рангов дельта, цвет статы при навидении, сколько осталось для следующего, китайский
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
 		var VersionWoWsStatInfo = '0.5.1.26';
@@ -2260,7 +2260,7 @@
 				}
 			);
 			
-			$('<div id="tooltip-chart-'+title+'"></div>').css({
+			jQ('<div id="tooltip-chart-'+title+'"></div>').css({
 				position: "absolute",
 				display: "none",
 				border: "1px solid #fdd",
@@ -2271,12 +2271,12 @@
 				color: "black"
 			}).appendTo("body");
 
-			$('#chart_'+title).bind("plothover", function (event, pos, item) {
+			jQ('#chart_'+title).bind("plothover", function (event, pos, item) {
 				if(item){
 					var y = item.datapoint[1].toFixed(2);
-					$('#tooltip-chart-'+title).html(y).css({top: item.pageY - 35, left: item.pageX - 15}).fadeIn(200);
+					jQ('#tooltip-chart-'+title).html(y).css({top: item.pageY - 35, left: item.pageX - 15}).fadeIn(200);
 				}else{
-					$('#tooltip-chart-'+title).hide();
+					jQ('#tooltip-chart-'+title).hide();
 				}
 			});
 		}
@@ -5113,13 +5113,59 @@
 				localizationText['vi']['destroyer'] = 'Khu trục hạm';
 			}
 			
-			{/* 繁體中文 */
+			{/* 繁體中文 By chunhung 24/12/2015 */
 				localizationText['zh-tw'] = [];
-			
+				
 				localizationText['zh-tw'] = jQ.extend([], localizationText['en']);
 				
 				localizationText['zh-tw']['num-separator'] = '';
 				localizationText['zh-tw']['num-fractional'] = '.';
+				
+				localizationText['zh-tw']['Box'] = '通知';
+				localizationText['zh-tw']['Ok'] = '確定';
+				localizationText['zh-tw']['Cancel'] = '取消';
+				
+				localizationText['zh-tw']['NewVersion'] = '新版本已經發佈';
+				localizationText['zh-tw']['NewUpdate'] = '請更新擴充功能';
+				
+				localizationText['zh-tw']['ErrorScript'] = '運行時發生錯誤 UserScript WoWsStatInfo '+VersionWoWsStatInfo+', script:';
+				localizationText['zh-tw']['ErrorSendDeveloper'] = '請將此錯誤通知腳本開發者。';
+				localizationText['zh-tw']['ErrorAPI'] = '無法取得數據。<br />WG API 存在問題。<br />請嘗試重新載入頁面，或稍後再試。';
+				
+				localizationText['zh-tw']['userscript-developer'] = 'Developer - UserScript WoWsStatInfo:';
+				localizationText['zh-tw']['userscript-alliance'] = 'аlliance member';
+				localizationText['zh-tw']['userscript-topic'] = 'Forum topic:';
+				localizationText['zh-tw']['userscript-developer-support'] = 'Ways to support the developer:';
+				
+				localizationText['zh-tw']['search-clan-forum'] = 'Clan Search...';
+				
+				localizationText['zh-tw']['profile-wows'] = 'World of Warships profile';
+				localizationText['zh-tw']['profile-clan'] = 'Clan';
+				localizationText['zh-tw']['forum-profile'] = 'Forum profile';
+				localizationText['zh-tw']['role'] = '位階';
+				localizationText['zh-tw']['clan-day'] = '待在公會的天數';
+				
+				localizationText['zh-tw']['generator-userbar'] = '創建簽名檔';
+				localizationText['zh-tw']['userbar-bg'] = '選擇背景圖片:';
+				localizationText['zh-tw']['userbar-filters'] = '過濾器：';
+				localizationText['zh-tw']['filters-all'] = '全部';
+				localizationText['zh-tw']['filters-clan'] = '公會';
+				localizationText['zh-tw']['filters-noclassification'] = '未分類';
+				localizationText['zh-tw']['filters-battleship'] = '主力艦';
+				localizationText['zh-tw']['filters-aircarrier'] = '航空母艦';
+				localizationText['zh-tw']['filters-cruiser'] = '巡洋艦';
+				localizationText['zh-tw']['filters-destroyer'] = '驅逐艦';
+				localizationText['zh-tw']['filters-japan'] = '日本';
+				localizationText['zh-tw']['filters-ussr'] = '蘇聯';
+				localizationText['zh-tw']['filters-germany'] = '德國';
+				localizationText['zh-tw']['filters-uk'] = '英國';
+				localizationText['zh-tw']['filters-usa'] = '美國';
+				localizationText['zh-tw']['userbar-your-background'] = '上傳背景圖片';
+				localizationText['zh-tw']['upload-submit'] = '上傳';
+				localizationText['zh-tw']['img-max-size'] = '最大容量： 150 KB';
+				localizationText['zh-tw']['img-max-px'] = '圖片解析度： 468x100';
+				localizationText['zh-tw']['img-format'] = '圖片格式： PNG';
+				localizationText['zh-tw']['upload-verification'] = '背景圖片會在驗證後更新。';
 				
 				localizationText['zh-tw']['pvp_solo'] = '單獨';
 				localizationText['zh-tw']['pvp_div'] = '分艦隊';
@@ -5137,7 +5183,7 @@
 				localizationText['zh-tw']['wins'] = '勝利數';
 				localizationText['zh-tw']['survived_battles'] = '存活數';
 				localizationText['zh-tw']['damage_dealt'] = '造成的傷害';
-				localizationText['zh-tw']['frags'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['frags'] = '擊毀的艦艇數';
 				localizationText['zh-tw']['planes_killed'] = '擊毀飛機數';
 				localizationText['zh-tw']['capture_points'] = '佔領點數';
 				localizationText['zh-tw']['dropped_capture_points'] = '防禦點數';
@@ -5145,7 +5191,7 @@
 				localizationText['zh-tw']['stat-table-2'] = '平均每場戰鬥分數';
 				localizationText['zh-tw']['avg_xp'] = '經驗';
 				localizationText['zh-tw']['avg_damage_dealt'] = '造成的傷害';
-				localizationText['zh-tw']['avg_frags'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['avg_frags'] = '擊毀的艦艇數';
 				localizationText['zh-tw']['avg_planes_killed'] = '擊毀飛機數';
 				localizationText['zh-tw']['avg_capture_points'] = '佔領點數';
 				localizationText['zh-tw']['avg_dropped_capture_points'] = '防禦點數';
@@ -5153,23 +5199,101 @@
 				localizationText['zh-tw']['stat-table-3'] = '紀錄分數';
 				localizationText['zh-tw']['max_xp'] = '經驗';
 				localizationText['zh-tw']['max_damage_dealt'] = '造成的傷害';
-				localizationText['zh-tw']['max_frags_battle'] = '擊毀的戰艦數';
+				localizationText['zh-tw']['max_frags_battle'] = '擊毀的艦艇數';
 				localizationText['zh-tw']['max_planes_killed'] = '擊毀飛機數';
 				
 				localizationText['zh-tw']['stat-table-4'] = '其他結果';
 				localizationText['zh-tw']['battles_days'] = '每日戰鬥數';
 				localizationText['zh-tw']['max_ship_level'] = '最大艦艇階級';
 				localizationText['zh-tw']['avg_battles_level'] = '玩家所用艦艇的平均階級';
-				localizationText['zh-tw']['number-ships-x'] = '第X階艦艇數量';
+				localizationText['zh-tw']['number-ships-x'] = '第Ｘ階艦艇數量';
 				localizationText['zh-tw']['wr'] = 'WR';
 				localizationText['zh-tw']['wtr'] = 'WTR';
 				
 				localizationText['zh-tw']['ships_stat'] = '詳細艦艇統計';
-				localizationText['zh-tw']['title_ships'] = '戰艦';
+				localizationText['zh-tw']['title_ships'] = '艦艇';
 				localizationText['zh-tw']['battleship'] = '主力艦';
 				localizationText['zh-tw']['aircarrier'] = '航空母艦';
 				localizationText['zh-tw']['cruiser'] = '巡洋艦';
 				localizationText['zh-tw']['destroyer'] = '驅逐艦';
+				
+				localizationText['zh-tw']['block-link-clan-member-history'] = '「公會成員變化」分段';
+				localizationText['zh-tw']['link-clan-member-history'] = '公會成員變化';
+				localizationText['zh-tw']['member-history-clear'] = '清除歷史記錄';
+				localizationText['zh-tw']['member-history-join'] = '%NAME% 已加入公會';
+				localizationText['zh-tw']['member-history-leave'] = '%NAME% 已離開公會';
+				localizationText['zh-tw']['member-history-rename'] = '%OLDNAME% 已更改暱稱為 %NEWNAME%';
+				localizationText['zh-tw']['member-history-rerole'] = '%NAME% 位階已更變： %OLDROLE% &rArr; %NEWROLE%';
+				localizationText['zh-tw']['member-history-notchange'] = '自從安裝WoWsStatInfo腳本和上次進入本頁後，公會成員並無任何改變。';
+				
+				localizationText['zh-tw']['banned'] = '被封禁';
+				localizationText['zh-tw']['commander'] = '指揮官';
+				localizationText['zh-tw']['executive_officer'] = '執行官';
+				localizationText['zh-tw']['personnel_officer'] = '人事官';
+				localizationText['zh-tw']['intelligence_officer'] = '情報官';
+				localizationText['zh-tw']['quartermaster'] = '軍需官';
+				localizationText['zh-tw']['recruitment_officer'] = '徵募官';
+				localizationText['zh-tw']['junior_officer'] = '下級軍官';
+				localizationText['zh-tw']['combat_officer'] = '作戰官';
+				localizationText['zh-tw']['private'] = '士兵';
+				localizationText['zh-tw']['recruit'] = '新兵';
+				localizationText['zh-tw']['reservist'] = '後備軍人';
+				
+				localizationText['zh-tw']['get-settings-button'] = '設定';
+				localizationText['zh-tw']['set-settings-default'] = '預設';
+				localizationText['zh-tw']['table-setting-caption'] = '查看列表排序「公會統計」';
+				localizationText['zh-tw']['table-setting-structure'] = '列表排序';
+				
+				localizationText['zh-tw']['statistic-clan-button-0'] = '公會統計';				
+				localizationText['zh-tw']['statistic-clan-button-1'] = '公會架構';	
+				localizationText['zh-tw']['statistic-clan-load-text'] = '請稍候 •••<br />正在獲取統計數據';
+				
+				localizationText['zh-tw']['statistic-load-text-lost'] = '<br />剩餘時間 &#8776;';
+				localizationText['zh-tw']['statistic-load-text-min'] = '分';
+				localizationText['zh-tw']['statistic-load-text-sec'] = '秒';
+				
+				localizationText['zh-tw']['account_name'] = '玩家名稱';
+				
+				localizationText['zh-tw']['role_i18n'] = '位階';
+				localizationText['zh-tw']['clan_days'] = '待在公會的天數';
+				localizationText['zh-tw']['info.last_battle_time'] = '上次戰鬥時間';
+				localizationText['zh-tw']['info.logout_at'] = '上次遊戲完結時間';
+				
+				localizationText['zh-tw']['info.statistics.pvp.battles'] = '戰鬥數';
+				localizationText['zh-tw']['info.statistics.pvp.wins'] = '勝利數';
+				localizationText['zh-tw']['info.statistics.pvp.losses'] = '失敗數';
+				localizationText['zh-tw']['info.statistics.pvp.draws'] = '平手數';
+				localizationText['zh-tw']['info.statistics.pvp.survived_battles'] = '存活數';
+				localizationText['zh-tw']['info.statistics.pvp.survived_wins'] = '勝利並存活數';
+				
+				localizationText['zh-tw']['info.statistics.pvp.kill_dead'] = '擊毀/死亡比';
+				localizationText['zh-tw']['info.statistics.pvp.xp'] = '總經驗';
+				localizationText['zh-tw']['info.statistics.pvp.damage_dealt'] = '造成的傷害';
+				
+				localizationText['zh-tw']['info.statistics.pvp.frags'] = '擊毀的艦艇數';
+				localizationText['zh-tw']['info.statistics.pvp.planes_killed'] = '擊毀飛機數';
+				localizationText['zh-tw']['info.statistics.pvp.capture_points'] = '佔領點數';
+				localizationText['zh-tw']['info.statistics.pvp.dropped_capture_points'] = '防禦點數';
+				
+				localizationText['zh-tw']['info.statistics.pvp.avg_xp'] = '平均經驗';
+				localizationText['zh-tw']['info.statistics.pvp.avg_damage_dealt'] = '平均造成傷害';
+				localizationText['zh-tw']['info.statistics.pvp.avg_frags'] = '平均擊毀艦艇數';
+				localizationText['zh-tw']['info.statistics.pvp.avg_planes_killed'] = '平均擊毀飛機數';
+				localizationText['zh-tw']['info.statistics.pvp.avg_capture_points'] = '平均佔領點數';
+				localizationText['zh-tw']['info.statistics.pvp.avg_dropped_capture_points'] = '平均防禦點數';
+				
+				localizationText['zh-tw']['info.statistics.pvp.max_xp'] = '最大經驗';
+				localizationText['zh-tw']['info.statistics.pvp.max_damage_dealt'] = '最大造成傷害';
+				localizationText['zh-tw']['info.statistics.pvp.max_frags_battle'] = '最大擊毀的艦艇數';
+				localizationText['zh-tw']['info.statistics.pvp.max_planes_killed'] = '最大擊毀飛機數';
+				
+				localizationText['zh-tw']['info.statistics.pvp.wins_percents'] = '勝利率';
+				localizationText['zh-tw']['info.statistics.pvp.survived_battles_percents'] = '存活率';
+				
+				localizationText['zh-tw']['info.statistics.pvp.wr'] = 'WR';
+				localizationText['zh-tw']['info.statistics.pvp.wtr'] = 'WTR';
+				
+				localizationText['zh-tw']['info.ships_x_level'] = '10 lvl';
 			}
 			
 			return localizationText[lang];
