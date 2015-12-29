@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.1.26
+// @version 0.5.2.26
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -42,10 +42,14 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии */ // сохранение рангов дельта, цвет статы при навидении, сколько осталось для следующего, китайский
+(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии 0.5.2.26 */ 
+// сохранение рангов дельта
+// цвет статы при навидении, сколько осталось для следующего
+// выделение ПА кораблей
+// Захват и Защита, уюрать использование в ВР.
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.1.26';
+		var VersionWoWsStatInfo = '0.5.2.26';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -917,8 +921,8 @@
 						account_table[1].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt', 'main');
 						account_table[1].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_frags'], 'avg_frags', 'main');
 						account_table[1].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_planes_killed'], 'avg_planes_killed', 'main');
-						account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points', 'main');
-						account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points', 'main');
+						//account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points', 'main');
+						//account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points', 'main');
 						
 						// Рекордные показатели
 						account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp', 'main');
@@ -1013,6 +1017,12 @@
 							var ship_id = row.getAttribute('js-has-extension').split('-')[0];
 							
 							if(row.cells.length < 5){
+								var name_text = row.cells[0].getElementsByClassName('_text')[0];
+								var is_premium = Encyclopedia[ship_id]['is_premium'];
+								if(is_premium){
+									name_text.setAttribute('style', 'color: #ffab34;');
+								}
+							
 								var td = document.createElement('td');
 								td.setAttribute('id', 'wr-'+ship_id);
 								td.innerHTML = '<span>0</span>';
@@ -1084,17 +1094,19 @@
 						}
 					}
 					
-					achieves_block.outerHTML += '' +
-						'<div>' +
-							'<div style="width: initial; height: initial; float: initial;" class="achieve-item _big tooltip-target tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left">' +
-								'<div class="_counter" style="position: relative; background-color: #F7882E; min-width: 3em; left: 0; float: left;">12</div>' +
-								'<div> - '+localizationText['achieve_counter_1']+'</div>' +
-								'<div class="_counter" style="position: relative; background-color: #AAAAAA; min-width: 3em; left: 0; float: left;">31</div>' +
-								'<div> - '+localizationText['achieve_counter_2']+'</div>' +
+					var achieve_counter = tabContainer.getElementsByClassName('achieve-counter')[0];
+					if(achieve_counter == null){
+						achieves_block.outerHTML += '' +
+							'<div class="achieve-counter">' +
+								'<div style="width: initial; height: initial; float: initial;" class="achieve-item _big tooltip-target tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left">' +
+									'<div class="_counter" style="position: relative; background-color: #F7882E; min-width: 3em; left: 0; float: left;">12</div>' +
+									'<div> - '+localizationText['achieve_counter_1']+'</div>' +
+									'<div class="_counter" style="position: relative; background-color: #AAAAAA; min-width: 3em; left: 0; float: left;">31</div>' +
+									'<div> - '+localizationText['achieve_counter_2']+'</div>' +
+								'</div>' +
 							'</div>' +
-						'</div>' +
-					'';
-
+						'';
+					}
 				}
 				
 				var typeStatAdd = ["pvp_div", "pvp_solo"];
@@ -1472,7 +1484,8 @@
 										'<span>'+localizationText['avg_capture_points']+'</span>' +
 									'</td>' +
 									'<td class="_value">' +
-										'<span style="color: '+findColorASC(StatArray['avg_capture_points'], 'avg_capture_points', type_stat)+';">'
+										//'<span style="color: '+findColorASC(StatArray['avg_capture_points'], 'avg_capture_points', type_stat)+';">'
+										'<span>'
 											+valueFormat((StatArray['avg_capture_points']).toFixed(2))+
 										'</span>' +
 									'</td>' +
@@ -1482,7 +1495,8 @@
 										'<span>'+localizationText['avg_dropped_capture_points']+'</span>' +
 									'</td>' +
 									'<td class="_value">' +
-										'<span style="color: '+findColorASC(StatArray['avg_dropped_capture_points'], 'avg_dropped_capture_points', type_stat)+';">'+
+										//'<span style="color: '+findColorASC(StatArray['avg_dropped_capture_points'], 'avg_dropped_capture_points', type_stat)+';">'+
+										'<span>'+
 											valueFormat((StatArray['avg_dropped_capture_points']).toFixed(0))+
 										'</span>' +
 									'</td>' +
@@ -1570,12 +1584,18 @@
 			for(var sI = 0; sI < StatArray['ships'].length; sI++){
 				var Ship = StatArray['ships'][sI];
 				var ship_id = Ship['ship_id'];
-				var ship_nation = Encyclopedia[ship_id]['nation']
+				var ship_nation = Encyclopedia[ship_id]['nation'];
 				var ship_name = Encyclopedia[ship_id]['name'];
 				var ship_type = Encyclopedia[ship_id]['type'];
 				var ship_tier = Encyclopedia[ship_id]['tier'];
 				var ship_lvl = getLevelText(ship_tier);
 				var ship_img = Encyclopedia[ship_id]['images']['small'];
+				var is_premium = Encyclopedia[ship_id]['is_premium'];
+				
+				var color_name = '';
+				if(is_premium){
+					color_name = '#ffab34';
+				}
 				
 				if(Ship[type]['battles'] > 0){
 					StatClassArray[ship_type]['battles'] += Ship[type]['battles'];
@@ -1589,7 +1609,7 @@
 								'<div class="_bg-nation-'+ship_nation+'"></div>' +
 								'<span class="_lvl">'+ship_lvl+'</span>' +
 								'<img class="_icon-ships img-responsive" style="width: 68px; height: 40px;" src="'+ship_img+'">' +
-								'<span class="_text">'+ship_name+'</span>' +
+								'<span class="_text" style="color: '+color_name+';">'+ship_name+'</span>' +
 							'</td>' +
 							'<td class="_value">'+valueFormat((Ship[type]['battles']).toFixed(0))+'</td>' +
 							'<td class="_value" style="white-space: nowrap;">' +
@@ -2126,6 +2146,7 @@
 				var tab_container = document.getElementsByClassName('tab-container');
 				for(var tc = 0; tc < tab_container.length; tc++){
 					if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
+					console.log(tab_container[tc]);
 					tabContainer = tab_container[tc];
 				}
 				
@@ -2135,54 +2156,62 @@
 						account_tab_background[atb].style.zIndex = '-1';
 					}
 					
-					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
-					if(account_tab == null){
-						var Keys = Object.keys(StatPvPMemberArray);
-						var IndexLast = Keys.length - 1;
-						var IndexOld = Keys.length - 2;
+					var account_tab_overview = tabContainer.getElementsByClassName('account-tab-overview')[0];
+					var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
+					if(account_battle_stats != null){
+						var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
+						if(account_delta_stat == null){
+							account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
 						
-						var battles = StatPvPMemberArray[Keys[IndexLast]]['battles'] - StatPvPMemberArray[Keys[IndexOld]]['battles'];
-						var wins_percents = StatPvPMemberArray[Keys[IndexLast]]['wins_percents'] - StatPvPMemberArray[Keys[IndexOld]]['wins_percents'];
-						var avg_xp = StatPvPMemberArray[Keys[IndexLast]]['avg_xp'] - StatPvPMemberArray[Keys[IndexOld]]['avg_xp'];
-						var avg_damage_dealt = StatPvPMemberArray[Keys[IndexLast]]['avg_damage_dealt'] - StatPvPMemberArray[Keys[IndexOld]]['avg_damage_dealt'];
-						var kill_dead = StatPvPMemberArray[Keys[IndexLast]]['kill_dead'] - StatPvPMemberArray[Keys[IndexOld]]['kill_dead'];
-						var avg_frags = StatPvPMemberArray[Keys[IndexLast]]['avg_frags'] - StatPvPMemberArray[Keys[IndexOld]]['avg_frags'];
-						var avg_planes_killed = StatPvPMemberArray[Keys[IndexLast]]['avg_planes_killed'] - StatPvPMemberArray[Keys[IndexOld]]['avg_planes_killed'];
-						var avg_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_capture_points'];
-						var avg_dropped_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_dropped_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_dropped_capture_points'];
-						var avg_battles_level = StatPvPMemberArray[Keys[IndexLast]]['avg_battles_level'] - StatPvPMemberArray[Keys[IndexOld]]['avg_battles_level'];
-						var wr = StatPvPMemberArray[Keys[IndexLast]]['wr'] - StatPvPMemberArray[Keys[IndexOld]]['wr'];
-						var wtr = StatPvPMemberArray[Keys[IndexLast]]['wtr'] - StatPvPMemberArray[Keys[IndexOld]]['wtr'];
-						
-						var _values = tabContainer.getElementsByClassName('_values')[0];
-						var main_stat = _values.getElementsByTagName('div');
-						main_stat[0].innerHTML += getHTMLDif(battles, 0);
-						main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
-						main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
-						main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
-						main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
-						
-						var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
-						if(account_battle_stats != null){
-							var account_table = account_battle_stats.getElementsByClassName('account-table');
+							var Keys = Object.keys(StatPvPMemberArray);
+							var IndexLast = Keys.length - 1;
+							var IndexOld = Keys.length - 2;
 							
-							account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
-							account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
-							account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
-							account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
-							account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
-							account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
-						}
-						
-						var main_page_script_block = document.getElementById('main-page-script-block');
-						if(main_page_script_block != null){
-							var account_table = main_page_script_block.getElementsByClassName('account-table');
+							var battles = StatPvPMemberArray[Keys[IndexLast]]['battles'] - StatPvPMemberArray[Keys[IndexOld]]['battles'];
+							var wins_percents = StatPvPMemberArray[Keys[IndexLast]]['wins_percents'] - StatPvPMemberArray[Keys[IndexOld]]['wins_percents'];
+							var avg_xp = StatPvPMemberArray[Keys[IndexLast]]['avg_xp'] - StatPvPMemberArray[Keys[IndexOld]]['avg_xp'];
+							var avg_damage_dealt = StatPvPMemberArray[Keys[IndexLast]]['avg_damage_dealt'] - StatPvPMemberArray[Keys[IndexOld]]['avg_damage_dealt'];
+							var kill_dead = StatPvPMemberArray[Keys[IndexLast]]['kill_dead'] - StatPvPMemberArray[Keys[IndexOld]]['kill_dead'];
+							var avg_frags = StatPvPMemberArray[Keys[IndexLast]]['avg_frags'] - StatPvPMemberArray[Keys[IndexOld]]['avg_frags'];
+							var avg_planes_killed = StatPvPMemberArray[Keys[IndexLast]]['avg_planes_killed'] - StatPvPMemberArray[Keys[IndexOld]]['avg_planes_killed'];
+							var avg_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_capture_points'];
+							var avg_dropped_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_dropped_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_dropped_capture_points'];
+							var avg_battles_level = StatPvPMemberArray[Keys[IndexLast]]['avg_battles_level'] - StatPvPMemberArray[Keys[IndexOld]]['avg_battles_level'];
+							var wr = StatPvPMemberArray[Keys[IndexLast]]['wr'] - StatPvPMemberArray[Keys[IndexOld]]['wr'];
+							var wtr = StatPvPMemberArray[Keys[IndexLast]]['wtr'] - StatPvPMemberArray[Keys[IndexOld]]['wtr'];
 							
-							account_table[0].rows[4].cells[1].innerHTML  += getHTMLDif(avg_battles_level, 2);
-							account_table[0].rows[5].cells[1].innerHTML  += getHTMLDif(wr, 2);
-							account_table[0].rows[6].cells[1].innerHTML  += getHTMLDif(wtr, 2);
+							var _values = tabContainer.getElementsByClassName('_values')[0];
+							var main_stat = _values.getElementsByTagName('div');
+							main_stat[0].innerHTML += getHTMLDif(battles, 0);
+							main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
+							main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
+							main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
+							main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
+							
+							if(account_battle_stats != null){
+								var account_table = account_battle_stats.getElementsByClassName('account-table');
+								
+								account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
+								account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
+								account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
+								account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
+								//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
+								//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
+							}
+							
+							var main_page_script_block = document.getElementById('main-page-script-block');
+							if(main_page_script_block != null){
+								var account_table = main_page_script_block.getElementsByClassName('account-table');
+								
+								account_table[0].rows[4].cells[1].innerHTML  += getHTMLDif(avg_battles_level, 2);
+								account_table[0].rows[5].cells[1].innerHTML  += getHTMLDif(wr, 2);
+								account_table[0].rows[6].cells[1].innerHTML  += getHTMLDif(wtr, 2);
+							}
 						}
+					}
 					
+					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
+					if(account_tab == null){					
 						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
 						if(account_tab_detail_stats != null){
 							var date = [];
@@ -2268,7 +2297,7 @@
 				}
 			);
 			
-			jQ('<div id="tooltip-chart-'+title+'"></div>').css({
+			$('<div id="tooltip-chart-'+title+'"></div>').css({
 				position: "absolute",
 				display: "none",
 				border: "1px solid #fdd",
@@ -2279,12 +2308,12 @@
 				color: "black"
 			}).appendTo("body");
 
-			jQ('#chart_'+title).bind("plothover", function (event, pos, item) {
+			$('#chart_'+title).bind("plothover", function (event, pos, item) {
 				if(item){
 					var y = item.datapoint[1].toFixed(2);
-					jQ('#tooltip-chart-'+title).html(y).css({top: item.pageY - 35, left: item.pageX - 15}).fadeIn(200);
+					$('#tooltip-chart-'+title).html(y).css({top: item.pageY - 35, left: item.pageX - 15}).fadeIn(200);
 				}else{
-					jQ('#tooltip-chart-'+title).hide();
+					$('#tooltip-chart-'+title).hide();
 				}
 			});
 		}
