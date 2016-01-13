@@ -42,11 +42,7 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии 0.5.2.26 */ 
-// сохранение рангов дельта
-// цвет статы при навидении, сколько осталось для следующего
-// выделение ПА кораблей
-// Захват и Защита, уюрать использование в ВР.
+(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии 0.5.2.26 */
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
 		var VersionWoWsStatInfo = '0.5.2.26';
@@ -289,53 +285,7 @@
 			document.body.appendChild(messagebg);
 		}	
 		
-		var navigatorInfo = getBrowser();
-		window.onerror = function(message, source, lineno, column, errorObj){
-			if(source == ''){source = window.location.href;}
-			else if(source.indexOf(".js") != -1){return false;}
-			else if(source.indexOf("prettyPrint") != -1){return false;}
-			if(message == 'Script error.' && errorObj == null){console.log('message == \'Script error.\' && errorObj == null'); return false;}
-			
-			lineno += 47;
-			
-			var agent = '';
-			var agentArr = navigator.userAgent.split(')');
-			for(var i = 0; i < agentArr.length; i++){
-				if(agent != ''){agent += ')\n';}
-				agent += agentArr[i];
-			}
-			
-			var error = localizationText['ErrorScript']+"\n\n" +
-					"Lang: "+lang+"\n"+
-					"Browser name: "+navigatorInfo['browserName']+"\n"+
-					"Full version: "+navigatorInfo['fullVersion']+"\n"+
-					"Major version: "+navigatorInfo['majorVersion']+"\n"+
-					"AppName: "+navigatorInfo['appName']+"\n"+
-					"UserAgent: "+agent+"\n\n"+
-					"Error: "+message+"\n"+
-					"URL: " +source+"\n"+
-					"Line: "+lineno+"\n"+
-					"Column: "+column+"\n"+
-					"StackTrace: "+errorObj+"\n\n"+
-					localizationText['ErrorSendDeveloper'];
-			
-			console.log(error);
-			
-			if(window.location.host == 'forum.worldofwarships.'+realm_host){
-				//if(lineno < 8285){alert(error);}
-			}else{
-				// error = error.split('\n').join('<br />');
-				// onShowMessage(
-					// localizationText['Box'],
-					// error,
-					// onCloseMessage,
-					// localizationText['Ok'],
-					// false
-				// );
-			}
-			
-			return false;
-		}
+		getBrowser();
 		
 		function getBrowser(){
 			var nVer = navigator.appVersion;
@@ -767,6 +717,7 @@
 			
 			if(!calcStat(0)){
 				console.log('Error calcStat '+MembersArray[0]['info']['account_id']);
+				return;
 			}
 			
 			var tabContainer = null;
@@ -845,7 +796,7 @@
 													'<span>'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['avg_battles_level']).toFixed(1))+'</span>'+
 												'</td>' +
 											'</tr>' +
-											'<tr>' +
+											'<tr id="info-stat-pvp-wr">' +
 												'<td class="_name">' +
 													'<span>'+
 														'<a target="_blank" href="http://vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
@@ -859,7 +810,7 @@
 													'</span>'+
 												'</td>' +
 											'</tr>' +
-											'<tr>' +
+											'<tr id="info-stat-pvp-wtr">' +
 												'<td class="_name">' +
 													'<span>' +
 														'<a target="_blank" href="http://warships.today/player/'+MembersArray[0]['info']['account_id']+'/'+realm+'/'+MembersArray[0]['info']['nickname']+'">'+
@@ -884,6 +835,8 @@
 							'</tr>' +
 						'</table>'
 					'';
+					addStatHover(document.getElementById('info-stat-pvp-wr'), 'wr');
+					addStatHover(document.getElementById('info-stat-pvp-wtr'), 'wtr');
 					
 					var img = new Image();
 					img.onload = function(){
@@ -904,10 +857,20 @@
 					var _values = tabContainer.getElementsByClassName('_values')[0];
 					var main_stat = _values.getElementsByTagName('div');
 					main_stat[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles', 'main');
+					addStatHover(main_stat[0], 'battles');
+					
 					main_stat[1].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents', 'main');
+					addStatHover(main_stat[1], 'wins_percents');
+					
 					main_stat[2].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp', 'main');
+					addStatHover(main_stat[2], 'avg_xp');
+					
+					
 					main_stat[3].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt', 'main');
+					addStatHover(main_stat[3], 'avg_damage_dealt');
+					
 					main_stat[4].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['kill_dead'], 'kill_dead', 'main');
+					addStatHover(main_stat[4], 'kill_dead');
 					
 					var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
 					if(account_battle_stats != null){
@@ -915,26 +878,45 @@
 						
 						//Общие результаты
 						account_table[0].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles', 'main');
+						addStatHover(account_table[0].rows[1], 'battles');
 						
 						//Средние показатели за бой
 						account_table[1].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_xp'], 'avg_xp', 'main');
+						addStatHover(account_table[1].rows[1], 'avg_xp');
+						
 						account_table[1].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_damage_dealt'], 'avg_damage_dealt', 'main');
+						addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
+						
 						account_table[1].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_frags'], 'avg_frags', 'main');
+						addStatHover(account_table[1].rows[3], 'avg_frags');
+						
 						account_table[1].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_planes_killed'], 'avg_planes_killed', 'main');
+						addStatHover(account_table[1].rows[4], 'avg_planes_killed');
+						
 						//account_table[1].rows[5].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_capture_points'], 'avg_capture_points', 'main');
 						//account_table[1].rows[6].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['avg_dropped_capture_points'], 'avg_dropped_capture_points', 'main');
 						
 						// Рекордные показатели
 						account_table[2].rows[1].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_xp'], 'max_xp', 'main');
+						addStatHover(account_table[2].rows[1], 'max_xp');
+						
 						account_table[2].rows[2].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_damage_dealt'], 'max_damage_dealt', 'main');
+						addStatHover(account_table[2].rows[2], 'max_damage_dealt');
+						
 						account_table[2].rows[3].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_frags_battle'], 'max_frags_battle', 'main');
+						addStatHover(account_table[2].rows[3], 'max_frags_battle');
+						
 						account_table[2].rows[4].cells[1].getElementsByTagName('span')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['max_planes_killed'], 'max_planes_killed', 'main');
+						addStatHover(account_table[2].rows[4], 'max_planes_killed');
 						
 						//Дополнительно
 						account_table[0].rows[2].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['wins_percents'], 'wins_percents', 'main');
+						addStatHover(account_table[0].rows[2], 'wins_percents');
+						
 						if(account_table[0].rows[3].cells[1].getElementsByClassName('small-survived_battles_percents')[0] == undefined){
 							account_table[0].rows[3].cells[1].innerHTML += '<small class="small-survived_battles_percents">('+valueFormat((MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents']).toFixed(2))+'%)</small>';
 							account_table[0].rows[3].cells[1].getElementsByTagName('small')[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['survived_battles_percents'], 'survived_battles_percents', 'main');
+							addStatHover(account_table[0].rows[3], 'survived_battles_percents');
 						}					
 						if(account_table[2].rows[1].cells[0].getElementsByClassName('small-max_xp_ship')[0] == undefined 
 							&& Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] != null && Encyclopedia[MembersArray[0]['info']['statistics']['pvp']['max_xp_ship_id']] !== undefined){
@@ -2146,7 +2128,6 @@
 				var tab_container = document.getElementsByClassName('tab-container');
 				for(var tc = 0; tc < tab_container.length; tc++){
 					if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
-					console.log(tab_container[tc]);
 					tabContainer = tab_container[tc];
 				}
 				
@@ -2197,6 +2178,20 @@
 								account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
 								//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
 								//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
+								
+								addStatHover(account_table[0].rows[1], 'battles');
+								addStatHover(account_table[0].rows[2], 'wins_percents');
+								addStatHover(account_table[0].rows[3], 'survived_battles_percents');
+								
+								addStatHover(account_table[1].rows[1], 'avg_xp');
+								addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
+								addStatHover(account_table[1].rows[3], 'avg_frags');
+								addStatHover(account_table[1].rows[4], 'avg_planes_killed');
+								
+								addStatHover(account_table[2].rows[1], 'max_xp');
+								addStatHover(account_table[2].rows[2], 'max_damage_dealt');
+								addStatHover(account_table[2].rows[3], 'max_frags_battle');
+								addStatHover(account_table[2].rows[4], 'max_planes_killed');
 							}
 							
 							var main_page_script_block = document.getElementById('main-page-script-block');
@@ -2329,6 +2324,141 @@
 		
 			return ' <span style="color: '+color+';"><sup>'+text+'</sup></span>';
 		}
+		function addStatHover(elem, type_stat_hover){
+			$(elem).attr('type-stat', type_stat_hover);
+			$(elem).hover(hoverStatIn, hoverStatOut);
+			
+			var tooltip_stat = document.getElementById('tooltip-stat-'+type_stat_hover);
+			if(tooltip_stat == null){				
+				$('<div id="tooltip-stat-'+type_stat_hover+'" class="tooltip tooltip-element tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left"></div>').css({
+					width: "200px",
+					position: "absolute",
+					display: "none",
+					textAlign: "center",
+					"background-color": "#066",
+					padding: "0px", 
+					top: "0", 
+					left: "0"
+				}).appendTo("body");
+			}
+		}
+		function hoverStatIn(){
+			var type_stat_hover = $(this).attr('type-stat');
+			
+			var bodyRect = document.body.getBoundingClientRect(), 
+			elemRect = this.getBoundingClientRect(), 
+			offsetTop = elemRect.top - bodyRect.top, 
+			offsetLeft = elemRect.left - bodyRect.left;
+			
+			var offsetWidth = this.offsetWidth;
+			var offsetHeight = this.offsetHeight;
+			
+			var paddingLeft = Number($(this).css('padding-left').replace(/[^0-9\.]+/g,""));
+			var paddingTop = Number($(this).css('padding-top').replace(/[^0-9\.]+/g,""));
+			var paddingRight = Number($(this).css('padding-bottom').replace(/[^0-9\.]+/g,""));
+			var paddingBottom = Number($(this).css('padding-bottom').replace(/[^0-9\.]+/g,""));
+			
+			var statValue = MembersArray[0]['info']['statistics']['pvp'][type_stat_hover];
+			
+			var plusValue = 0.01;
+			var tofixedNum = 2; 
+			if(type_stat_hover == 'battles' || type_stat_hover.indexOf("max_") > -1){
+				tofixedNum = 0;
+				plusValue = 1;
+			}
+			
+			var color1 = color['very_bad'];
+			var color2 = color['very_bad'];
+			var color3 = color['very_bad'];
+			
+			var value1 = parseFloat(0);
+			var value3 = parseFloat(0);
+			
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][5])){
+				color1 = color['very_good'];
+				color2 = color['unique'];
+				color3 = color['unique'];
+				
+				value1 = (parseFloat(colorStat[type_stat_hover][4])).toFixed(tofixedNum);
+				value3 = '&infin;';
+			}
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][4])){
+				color1 = color['good'];
+				color2 = color['very_good'];
+				color3 = color['unique'];
+				
+				value1 = (parseFloat(colorStat[type_stat_hover][3])).toFixed(tofixedNum);
+				value3 = (parseFloat(colorStat[type_stat_hover][4]) + plusValue).toFixed(tofixedNum);
+			}
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][3])){
+				color1 = color['normal'];
+				color2 = color['good'];
+				color3 = color['very_good'];
+				
+				value1 = (parseFloat(colorStat[type_stat_hover][2])).toFixed(tofixedNum);
+				value3 = (parseFloat(colorStat[type_stat_hover][3]) + plusValue).toFixed(tofixedNum);
+			}
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][2])){
+				color1 = color['bad'];
+				color2 = color['normal'];
+				color3 = color['good'];
+				
+				value1 = (parseFloat(colorStat[type_stat_hover][1])).toFixed(tofixedNum);
+				value3 = (parseFloat(colorStat[type_stat_hover][2]) + plusValue).toFixed(tofixedNum);
+			}
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][1])){
+				color1 = color['very_bad'];
+				color2 = color['bad'];
+				color3 = color['normal'];
+				
+				value1 = (parseFloat(colorStat[type_stat_hover][0])).toFixed(tofixedNum);
+				value3 = (parseFloat(colorStat[type_stat_hover][1]) + plusValue).toFixed(tofixedNum);
+			}
+			if(parseFloat(statValue) <= parseFloat(colorStat[type_stat_hover][0])){
+				color1 = color['very_bad'];
+				color2 = color['very_bad'];
+				color3 = color['bad'];
+				
+				value1 = (parseFloat(0)).toFixed(tofixedNum);
+				value3 = (parseFloat(colorStat[type_stat_hover][0]) + plusValue).toFixed(tofixedNum);
+			}
+			
+			var next_percent_wins_html = '';
+			if(type_stat_hover == 'wins_percents'){
+				var next_percent_losses = Math.floor(100 - MembersArray[0]['info']['statistics']['pvp']['wins_percents']);
+				var next_percent_wins = 100 - next_percent_losses;
+				var next_losses_rate = next_percent_losses / 100;
+				var next_battles = Math.ceil(
+					(
+						(
+							MembersArray[0]['info']['statistics']['pvp']['battles'] - MembersArray[0]['info']['statistics']['pvp']['wins']
+						) / next_losses_rate
+					) - MembersArray[0]['info']['statistics']['pvp']['battles']
+				);
+				
+				next_percent_wins_html = '<p class="tooltip__text" style="font-size: 14px; color: #FFF;">'+next_battles+' '+localizationText['to']+' '+next_percent_wins+'%</p>';
+			}
+			
+			
+			$('#tooltip-stat-'+type_stat_hover).html('' +
+				'<p class="tooltip__title" style="color: #FFF;">'+localizationText['info.statistics.pvp.'+type_stat_hover]+'</p>' +
+				'<p class="tooltip__text" style="font-size: 14px; color: #FFF;">' +
+				'<font color="'+color1+'">'+value1+'</font>' +
+				' &lArr; <font color="'+color2+'">'+(statValue).toFixed(tofixedNum)+'</font> &rArr; ' +
+				'<font color="'+color3+'">'+value3+'</font>' +
+				'</p>' +
+				next_percent_wins_html +
+			'').css({
+				width: offsetWidth+"px", //(offsetWidth - paddingRight - paddingLeft)
+				display: "block", 
+				top: offsetTop + offsetHeight - paddingTop - paddingBottom, 
+				left: offsetLeft //+ paddingLeft
+			}).fadeIn(200);
+		}
+		function hoverStatOut(){
+			var type_stat_hover = $(this).attr('type-stat');
+			$('#tooltip-stat-'+type_stat_hover).hide();
+		}	
 		
 		/* ===== ClanPage function ===== */
 		function getSettingsClanPage(){
@@ -2922,7 +3052,6 @@
 			}
 			
 			if(attr.indexOf(".avg_") > -1 || attr.indexOf("_percents") > -1 || attr.indexOf(".kill_dead") > -1 || attr.indexOf(".wr") > -1 || attr.indexOf(".wtr") > -1){
-				//console.log(attr+' '+value);
 				value = (value).toFixed(2);
 			}
 			
@@ -3001,21 +3130,21 @@
 		}
 		function updateColorStat(response){
 			if(response == null){
-				colorStat = jQ.parseJSON('{"wtr":["795.99","991.68","1138.34","1384.65","1577.72","99999.00"],"max_frags_battle":[4,5,6,7,8,99],"avg_planes_killed":["0.22","0.94","1.81","3.74","6.09","99.00"],"max_damage_dealt":[80482,108870,129594,163436,193332,9999999],"wr":["609.71","958.30","1246.05","1792.43","2281.91","99999.00"],"kill_dead":["0.61","0.96","1.28","1.98","2.76","99.00"],"avg_capture_points":["0.18","0.53","0.89","1.63","2.39","99.00"],"survived_battles_percents":["16.58","25.96","33.26","45.04","53.86","100.00"],"max_xp":[1626,2187,2759,3774,4514,99999],"avg_damage_dealt":["15628.23","22222.94","27489.60","37362.57","47101.21","999999.00"],"avg_dropped_capture_points":["1.17","3.72","5.47","8.42","11.00","999.00"],"max_planes_killed":[7,21,31,48,60,999],"avg_xp":["463.42","626.87","782.57","1122.40","1419.22","99999.00"],"avg_frags":["0.50","0.71","0.87","1.15","1.39","99.00"],"wins_percents":["44.32","48.30","51.15","55.81","59.94","100.00"],"battles":[238,377,580,1087,1673,99999]}');
+				colorStat = jQ.parseJSON('{"wtr":["789.20","983.98","1125.80","1360.69","1548.68","99999.00"],"max_frags_battle":[4,5,6,7,8,99],"avg_planes_killed":["0.19","0.86","1.69","3.59","5.88","99.00"],"max_damage_dealt":[78397,106983,128431,163532,194270,9999999],"wr":["553.98","855.26","1093.56","1524.67","1904.51","99999.00"],"kill_dead":["0.60","0.94","1.25","1.92","2.66","99.00"],"avg_capture_points":["0.05","0.33","0.64","1.33","2.03","99.00"],"survived_battles_percents":["16.53","25.86","33.09","44.92","53.61","100.00"],"max_xp":[1658,2266,2850,3887,4670,99999],"avg_damage_dealt":["14866.40","21346.71","26575.10","36498.53","46017.30","999999.00"],"avg_dropped_capture_points":["0.29","2.13","4.10","7.28","9.91","99.00"],"max_planes_killed":[6,21,31,49,62,999],"avg_xp":["465.20","618.98","764.13","1090.82","1382.56","99999.00"],"avg_frags":["0.48","0.69","0.85","1.12","1.35","99.00"],"wins_percents":["44.73","48.64","51.40","55.94","59.96","100.00"],"battles":[243,415,686,1396,2179,99999]}');
 			}else{
 				colorStat = response;
 			}
 		}
 		function updateExpShips(response){
 			if(response == null){
-				ExpShips = jQ.parseJSON('{"4292818736":{"expDamage":41253.93,"expFrags":0.67,"expCapturePoints":0.23,"expPlanesKilled":2.27,"expDroppedCapturePoints":0.74},"4293834544":{"expDamage":8107.63,"expFrags":0.67,"expCapturePoints":0.12,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.34},"4287542992":{"expDamage":29141.63,"expFrags":0.79,"expCapturePoints":0.58,"expPlanesKilled":2.05,"expDroppedCapturePoints":2.8},"4188976592":{"expDamage":9082.31,"expFrags":0.74,"expCapturePoints":0.15,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.43},"4288558800":{"expDamage":23320.71,"expFrags":0.69,"expCapturePoints":0.76,"expPlanesKilled":0.55,"expDroppedCapturePoints":1.14},"4289607376":{"expDamage":20313.14,"expFrags":0.64,"expCapturePoints":0.88,"expPlanesKilled":0.57,"expDroppedCapturePoints":0.95},"4277057520":{"expDamage":33522.04,"expFrags":0.62,"expCapturePoints":0.6,"expPlanesKilled":5.26,"expDroppedCapturePoints":3.11},"4276041424":{"expDamage":76656.39,"expFrags":0.9,"expCapturePoints":0.29,"expPlanesKilled":6.39,"expDroppedCapturePoints":1.61},"4180555216":{"expDamage":34411.72,"expFrags":1.13,"expCapturePoints":0.09,"expPlanesKilled":0.33,"expDroppedCapturePoints":0.06},"4264441840":{"expDamage":15019.3,"expFrags":0.49,"expCapturePoints":0.89,"expPlanesKilled":0.28,"expDroppedCapturePoints":3.43},"4266538992":{"expDamage":11968.18,"expFrags":0.54,"expCapturePoints":0.46,"expPlanesKilled":0.02,"expDroppedCapturePoints":2.66},"4293867504":{"expDamage":17373.89,"expFrags":0.61,"expCapturePoints":1.01,"expPlanesKilled":0.03,"expDroppedCapturePoints":5.59},"4183734064":{"expDamage":31528.13,"expFrags":0.96,"expCapturePoints":0.07,"expPlanesKilled":1.05,"expDroppedCapturePoints":0.19},"4290655952":{"expDamage":26938.28,"expFrags":0.96,"expCapturePoints":0.87,"expPlanesKilled":0.13,"expDroppedCapturePoints":1.47},"4291737040":{"expDamage":30367.78,"expFrags":0.92,"expCapturePoints":0.65,"expPlanesKilled":1.32,"expDroppedCapturePoints":5.13},"4277122768":{"expDamage":87112.85,"expFrags":1.28,"expCapturePoints":0.19,"expPlanesKilled":20.26,"expDroppedCapturePoints":4.11},"4286527184":{"expDamage":24637.32,"expFrags":0.73,"expCapturePoints":0.76,"expPlanesKilled":0.17,"expDroppedCapturePoints":3.98},"4259231440":{"expDamage":67761.05,"expFrags":1.05,"expCapturePoints":0.45,"expPlanesKilled":3.7,"expDroppedCapturePoints":2.62},"4293866960":{"expDamage":35775.6,"expFrags":1.09,"expCapturePoints":0.57,"expPlanesKilled":0.04,"expDroppedCapturePoints":1.11},"4293834736":{"expDamage":9280.59,"expFrags":0.59,"expCapturePoints":0.66,"expPlanesKilled":0.01,"expDroppedCapturePoints":7.07},"4289640144":{"expDamage":20041.76,"expFrags":0.58,"expCapturePoints":0.52,"expPlanesKilled":0.38,"expDroppedCapturePoints":2.9},"4267620048":{"expDamage":28367.1,"expFrags":1.06,"expCapturePoints":1.05,"expPlanesKilled":1.0,"expDroppedCapturePoints":6.2},"4280170480":{"expDamage":19859.16,"expFrags":0.76,"expCapturePoints":0.51,"expPlanesKilled":0.4,"expDroppedCapturePoints":1.97},"4286461936":{"expDamage":24706.51,"expFrags":0.76,"expCapturePoints":0.6,"expPlanesKilled":0.4,"expDroppedCapturePoints":1.11},"4288657392":{"expDamage":35355.04,"expFrags":0.69,"expCapturePoints":0.29,"expPlanesKilled":11.78,"expDroppedCapturePoints":2.32},"4256085712":{"expDamage":11457.81,"expFrags":0.83,"expCapturePoints":0.95,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.69},"4259264496":{"expDamage":37843.29,"expFrags":0.89,"expCapturePoints":0.54,"expPlanesKilled":0.99,"expDroppedCapturePoints":2.28},"4248745968":{"expDamage":33736.1,"expFrags":1.04,"expCapturePoints":0.82,"expPlanesKilled":0.26,"expDroppedCapturePoints":5.73},"4258182864":{"expDamage":13165.03,"expFrags":0.59,"expCapturePoints":0.72,"expPlanesKilled":0.01,"expDroppedCapturePoints":7.11},"4185831216":{"expDamage":15167.17,"expFrags":0.55,"expCapturePoints":0.37,"expPlanesKilled":0.04,"expDroppedCapturePoints":0.91},"4291737584":{"expDamage":12809.77,"expFrags":0.72,"expCapturePoints":1.13,"expPlanesKilled":0.01,"expDroppedCapturePoints":10.0},"4286527472":{"expDamage":40810.63,"expFrags":0.77,"expCapturePoints":0.38,"expPlanesKilled":1.92,"expDroppedCapturePoints":1.52},"4282267344":{"expDamage":50579.96,"expFrags":0.81,"expCapturePoints":0.82,"expPlanesKilled":0.49,"expDroppedCapturePoints":0.98},"4292818896":{"expDamage":32770.02,"expFrags":0.76,"expCapturePoints":0.95,"expPlanesKilled":2.12,"expDroppedCapturePoints":4.11},"4280203248":{"expDamage":32543.6,"expFrags":0.66,"expCapturePoints":0.56,"expPlanesKilled":4.08,"expDroppedCapturePoints":2.51},"4293801680":{"expDamage":11784.77,"expFrags":0.9,"expCapturePoints":0.35,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.82},"4247697392":{"expDamage":38935.05,"expFrags":1.29,"expCapturePoints":1.15,"expPlanesKilled":0.25,"expDroppedCapturePoints":9.14},"4285445840":{"expDamage":42794.18,"expFrags":0.91,"expCapturePoints":0.42,"expPlanesKilled":2.39,"expDroppedCapturePoints":2.32},"4279154384":{"expDamage":17103.56,"expFrags":0.67,"expCapturePoints":0.62,"expPlanesKilled":0.04,"expDroppedCapturePoints":5.38},"4293867216":{"expDamage":18228.07,"expFrags":0.7,"expCapturePoints":1.16,"expPlanesKilled":0.06,"expDroppedCapturePoints":5.02},"4283381456":{"expDamage":13912.61,"expFrags":0.75,"expCapturePoints":1.28,"expPlanesKilled":0.01,"expDroppedCapturePoints":4.15},"4290754544":{"expDamage":21535.84,"expFrags":0.47,"expCapturePoints":0.11,"expPlanesKilled":10.03,"expDroppedCapturePoints":1.07},"4282365648":{"expDamage":58552.47,"expFrags":1.03,"expCapturePoints":0.21,"expPlanesKilled":14.47,"expDroppedCapturePoints":3.52},"4286494416":{"expDamage":37589.01,"expFrags":0.89,"expCapturePoints":0.51,"expPlanesKilled":2.39,"expDroppedCapturePoints":2.51},"4288624624":{"expDamage":27886.25,"expFrags":0.7,"expCapturePoints":0.61,"expPlanesKilled":0.62,"expDroppedCapturePoints":2.99},"4291704528":{"expDamage":20966.84,"expFrags":0.81,"expCapturePoints":0.8,"expPlanesKilled":0.09,"expDroppedCapturePoints":1.8},"4282300400":{"expDamage":26363.65,"expFrags":0.62,"expCapturePoints":0.51,"expPlanesKilled":2.63,"expDroppedCapturePoints":2.5},"4183700944":{"expDamage":25303.15,"expFrags":0.93,"expCapturePoints":0.21,"expPlanesKilled":0.24,"expDroppedCapturePoints":0.13},"4272830448":{"expDamage":35877.85,"expFrags":0.89,"expCapturePoints":0.94,"expPlanesKilled":0.9,"expDroppedCapturePoints":1.49},"4269684432":{"expDamage":14878.84,"expFrags":0.68,"expCapturePoints":0.6,"expPlanesKilled":0.02,"expDroppedCapturePoints":2.28},"4290689008":{"expDamage":19863.31,"expFrags":0.75,"expCapturePoints":0.95,"expPlanesKilled":0.01,"expDroppedCapturePoints":8.12},"4293834192":{"expDamage":20309.44,"expFrags":0.79,"expCapturePoints":0.9,"expPlanesKilled":0.02,"expDroppedCapturePoints":7.27},"4284430032":{"expDamage":44630.54,"expFrags":0.83,"expCapturePoints":0.37,"expPlanesKilled":1.38,"expDroppedCapturePoints":1.37},"4292786160":{"expDamage":10188.56,"expFrags":0.45,"expCapturePoints":0.68,"expPlanesKilled":0.01,"expDroppedCapturePoints":7.32},"4279220208":{"expDamage":114841.99,"expFrags":1.7,"expCapturePoints":0.19,"expPlanesKilled":23.7,"expDroppedCapturePoints":2.63},"4288559088":{"expDamage":20807.33,"expFrags":0.78,"expCapturePoints":0.62,"expPlanesKilled":0.45,"expDroppedCapturePoints":1.2},"4288624336":{"expDamage":41307.92,"expFrags":0.94,"expCapturePoints":0.51,"expPlanesKilled":0.98,"expDroppedCapturePoints":2.12},"4282365936":{"expDamage":50758.69,"expFrags":0.8,"expCapturePoints":0.19,"expPlanesKilled":27.87,"expDroppedCapturePoints":1.68},"4289607664":{"expDamage":19327.96,"expFrags":0.73,"expCapturePoints":0.6,"expPlanesKilled":0.52,"expDroppedCapturePoints":1.58},"4281284304":{"expDamage":54088.26,"expFrags":0.9,"expCapturePoints":0.31,"expPlanesKilled":3.38,"expDroppedCapturePoints":1.1},"4285511376":{"expDamage":46031.4,"expFrags":0.98,"expCapturePoints":0.2,"expPlanesKilled":8.6,"expDroppedCapturePoints":3.52},"4293801424":{"expDamage":22831.14,"expFrags":0.82,"expCapturePoints":0.98,"expPlanesKilled":0.35,"expDroppedCapturePoints":4.16},"4274927600":{"expDamage":18131.37,"expFrags":0.74,"expCapturePoints":0.62,"expPlanesKilled":0.03,"expDroppedCapturePoints":2.33},"4288657104":{"expDamage":43891.5,"expFrags":1.01,"expCapturePoints":0.26,"expPlanesKilled":7.02,"expDroppedCapturePoints":2.86},"4292753392":{"expDamage":9707.9,"expFrags":0.56,"expCapturePoints":0.5,"expPlanesKilled":0.01,"expDroppedCapturePoints":3.63},"4273911792":{"expDamage":50014.05,"expFrags":0.83,"expCapturePoints":0.36,"expPlanesKilled":4.27,"expDroppedCapturePoints":3.36},"4276041712":{"expDamage":61782.48,"expFrags":0.92,"expCapturePoints":0.44,"expPlanesKilled":6.45,"expDroppedCapturePoints":1.8},"4282333168":{"expDamage":52105.09,"expFrags":0.86,"expCapturePoints":0.4,"expPlanesKilled":5.73,"expDroppedCapturePoints":1.4},"4186846672":{"expDamage":11800.18,"expFrags":0.68,"expCapturePoints":0.26,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.42},"4292753104":{"expDamage":12006.74,"expFrags":0.69,"expCapturePoints":0.66,"expPlanesKilled":0.01,"expDroppedCapturePoints":3.09},"4269717488":{"expDamage":17973.84,"expFrags":0.55,"expCapturePoints":0.5,"expPlanesKilled":0.13,"expDroppedCapturePoints":4.66},"4292851408":{"expDamage":36548.43,"expFrags":0.9,"expCapturePoints":0.3,"expPlanesKilled":6.16,"expDroppedCapturePoints":1.89},"4186879792":{"expDamage":16426.53,"expFrags":0.8,"expCapturePoints":0.41,"expPlanesKilled":0.01,"expDroppedCapturePoints":1.05},"4184782640":{"expDamage":31413.84,"expFrags":1.01,"expCapturePoints":0.18,"expPlanesKilled":0.27,"expDroppedCapturePoints":0.7},"4292785616":{"expDamage":14271.23,"expFrags":0.7,"expCapturePoints":0.79,"expPlanesKilled":0.01,"expDroppedCapturePoints":3.34},"4283414224":{"expDamage":54782.77,"expFrags":1.09,"expCapturePoints":0.24,"expPlanesKilled":14.08,"expDroppedCapturePoints":3.81},"4281284592":{"expDamage":26740.84,"expFrags":0.77,"expCapturePoints":1.08,"expPlanesKilled":0.01,"expDroppedCapturePoints":5.88},"4284463088":{"expDamage":48138.29,"expFrags":0.88,"expCapturePoints":0.16,"expPlanesKilled":16.71,"expDroppedCapturePoints":2.35},"4277090288":{"expDamage":72719.28,"expFrags":0.93,"expCapturePoints":0.34,"expPlanesKilled":7.99,"expDroppedCapturePoints":1.97},"4288591856":{"expDamage":23929.73,"expFrags":0.7,"expCapturePoints":0.68,"expPlanesKilled":3.01,"expDroppedCapturePoints":3.82},"4287543280":{"expDamage":31965.55,"expFrags":0.92,"expCapturePoints":0.69,"expPlanesKilled":3.16,"expDroppedCapturePoints":4.18},"3769513264":{"expDamage":31330.08,"expFrags":1.12,"expCapturePoints":0.39,"expPlanesKilled":0.37,"expDroppedCapturePoints":0.06},"4290721776":{"expDamage":26296.36,"expFrags":0.74,"expCapturePoints":0.91,"expPlanesKilled":0.45,"expDroppedCapturePoints":4.68},"4255037136":{"expDamage":26631.87,"expFrags":0.51,"expCapturePoints":0.44,"expPlanesKilled":1.83,"expDroppedCapturePoints":3.13},"4185798096":{"expDamage":15542.62,"expFrags":0.69,"expCapturePoints":0.33,"expPlanesKilled":0.07,"expDroppedCapturePoints":0.5},"4287510224":{"expDamage":27979.16,"expFrags":0.7,"expCapturePoints":0.63,"expPlanesKilled":0.45,"expDroppedCapturePoints":0.97},"4291770064":{"expDamage":20036.32,"expFrags":0.52,"expCapturePoints":0.7,"expPlanesKilled":0.46,"expDroppedCapturePoints":3.3},"4281317360":{"expDamage":86203.1,"expFrags":1.43,"expCapturePoints":0.24,"expPlanesKilled":21.9,"expDroppedCapturePoints":2.58},"4187895248":{"expDamage":8670.57,"expFrags":0.68,"expCapturePoints":0.13,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.32},"4292851696":{"expDamage":24359.63,"expFrags":0.5,"expCapturePoints":0.11,"expPlanesKilled":12.56,"expDroppedCapturePoints":1.93},"4184749520":{"expDamage":22479.07,"expFrags":0.9,"expCapturePoints":0.28,"expPlanesKilled":0.19,"expDroppedCapturePoints":0.39},"4282300112":{"expDamage":43831.01,"expFrags":0.78,"expCapturePoints":0.45,"expPlanesKilled":3.38,"expDroppedCapturePoints":2.5},"4182685488":{"expDamage":30549.26,"expFrags":0.76,"expCapturePoints":0.02,"expPlanesKilled":1.69,"expDroppedCapturePoints":0.1},"4289640432":{"expDamage":28178.73,"expFrags":0.86,"expCapturePoints":0.63,"expPlanesKilled":1.14,"expDroppedCapturePoints":4.98},"4279219920":{"expDamage":79148.77,"expFrags":1.35,"expCapturePoints":0.28,"expPlanesKilled":19.79,"expDroppedCapturePoints":4.55},"4272895696":{"expDamage":54035.35,"expFrags":0.77,"expCapturePoints":0.28,"expPlanesKilled":4.19,"expDroppedCapturePoints":1.51},"4290688720":{"expDamage":19057.74,"expFrags":0.66,"expCapturePoints":0.71,"expPlanesKilled":1.65,"expDroppedCapturePoints":5.69},"4284364496":{"expDamage":36335.98,"expFrags":0.7,"expCapturePoints":0.93,"expPlanesKilled":0.39,"expDroppedCapturePoints":1.4},"4292785968":{"expDamage":13936.27,"expFrags":0.95,"expCapturePoints":0.27,"expPlanesKilled":0.01,"expDroppedCapturePoints":0.85},"4287575760":{"expDamage":29504.94,"expFrags":0.71,"expCapturePoints":0.55,"expPlanesKilled":1.02,"expDroppedCapturePoints":2.7},"4281251536":{"expDamage":23560.09,"expFrags":0.76,"expCapturePoints":0.58,"expPlanesKilled":0.29,"expDroppedCapturePoints":4.96}}');
+				ExpShips = jQ.parseJSON('{"4292818736":{"expDamage":44381.43,"expFrags":0.73,"expPlanesKilled":2.04},"4293834544":{"expDamage":7892.27,"expFrags":0.62,"expPlanesKilled":0.01},"4287542992":{"expDamage":27407.18,"expFrags":0.74,"expPlanesKilled":1.76},"4188976592":{"expDamage":8576.18,"expFrags":0.66,"expPlanesKilled":0.01},"4288558800":{"expDamage":22197.05,"expFrags":0.67,"expPlanesKilled":0.45},"4289607376":{"expDamage":19683.82,"expFrags":0.63,"expPlanesKilled":0.53},"4277057520":{"expDamage":34068.77,"expFrags":0.63,"expPlanesKilled":4.13},"4180588336":{"expDamage":45910.69,"expFrags":0.82,"expPlanesKilled":1.66},"4276041424":{"expDamage":81883.32,"expFrags":0.95,"expPlanesKilled":5.05},"4180555216":{"expDamage":27119.9,"expFrags":0.9,"expPlanesKilled":0.33},"4264441840":{"expDamage":14992.99,"expFrags":0.49,"expPlanesKilled":0.27},"4266538992":{"expDamage":12175.31,"expFrags":0.56,"expPlanesKilled":0.02},"4293867504":{"expDamage":17220.69,"expFrags":0.62,"expPlanesKilled":0.03},"4183734064":{"expDamage":27119.78,"expFrags":0.8,"expPlanesKilled":0.68},"4290655952":{"expDamage":25809.42,"expFrags":0.93,"expPlanesKilled":0.12},"4291737040":{"expDamage":30029.34,"expFrags":0.91,"expPlanesKilled":1.25},"4277122768":{"expDamage":85354.31,"expFrags":1.2,"expPlanesKilled":21.0},"4286527184":{"expDamage":25561.71,"expFrags":0.77,"expPlanesKilled":0.17},"4259231440":{"expDamage":67179.42,"expFrags":1.0,"expPlanesKilled":2.67},"3768497968":{"expDamage":16331.25,"expFrags":0.95,"expPlanesKilled":0.01},"4293866960":{"expDamage":35088.17,"expFrags":1.06,"expPlanesKilled":0.04},"4293834736":{"expDamage":9009.93,"expFrags":0.59,"expPlanesKilled":0.01},"4289640144":{"expDamage":19815.55,"expFrags":0.57,"expPlanesKilled":0.35},"4267620048":{"expDamage":28338.06,"expFrags":1.06,"expPlanesKilled":0.97},"4286461936":{"expDamage":26535.73,"expFrags":0.84,"expPlanesKilled":0.3},"4288657392":{"expDamage":30896.72,"expFrags":0.6,"expPlanesKilled":12.07},"4280170480":{"expDamage":18827.3,"expFrags":0.73,"expPlanesKilled":0.39},"4256085712":{"expDamage":10922.49,"expFrags":0.8,"expPlanesKilled":0.01},"4259264496":{"expDamage":37141.92,"expFrags":0.87,"expPlanesKilled":0.84},"4268635856":{"expDamage":36638.37,"expFrags":1.43,"expPlanesKilled":0.01},"4182652368":{"expDamage":33643.02,"expFrags":0.8,"expPlanesKilled":0.6},"4248745968":{"expDamage":38728.96,"expFrags":1.29,"expPlanesKilled":0.24},"4258182864":{"expDamage":12852.49,"expFrags":0.58,"expPlanesKilled":0.01},"4280170192":{"expDamage":16574.53,"expFrags":1.04,"expPlanesKilled":0.01},"4185831216":{"expDamage":14764.96,"expFrags":0.51,"expPlanesKilled":0.04},"3554621136":{"expDamage":44472.51,"expFrags":1.02,"expPlanesKilled":1.45},"4291737584":{"expDamage":12708.43,"expFrags":0.72,"expPlanesKilled":0.01},"4286527472":{"expDamage":42856.08,"expFrags":0.8,"expPlanesKilled":1.51},"4292818896":{"expDamage":34310.54,"expFrags":0.79,"expPlanesKilled":1.89},"4282267344":{"expDamage":52355.34,"expFrags":0.87,"expPlanesKilled":0.36},"4280203248":{"expDamage":31678.18,"expFrags":0.64,"expPlanesKilled":3.12},"4181636912":{"expDamage":35338.8,"expFrags":0.73,"expPlanesKilled":1.63},"4293801680":{"expDamage":16574.53,"expFrags":1.04,"expPlanesKilled":0.01},"4247697392":{"expDamage":38728.96,"expFrags":1.29,"expPlanesKilled":0.24},"4285445840":{"expDamage":40190.77,"expFrags":0.88,"expPlanesKilled":1.89},"4279154384":{"expDamage":16733.58,"expFrags":0.66,"expPlanesKilled":0.04},"4283381456":{"expDamage":13551.31,"expFrags":0.78,"expPlanesKilled":0.01},"4293867216":{"expDamage":18258.15,"expFrags":0.71,"expPlanesKilled":0.06},"4290754544":{"expDamage":20433.88,"expFrags":0.44,"expPlanesKilled":10.19},"4286494416":{"expDamage":39360.63,"expFrags":1.0,"expPlanesKilled":2.26},"4282365648":{"expDamage":53436.14,"expFrags":0.91,"expPlanesKilled":15.37},"4288624624":{"expDamage":27267.71,"expFrags":0.68,"expPlanesKilled":0.57},"4291704528":{"expDamage":20835.45,"expFrags":0.81,"expPlanesKilled":0.09},"4282300400":{"expDamage":25381.43,"expFrags":0.6,"expPlanesKilled":2.12},"4183700944":{"expDamage":18152.88,"expFrags":0.67,"expPlanesKilled":0.17},"4272830448":{"expDamage":33689.36,"expFrags":0.9,"expPlanesKilled":0.57},"4269684432":{"expDamage":14803.92,"expFrags":0.67,"expPlanesKilled":0.02},"4290689008":{"expDamage":19356.58,"expFrags":0.74,"expPlanesKilled":0.01},"4293834192":{"expDamage":20521.1,"expFrags":0.81,"expPlanesKilled":0.02},"4292786160":{"expDamage":10000.76,"expFrags":0.45,"expPlanesKilled":0.01},"4284430032":{"expDamage":44777.07,"expFrags":0.81,"expPlanesKilled":1.09},"4288559088":{"expDamage":19957.26,"expFrags":0.72,"expPlanesKilled":0.32},"4279220208":{"expDamage":104791.58,"expFrags":1.51,"expPlanesKilled":24.74},"4288624336":{"expDamage":41083.36,"expFrags":0.93,"expPlanesKilled":0.85},"4282365936":{"expDamage":47308.47,"expFrags":0.75,"expPlanesKilled":27.01},"4289607664":{"expDamage":17929.55,"expFrags":0.68,"expPlanesKilled":0.45},"4281284304":{"expDamage":55626.33,"expFrags":0.93,"expPlanesKilled":2.77},"4285511376":{"expDamage":40394.81,"expFrags":0.84,"expPlanesKilled":9.8},"3553572560":{"expDamage":44472.51,"expFrags":1.02,"expPlanesKilled":1.45},"4293801424":{"expDamage":22581.8,"expFrags":0.82,"expPlanesKilled":0.34},"4274927600":{"expDamage":17863.3,"expFrags":0.74,"expPlanesKilled":0.03},"4288657104":{"expDamage":40183.56,"expFrags":0.91,"expPlanesKilled":7.3},"4292753392":{"expDamage":9508.99,"expFrags":0.56,"expPlanesKilled":0.01},"4273911792":{"expDamage":53723.44,"expFrags":0.88,"expPlanesKilled":3.49},"4276041712":{"expDamage":60091.8,"expFrags":0.87,"expPlanesKilled":4.71},"4179506640":{"expDamage":40629.69,"expFrags":0.81,"expPlanesKilled":1.0},"4284397008":{"expDamage":19949.31,"expFrags":0.95,"expPlanesKilled":0.01},"4282333168":{"expDamage":52216.96,"expFrags":0.85,"expPlanesKilled":4.43},"4186846672":{"expDamage":11102.51,"expFrags":0.58,"expPlanesKilled":0.01},"4292753104":{"expDamage":11726.37,"expFrags":0.68,"expPlanesKilled":0.01},"4277024464":{"expDamage":36638.37,"expFrags":1.43,"expPlanesKilled":0.01},"4269717488":{"expDamage":17935.15,"expFrags":0.56,"expPlanesKilled":0.13},"4292851408":{"expDamage":34585.0,"expFrags":0.83,"expPlanesKilled":6.16},"4186879792":{"expDamage":15100.18,"expFrags":0.67,"expPlanesKilled":0.01},"4184782640":{"expDamage":27766.33,"expFrags":0.87,"expPlanesKilled":0.25},"4292785616":{"expDamage":19949.31,"expFrags":0.95,"expPlanesKilled":0.01},"4283414224":{"expDamage":49607.57,"expFrags":0.95,"expPlanesKilled":14.8},"4281284592":{"expDamage":27190.76,"expFrags":0.79,"expPlanesKilled":0.01},"3555669712":{"expDamage":44472.51,"expFrags":1.02,"expPlanesKilled":1.45},"4267587280":{"expDamage":36638.37,"expFrags":1.43,"expPlanesKilled":0.01},"4284463088":{"expDamage":44282.2,"expFrags":0.8,"expPlanesKilled":16.78},"4288591856":{"expDamage":22777.69,"expFrags":0.68,"expPlanesKilled":2.75},"4277090288":{"expDamage":72559.28,"expFrags":0.92,"expPlanesKilled":6.02},"4287543280":{"expDamage":30122.78,"expFrags":0.87,"expPlanesKilled":2.84},"3769513264":{"expDamage":21617.8,"expFrags":0.73,"expPlanesKilled":0.19},"4290721776":{"expDamage":26461.37,"expFrags":0.75,"expPlanesKilled":0.45},"4255037136":{"expDamage":28131.73,"expFrags":0.55,"expPlanesKilled":1.72},"3555636944":{"expDamage":39360.63,"expFrags":1.0,"expPlanesKilled":2.26},"4179539760":{"expDamage":63527.57,"expFrags":0.99,"expPlanesKilled":2.5},"4185798096":{"expDamage":13712.59,"expFrags":0.58,"expPlanesKilled":0.07},"4287510224":{"expDamage":26909.03,"expFrags":0.7,"expPlanesKilled":0.35},"4291770064":{"expDamage":20597.6,"expFrags":0.55,"expPlanesKilled":0.49},"3552523984":{"expDamage":44472.51,"expFrags":1.02,"expPlanesKilled":1.45},"4281219056":{"expDamage":42846.63,"expFrags":0.85,"expPlanesKilled":0.83},"4281317360":{"expDamage":79876.74,"expFrags":1.28,"expPlanesKilled":21.92},"4187895248":{"expDamage":8276.49,"expFrags":0.58,"expPlanesKilled":0.01},"3762206160":{"expDamage":30798.65,"expFrags":0.71,"expPlanesKilled":3.47},"4292851696":{"expDamage":22020.05,"expFrags":0.44,"expPlanesKilled":12.71},"4184749520":{"expDamage":17748.09,"expFrags":0.7,"expPlanesKilled":0.17},"4282300112":{"expDamage":41896.23,"expFrags":0.74,"expPlanesKilled":2.61},"4289640432":{"expDamage":26846.88,"expFrags":0.82,"expPlanesKilled":1.04},"4182685488":{"expDamage":26828.93,"expFrags":0.66,"expPlanesKilled":1.05},"4290688720":{"expDamage":19138.12,"expFrags":0.67,"expPlanesKilled":1.65},"4279219920":{"expDamage":73950.93,"expFrags":1.21,"expPlanesKilled":20.0},"4272895696":{"expDamage":54736.52,"expFrags":0.78,"expPlanesKilled":3.09},"4181603792":{"expDamage":24902.28,"expFrags":0.74,"expPlanesKilled":0.41},"4292785968":{"expDamage":13731.52,"expFrags":0.87,"expPlanesKilled":0.01},"4284364496":{"expDamage":36019.61,"expFrags":0.74,"expPlanesKilled":0.29},"4287575760":{"expDamage":44472.51,"expFrags":1.02,"expPlanesKilled":1.45},"4281251536":{"expDamage":23428.4,"expFrags":0.77,"expPlanesKilled":0.27}}');
 			}else{
 				ExpShips = response;
 			}
 		}
 		function updateExpWTR(response){
 			if(response == null){
-				ExpWTR = jQ.parseJSON('{"coefficients":{"wins_weight":0.25,"damage_weight":0.5,"frags_weight":0.25,"capture_weight":0,"dropped_capture_weight":0,"ship_frags_importance_weight":10,"nominal_rating":1000},"expected":{"4184782640":{"ship_id":4184782640,"wins":0.51144236326218,"damage_dealt":29327.34765625,"frags":0.87535357475281,"capture_points":0.07742128521204,"dropped_capture_points":0.35328429937363,"planes_killed":0.27712514996529},"4185831216":{"ship_id":4185831216,"wins":0.47205796837807,"damage_dealt":14347.674804688,"frags":0.46883052587509,"capture_points":0.17762111127377,"dropped_capture_points":0.54029613733292,"planes_killed":0.034302607178688},"4293801680":{"ship_id":4293801680,"wins":0.53981232643127,"damage_dealt":14058.28515625,"frags":0.93045520782471,"capture_points":0.24825662374496,"dropped_capture_points":0.4013566672802,"planes_killed":0},"4286527472":{"ship_id":4286527472,"wins":0.46909514069557,"damage_dealt":41040.66796875,"frags":0.70126676559448,"capture_points":0.29407414793968,"dropped_capture_points":1.3278222084045,"planes_killed":1.9318579435349},"4287542992":{"ship_id":4287542992,"wins":0.48064929246902,"damage_dealt":27909.423828125,"frags":0.70683819055557,"capture_points":0.55140209197998,"dropped_capture_points":2.5795605182648,"planes_killed":1.9272725582123},"4282300112":{"ship_id":4282300112,"wins":0.47857391834259,"damage_dealt":43702.1015625,"frags":0.70744508504868,"capture_points":0.45598375797272,"dropped_capture_points":2.5085189342499,"planes_killed":2.7388224601746},"4293801424":{"ship_id":4293801424,"wins":0.52133285999298,"damage_dealt":27596.884765625,"frags":0.97438377141953,"capture_points":1.1443283557892,"dropped_capture_points":3.7691659927368,"planes_killed":0.35605230927467},"4272895696":{"ship_id":4272895696,"wins":0.46596679091454,"damage_dealt":53508.98828125,"frags":0.67378884553909,"capture_points":0.2365470379591,"dropped_capture_points":1.4500216245651,"planes_killed":3.587721824646},"4283414224":{"ship_id":4283414224,"wins":0.49976310133934,"damage_dealt":51859.02734375,"frags":0.96926707029343,"capture_points":0.20859603583813,"dropped_capture_points":3.4542102813721,"planes_killed":16.364891052246},"4277090288":{"ship_id":4277090288,"wins":0.47736895084381,"damage_dealt":74486.328125,"frags":0.85579180717468,"capture_points":0.37277370691299,"dropped_capture_points":2.0491509437561,"planes_killed":6.6390309333801},"4282300400":{"ship_id":4282300400,"wins":0.46682730317116,"damage_dealt":27003.578125,"frags":0.59626632928848,"capture_points":0.49385052919388,"dropped_capture_points":2.402939081192,"planes_killed":2.4023733139038},"4268635856":{"ship_id":4268635856,"wins":0.72727274894714,"damage_dealt":33277.6953125,"frags":1,"capture_points":0,"dropped_capture_points":0,"planes_killed":0},"3762206160":{"ship_id":3762206160,"wins":0.51406466960907,"damage_dealt":32726.25390625,"frags":0.72151899337769,"capture_points":0.022503515705466,"dropped_capture_points":0.042194094508886,"planes_killed":1.9486638307571},"4287575760":{"ship_id":4287575760,"wins":0.48265165090561,"damage_dealt":31814.04296875,"frags":0.70619660615921,"capture_points":0.50732213258743,"dropped_capture_points":2.289083480835,"planes_killed":1.267110824585},"4292753392":{"ship_id":4292753392,"wins":0.46884316205978,"damage_dealt":9142.3876953125,"frags":0.52234119176865,"capture_points":0.43803408741951,"dropped_capture_points":2.8511443138123,"planes_killed":0.00033849669853225},"4291770064":{"ship_id":4291770064,"wins":0.46141958236694,"damage_dealt":20754.75,"frags":0.5038595199585,"capture_points":0.64177030324936,"dropped_capture_points":2.796489238739,"planes_killed":0.62163323163986},"4281284304":{"ship_id":4281284304,"wins":0.50143712759018,"damage_dealt":56466.83203125,"frags":0.84902656078339,"capture_points":0.27920430898666,"dropped_capture_points":1.1814756393433,"planes_killed":3.3837628364563},"4292851408":{"ship_id":4292851408,"wins":0.50081539154053,"damage_dealt":37207.19140625,"frags":0.86703306436539,"capture_points":0.2615262567997,"dropped_capture_points":1.6023281812668,"planes_killed":6.671886920929},"4264441840":{"ship_id":4264441840,"wins":0.44569125771523,"damage_dealt":16115.174804688,"frags":0.49565368890762,"capture_points":0.88410931825638,"dropped_capture_points":2.7871909141541,"planes_killed":0.21849791705608},"4287510224":{"ship_id":4287510224,"wins":0.47590667009354,"damage_dealt":27835.193359375,"frags":0.61677467823029,"capture_points":0.6986123919487,"dropped_capture_points":0.87761247158051,"planes_killed":0.47129198908806},"4290754544":{"ship_id":4290754544,"wins":0.46101638674736,"damage_dealt":23401.916015625,"frags":0.48008349537849,"capture_points":0.092204891145229,"dropped_capture_points":0.86285030841827,"planes_killed":11.110766410828},"4293834192":{"ship_id":4293834192,"wins":0.51346826553345,"damage_dealt":22706.90234375,"frags":0.8711941242218,"capture_points":0.86314624547958,"dropped_capture_points":5.7426495552063,"planes_killed":0.01520515140146},"4286527184":{"ship_id":4286527184,"wins":0.49285337328911,"damage_dealt":24788.845703125,"frags":0.70002764463425,"capture_points":0.61998111009598,"dropped_capture_points":3.0085229873657,"planes_killed":0.15929062664509},"4279154384":{"ship_id":4279154384,"wins":0.47522038221359,"damage_dealt":16343.153320312,"frags":0.61388367414474,"capture_points":0.61372125148773,"dropped_capture_points":4.5212726593018,"planes_killed":0.03521366789937},"4292785968":{"ship_id":4292785968,"wins":0.5201216340065,"damage_dealt":14511.73046875,"frags":0.84488886594772,"capture_points":0.20043376088142,"dropped_capture_points":0.68648815155029,"planes_killed":6.3309278630186e-5},"4280170192":{"ship_id":4280170192,"wins":0.59036141633987,"damage_dealt":15485.84375,"frags":0.89759033918381,"capture_points":1.0481927394867,"dropped_capture_points":5.1144576072693,"planes_killed":0},"4279219920":{"ship_id":4279219920,"wins":0.49095487594604,"damage_dealt":79527.5703125,"frags":1.2524645328522,"capture_points":0.18717786669731,"dropped_capture_points":4.39031457901,"planes_killed":22.605403900146},"4182685488":{"ship_id":4182685488,"wins":0.48864328861237,"damage_dealt":26444.470703125,"frags":0.62262511253357,"capture_points":0.0098546668887138,"dropped_capture_points":0.025494255125523,"planes_killed":1.0719004869461},"4255037136":{"ship_id":4255037136,"wins":0.45577567815781,"damage_dealt":30378.376953125,"frags":0.55397969484329,"capture_points":0.40117424726486,"dropped_capture_points":2.4196634292603,"planes_killed":1.6874372959137},"4181636912":{"ship_id":4181636912,"wins":0.50244331359863,"damage_dealt":35992.875,"frags":0.68271744251251,"capture_points":0.020216653123498,"dropped_capture_points":0.086358621716499,"planes_killed":1.5575255155563},"4183700944":{"ship_id":4183700944,"wins":0.52490627765656,"damage_dealt":22087.02734375,"frags":0.77518689632416,"capture_points":0.028218938037753,"dropped_capture_points":0.021830813959241,"planes_killed":0.20426772534847},"4180588336":{"ship_id":4180588336,"wins":0.49620488286018,"damage_dealt":44817.76953125,"frags":0.70956927537918,"capture_points":0.055785797536373,"dropped_capture_points":0.26235157251358,"planes_killed":1.5549708604813},"4273911792":{"ship_id":4273911792,"wins":0.47715365886688,"damage_dealt":52567.1171875,"frags":0.79459488391876,"capture_points":0.46731999516487,"dropped_capture_points":2.7926111221313,"planes_killed":5.2445363998413},"4293834544":{"ship_id":4293834544,"wins":0.48983442783356,"damage_dealt":8690.453125,"frags":0.68860483169556,"capture_points":0.08774196356535,"dropped_capture_points":0.23115234076977,"planes_killed":0.0036653624847531},"4293867504":{"ship_id":4293867504,"wins":0.47476980090141,"damage_dealt":17623.275390625,"frags":0.59116113185883,"capture_points":0.90126675367355,"dropped_capture_points":4.6952438354492,"planes_killed":0.019691698253155},"3769513264":{"ship_id":3769513264,"wins":0.51616472005844,"damage_dealt":23294.26953125,"frags":0.72660940885544,"capture_points":0.017924821004272,"dropped_capture_points":0.034919008612633,"planes_killed":0.16143128275871},"4277024464":{"ship_id":4277024464,"wins":0.54149156808853,"damage_dealt":28624.5703125,"frags":1.0049687623978,"capture_points":0.18166197836399,"dropped_capture_points":0.11372448503971,"planes_killed":0.0023218556307256},"4290688720":{"ship_id":4290688720,"wins":0.48792213201523,"damage_dealt":21207.95703125,"frags":0.72139596939087,"capture_points":0.78781008720398,"dropped_capture_points":5.0412755012512,"planes_killed":2.1373159885406},"4292753104":{"ship_id":4292753104,"wins":0.51334017515182,"damage_dealt":13375.862304688,"frags":0.75151073932648,"capture_points":0.71292144060135,"dropped_capture_points":2.4542906284332,"planes_killed":0.0025320558343083},"4288657392":{"ship_id":4288657392,"wins":0.46958178281784,"damage_dealt":32925.06640625,"frags":0.61053228378296,"capture_points":0.23886477947235,"dropped_capture_points":2.033046245575,"planes_killed":12.373122215271},"4292786160":{"ship_id":4292786160,"wins":0.46840387582779,"damage_dealt":9682.4677734375,"frags":0.41476845741272,"capture_points":0.6209329366684,"dropped_capture_points":6.0186038017273,"planes_killed":0.00023354696168099},"4284430032":{"ship_id":4284430032,"wins":0.48798614740372,"damage_dealt":46599.30078125,"frags":0.76956462860107,"capture_points":0.29414123296738,"dropped_capture_points":1.225365281105,"planes_killed":1.3579453229904},"4286494416":{"ship_id":4286494416,"wins":0.50189566612244,"damage_dealt":35526.34765625,"frags":0.78310096263885,"capture_points":0.46726503968239,"dropped_capture_points":2.2390806674957,"planes_killed":2.1743800640106},"4179539760":{"ship_id":4179539760,"wins":0.48635476827621,"damage_dealt":60039.8984375,"frags":0.80303031206131,"capture_points":0.028708133846521,"dropped_capture_points":0.24401913583279,"planes_killed":2.4687223434448},"4291704528":{"ship_id":4291704528,"wins":0.4903489947319,"damage_dealt":21143.6328125,"frags":0.78706359863281,"capture_points":0.86750078201294,"dropped_capture_points":1.3478718996048,"planes_killed":0.081807471811771},"4276041712":{"ship_id":4276041712,"wins":0.48816350102425,"damage_dealt":61051.21875,"frags":0.82696229219437,"capture_points":0.4640905559063,"dropped_capture_points":2.046421289444,"planes_killed":5.6800532341003},"4279220208":{"ship_id":4279220208,"wins":0.57496285438538,"damage_dealt":125114.5859375,"frags":1.7496103048325,"capture_points":0.2257222533226,"dropped_capture_points":2.4983325004578,"planes_killed":21.959182739258},"4289607664":{"ship_id":4289607664,"wins":0.47378101944923,"damage_dealt":17635.37890625,"frags":0.63037109375,"capture_points":0.52872961759567,"dropped_capture_points":1.3554534912109,"planes_killed":0.44579941034317},"4274927600":{"ship_id":4274927600,"wins":0.48215329647064,"damage_dealt":17748.029296875,"frags":0.71034383773804,"capture_points":0.58598625659943,"dropped_capture_points":1.8459652662277,"planes_killed":0.015847567468882},"4288624336":{"ship_id":4288624336,"wins":0.49519303441048,"damage_dealt":43122.5703125,"frags":0.87558656930923,"capture_points":0.3764982521534,"dropped_capture_points":1.7660456895828,"planes_killed":0.97625946998596},"4182652368":{"ship_id":4182652368,"wins":0.53325682878494,"damage_dealt":37980.265625,"frags":0.85911917686462,"capture_points":0.15483598411083,"dropped_capture_points":0.34428805112839,"planes_killed":0.78680598735809},"4180555216":{"ship_id":4180555216,"wins":0.57742524147034,"damage_dealt":34757.765625,"frags":1.0727962255478,"capture_points":0.028936488553882,"dropped_capture_points":0.041177026927471,"planes_killed":0.44909682869911},"4276041424":{"ship_id":4276041424,"wins":0.52029538154602,"damage_dealt":86303.0078125,"frags":0.85731720924377,"capture_points":0.26217433810234,"dropped_capture_points":1.3853801488876,"planes_killed":5.5114479064941},"4292818896":{"ship_id":4292818896,"wins":0.48409178853035,"damage_dealt":37620.328125,"frags":0.78764349222183,"capture_points":0.58300858736038,"dropped_capture_points":2.5061447620392,"planes_killed":1.7604503631592},"4291737584":{"ship_id":4291737584,"wins":0.5124300122261,"damage_dealt":13101.841796875,"frags":0.74404162168503,"capture_points":1.1191152334213,"dropped_capture_points":8.2380666732788,"planes_killed":0.00055324425920844},"4256085712":{"ship_id":4256085712,"wins":0.51597660779953,"damage_dealt":11982.62109375,"frags":0.88534218072891,"capture_points":0.98543953895569,"dropped_capture_points":7.8380074501038,"planes_killed":0.0094841429963708},"4288559088":{"ship_id":4288559088,"wins":0.48405650258064,"damage_dealt":19866.423828125,"frags":0.66655617952347,"capture_points":0.50879180431366,"dropped_capture_points":1.023851275444,"planes_killed":0.35601687431335},"4284397008":{"ship_id":4284397008,"wins":0.58796298503876,"damage_dealt":23804.189453125,"frags":1.129629611969,"capture_points":1.3009259700775,"dropped_capture_points":14.680555343628,"planes_killed":0},"4292851696":{"ship_id":4292851696,"wins":0.45927909016609,"damage_dealt":21429.2890625,"frags":0.41698998212814,"capture_points":0.083820283412933,"dropped_capture_points":1.651645898819,"planes_killed":13.947665214539},"4184749520":{"ship_id":4184749520,"wins":0.51361870765686,"damage_dealt":21119.681640625,"frags":0.79473829269409,"capture_points":0.092410244047642,"dropped_capture_points":0.17881728708744,"planes_killed":0.1809868812561},"4282365936":{"ship_id":4282365936,"wins":0.46910259127617,"damage_dealt":47589.0546875,"frags":0.71761804819107,"capture_points":0.12464741617441,"dropped_capture_points":1.4792764186859,"planes_killed":27.842367172241},"4285445840":{"ship_id":4285445840,"wins":0.50853610038757,"damage_dealt":42696.13671875,"frags":0.85157352685928,"capture_points":0.4660656452179,"dropped_capture_points":2.5877184867859,"planes_killed":2.2109701633453},"4282365648":{"ship_id":4282365648,"wins":0.4840704202652,"damage_dealt":60911.66015625,"frags":1.0253527164459,"capture_points":0.20305614173412,"dropped_capture_points":3.9538433551788,"planes_killed":15.684978485107},"4293867312":{"ship_id":4293867312,"wins":0.33333334326744,"damage_dealt":47393.109375,"frags":1.111111164093,"capture_points":0,"dropped_capture_points":13.777777671814,"planes_killed":0.55555558204651},"4287543280":{"ship_id":4287543280,"wins":0.49188962578773,"damage_dealt":31108.79296875,"frags":0.84891390800476,"capture_points":0.63077801465988,"dropped_capture_points":3.6441118717194,"planes_killed":2.9725940227509},"4289607376":{"ship_id":4289607376,"wins":0.47140210866928,"damage_dealt":20341.80078125,"frags":0.57508307695389,"capture_points":0.92420160770416,"dropped_capture_points":0.79397934675217,"planes_killed":0.58541172742844},"4283381456":{"ship_id":4283381456,"wins":0.5108608007431,"damage_dealt":12774.908203125,"frags":0.69592261314392,"capture_points":1.0902901887894,"dropped_capture_points":3.678070306778,"planes_killed":0},"4290655952":{"ship_id":4290655952,"wins":0.49738252162933,"damage_dealt":26901.880859375,"frags":0.90426748991013,"capture_points":1.0334584712982,"dropped_capture_points":1.2482552528381,"planes_killed":0.1155132651329},"4186846672":{"ship_id":4186846672,"wins":0.48983815312386,"damage_dealt":12132.255859375,"frags":0.62430566549301,"capture_points":0.1561608761549,"dropped_capture_points":0.29215821623802,"planes_killed":0.0012102660257369},"4280203248":{"ship_id":4280203248,"wins":0.47312697768211,"damage_dealt":31305.328125,"frags":0.59218579530716,"capture_points":0.55304419994354,"dropped_capture_points":2.538426399231,"planes_killed":3.5944085121155},"4247697392":{"ship_id":4247697392,"wins":0.62285715341568,"damage_dealt":42781.4375,"frags":1.3628571033478,"capture_points":0.91142857074738,"dropped_capture_points":7.0999999046326,"planes_killed":0.25714287161827},"4188976592":{"ship_id":4188976592,"wins":0.51522177457809,"damage_dealt":10208.93359375,"frags":0.8022027015686,"capture_points":0.10607925802469,"dropped_capture_points":0.27303048968315,"planes_killed":0.00087216187966987},"4269717488":{"ship_id":4269717488,"wins":0.47313794493675,"damage_dealt":19595.396484375,"frags":0.58269023895264,"capture_points":0.53379386663437,"dropped_capture_points":4.257984161377,"planes_killed":0.15035820007324},"4285511376":{"ship_id":4285511376,"wins":0.5000387430191,"damage_dealt":44368.25390625,"frags":0.90319794416428,"capture_points":0.17720854282379,"dropped_capture_points":3.3632996082306,"planes_killed":9.3871831893921},"4290721776":{"ship_id":4290721776,"wins":0.48567771911621,"damage_dealt":27086.42578125,"frags":0.71517157554626,"capture_points":0.78359854221344,"dropped_capture_points":3.8070821762085,"planes_killed":0.5122092962265},"4277122768":{"ship_id":4277122768,"wins":0.52414709329605,"damage_dealt":99352.875,"frags":1.464435338974,"capture_points":0.28929537534714,"dropped_capture_points":5.0580668449402,"planes_killed":24.937957763672},"4280202960":{"ship_id":4280202960,"wins":0.40000000596046,"damage_dealt":25757.029296875,"frags":0.54285717010498,"capture_points":0,"dropped_capture_points":2.2571427822113,"planes_killed":0.65714287757874},"4292785616":{"ship_id":4292785616,"wins":0.52972388267517,"damage_dealt":16421.02734375,"frags":0.80425155162811,"capture_points":0.51654332876205,"dropped_capture_points":3.0945284366608,"planes_killed":0},"4284463088":{"ship_id":4284463088,"wins":0.46392181515694,"damage_dealt":43396.60546875,"frags":0.73413914442062,"capture_points":0.10792381316423,"dropped_capture_points":2.0727033615112,"planes_killed":17.886707305908},"4282267344":{"ship_id":4282267344,"wins":0.49188193678856,"damage_dealt":54646.8515625,"frags":0.79407215118408,"capture_points":0.8702580332756,"dropped_capture_points":0.95413875579834,"planes_killed":0.45606598258018},"4277057520":{"ship_id":4277057520,"wins":0.45663878321648,"damage_dealt":33464.9375,"frags":0.58509737253189,"capture_points":0.61205947399139,"dropped_capture_points":3.0625936985016,"planes_killed":5.2400588989258},"4293867216":{"ship_id":4293867216,"wins":0.48608022928238,"damage_dealt":17311.271484375,"frags":0.64228767156601,"capture_points":1.0178252458572,"dropped_capture_points":4.148561000824,"planes_killed":0.055775254964828},"4282333168":{"ship_id":4282333168,"wins":0.47675603628159,"damage_dealt":50924.875,"frags":0.76717466115952,"capture_points":0.37975490093231,"dropped_capture_points":1.5491837263107,"planes_killed":4.7350564002991},"4286461936":{"ship_id":4286461936,"wins":0.4974881708622,"damage_dealt":25339.345703125,"frags":0.72234457731247,"capture_points":0.61607003211975,"dropped_capture_points":1.1703732013702,"planes_killed":0.34347185492516},"4186879792":{"ship_id":4186879792,"wins":0.49006217718124,"damage_dealt":15589.35546875,"frags":0.66056400537491,"capture_points":0.25263947248459,"dropped_capture_points":0.77547913789749,"planes_killed":0},"4267620048":{"ship_id":4267620048,"wins":0.56450825929642,"damage_dealt":32620.166015625,"frags":1.1815983057022,"capture_points":1.0418957471848,"dropped_capture_points":5.3721241950989,"planes_killed":1.1841045618057},"4281284592":{"ship_id":4281284592,"wins":0.51497209072113,"damage_dealt":31436.630859375,"frags":0.88347572088242,"capture_points":1.0037748813629,"dropped_capture_points":5.1118850708008,"planes_killed":0},"4289640144":{"ship_id":4289640144,"wins":0.45901328325272,"damage_dealt":20084.697265625,"frags":0.55462431907654,"capture_points":0.51127773523331,"dropped_capture_points":2.5438437461853,"planes_killed":0.37759727239609},"4280170480":{"ship_id":4280170480,"wins":0.47030180692673,"damage_dealt":18899.232421875,"frags":0.70586889982224,"capture_points":0.50742024183273,"dropped_capture_points":1.6150177717209,"planes_killed":0.40866810083389},"4284364496":{"ship_id":4284364496,"wins":0.47844645380974,"damage_dealt":38441.58984375,"frags":0.66411149501801,"capture_points":0.94555389881134,"dropped_capture_points":1.0748049020767,"planes_killed":0.38309076428413},"4185798096":{"ship_id":4185798096,"wins":0.49063760042191,"damage_dealt":15565.431640625,"frags":0.63602751493454,"capture_points":0.13324366509914,"dropped_capture_points":0.2631784081459,"planes_killed":0.067188076674938},"4281219056":{"ship_id":4281219056,"wins":0.50652283430099,"damage_dealt":46898.74609375,"frags":0.82790869474411,"capture_points":0.83534818887711,"dropped_capture_points":1.3955150842667,"planes_killed":1.1119643449783},"4187895248":{"ship_id":4187895248,"wins":0.49022820591927,"damage_dealt":8912.8994140625,"frags":0.60022366046906,"capture_points":0.087208233773708,"dropped_capture_points":0.22652049362659,"planes_killed":0.0003730928292498},"4181603792":{"ship_id":4181603792,"wins":0.52831220626831,"damage_dealt":30967.244140625,"frags":0.82772427797318,"capture_points":0.026952985674143,"dropped_capture_points":0.077339686453342,"planes_killed":0.52068364620209},"4258182864":{"ship_id":4258182864,"wins":0.49664264917374,"damage_dealt":12956.270507812,"frags":0.56054162979126,"capture_points":0.68650555610657,"dropped_capture_points":6.055230140686,"planes_killed":7.2475944762118e-5},"4272830448":{"ship_id":4272830448,"wins":0.5101535320282,"damage_dealt":36547.3671875,"frags":0.85116559267044,"capture_points":0.84121268987656,"dropped_capture_points":1.4833908081055,"planes_killed":0.74901103973389},"4288657104":{"ship_id":4288657104,"wins":0.51031094789505,"damage_dealt":43446.703125,"frags":0.9649983048439,"capture_points":0.23565636575222,"dropped_capture_points":2.6746900081635,"planes_killed":7.3760781288147},"4288591856":{"ship_id":4288591856,"wins":0.44987446069717,"damage_dealt":23004.294921875,"frags":0.63212096691132,"capture_points":0.57232338190079,"dropped_capture_points":3.0369212627411,"planes_killed":2.6722247600555},"4288558800":{"ship_id":4288558800,"wins":0.47906813025475,"damage_dealt":21789.341796875,"frags":0.589903652668,"capture_points":0.75433510541916,"dropped_capture_points":1.0006568431854,"planes_killed":0.51567566394806},"4266538992":{"ship_id":4266538992,"wins":0.46837893128395,"damage_dealt":11793.8515625,"frags":0.52770453691483,"capture_points":0.43128275871277,"dropped_capture_points":2.0121333599091,"planes_killed":0.01000021956861},"4183734064":{"ship_id":4183734064,"wins":0.49568358063698,"damage_dealt":27878.62890625,"frags":0.76890754699707,"capture_points":0.013440903276205,"dropped_capture_points":0.030399339273572,"planes_killed":0.67256617546082},"4281317360":{"ship_id":4281317360,"wins":0.50627207756042,"damage_dealt":92844.921875,"frags":1.3886578083038,"capture_points":0.14698438346386,"dropped_capture_points":1.9911911487579,"planes_killed":20.411249160767},"4292818736":{"ship_id":4292818736,"wins":0.48790341615677,"damage_dealt":48155.08984375,"frags":0.69799906015396,"capture_points":0.15987873077393,"dropped_capture_points":0.63310700654984,"planes_killed":1.8752642869949},"4289640432":{"ship_id":4289640432,"wins":0.48912614583969,"damage_dealt":27990.744140625,"frags":0.82722020149231,"capture_points":0.61296993494034,"dropped_capture_points":4.4052481651306,"planes_killed":1.1732102632523},"4259264496":{"ship_id":4259264496,"wins":0.48540249466896,"damage_dealt":39263.0625,"frags":0.82619816064835,"capture_points":0.41513219475746,"dropped_capture_points":1.9385352134705,"planes_killed":1.1075314283371},"4288624624":{"ship_id":4288624624,"wins":0.46833336353302,"damage_dealt":29181.521484375,"frags":0.6702800989151,"capture_points":0.52952826023102,"dropped_capture_points":2.5600097179413,"planes_killed":0.73220098018646},"4281251536":{"ship_id":4281251536,"wins":0.4910629093647,"damage_dealt":22796.927734375,"frags":0.71743988990784,"capture_points":0.5905727148056,"dropped_capture_points":4.1228909492493,"planes_killed":0.29551953077316},"4269684432":{"ship_id":4269684432,"wins":0.48649471998215,"damage_dealt":14617.428710938,"frags":0.64617669582367,"capture_points":0.68318051099777,"dropped_capture_points":1.8051521778107,"planes_killed":0.018100267276168},"4290689008":{"ship_id":4290689008,"wins":0.5034686923027,"damage_dealt":20231.44140625,"frags":0.74609178304672,"capture_points":0.895636677742,"dropped_capture_points":6.8073377609253,"planes_killed":0.0043640551157296},"4179506640":{"ship_id":4179506640,"wins":0.53822153806686,"damage_dealt":49835.28125,"frags":0.84109652042389,"capture_points":0.14285714924335,"dropped_capture_points":0.28883442282677,"planes_killed":1.1555604934692},"4259231440":{"ship_id":4259231440,"wins":0.51082247495651,"damage_dealt":69890.5703125,"frags":0.92121464014053,"capture_points":0.34786388278008,"dropped_capture_points":2.3073899745941,"planes_killed":2.9731538295746},"4248745968":{"ship_id":4248745968,"wins":0.55815362930298,"damage_dealt":36800.25390625,"frags":1.1150671243668,"capture_points":0.38837066292763,"dropped_capture_points":0.93760937452316,"planes_killed":0.18886668980122},"4293866960":{"ship_id":4293866960,"wins":0.5942325592041,"damage_dealt":40135.43359375,"frags":1.1760889291763,"capture_points":0.23498959839344,"dropped_capture_points":0.49953690171242,"planes_killed":0.031620394438505},"4291737040":{"ship_id":4291737040,"wins":0.53009635210037,"damage_dealt":34660.88671875,"frags":1.0182241201401,"capture_points":0.59570103883743,"dropped_capture_points":4.0543575286865,"planes_killed":1.3488420248032},"4293834736":{"ship_id":4293834736,"wins":0.47806164622307,"damage_dealt":9586.4638671875,"frags":0.63092964887619,"capture_points":0.66196441650391,"dropped_capture_points":5.8935484886169,"planes_killed":0.0056901560164988},"4267587280":{"ship_id":4267587280,"wins":1,"damage_dealt":34520,"frags":1.25,"capture_points":0,"dropped_capture_points":0,"planes_killed":0}}}');
+				ExpWTR = jQ.parseJSON('{"coefficients":{"wins_weight":0.25,"damage_weight":0.5,"frags_weight":0.25,"capture_weight":0,"dropped_capture_weight":0,"ship_frags_importance_weight":10,"nominal_rating":1000},"expected":{"4184782640":{"ship_id":4184782640,"wins":0.51122170686722,"damage_dealt":29010.787109375,"frags":0.86259603500366,"capture_points":0.056900948286057,"dropped_capture_points":0.26138630509377,"planes_killed":0.27677825093269},"4185831216":{"ship_id":4185831216,"wins":0.47541585564613,"damage_dealt":14922.84765625,"frags":0.48721393942833,"capture_points":0.14922149479389,"dropped_capture_points":0.45502883195877,"planes_killed":0.034130837768316},"4293801680":{"ship_id":4293801680,"wins":0.54129618406296,"damage_dealt":14387.209960938,"frags":0.94595927000046,"capture_points":0.20993874967098,"dropped_capture_points":0.33782848715782,"planes_killed":0},"4286527472":{"ship_id":4286527472,"wins":0.47352772951126,"damage_dealt":41785.0234375,"frags":0.71913027763367,"capture_points":0.24547809362411,"dropped_capture_points":1.111743927002,"planes_killed":1.8227601051331},"4287542992":{"ship_id":4287542992,"wins":0.48403823375702,"damage_dealt":27601.314453125,"frags":0.69836097955704,"capture_points":0.47521156072617,"dropped_capture_points":2.2203254699707,"planes_killed":1.8591247797012},"4282300112":{"ship_id":4282300112,"wins":0.48449957370758,"damage_dealt":43626.83203125,"frags":0.70653027296066,"capture_points":0.36395245790482,"dropped_capture_points":2.004123210907,"planes_killed":2.5518198013306},"4293801424":{"ship_id":4293801424,"wins":0.52637714147568,"damage_dealt":27949.580078125,"frags":0.98774564266205,"capture_points":1.0703727006912,"dropped_capture_points":3.5271558761597,"planes_killed":0.35358089208603},"4272895696":{"ship_id":4272895696,"wins":0.47099414467812,"damage_dealt":53934.96875,"frags":0.68613040447235,"capture_points":0.19086363911629,"dropped_capture_points":1.1639505624771,"planes_killed":3.3138031959534},"4283414224":{"ship_id":4283414224,"wins":0.50300073623657,"damage_dealt":50991.78125,"frags":0.95326614379883,"capture_points":0.18270418047905,"dropped_capture_points":3.0336711406708,"planes_killed":16.524854660034},"4277090288":{"ship_id":4277090288,"wins":0.48147720098495,"damage_dealt":74156.7890625,"frags":0.85653483867645,"capture_points":0.31039190292358,"dropped_capture_points":1.6609683036804,"planes_killed":6.0576696395874},"4282300400":{"ship_id":4282300400,"wins":0.46984308958054,"damage_dealt":26931.9921875,"frags":0.59478557109833,"capture_points":0.42359617352486,"dropped_capture_points":2.0665423870087,"planes_killed":2.278792142868},"4268635856":{"ship_id":4268635856,"wins":0.62282401323318,"damage_dealt":31894.259765625,"frags":1.1750483512878,"capture_points":0,"dropped_capture_points":0.01160541549325,"planes_killed":0},"3762206160":{"ship_id":3762206160,"wins":0.5086122751236,"damage_dealt":33298.26953125,"frags":0.66069889068604,"capture_points":0.00036819276283495,"dropped_capture_points":0.00069036142667755,"planes_killed":3.9224264621735},"4287575760":{"ship_id":4287575760,"wins":0.48555356264114,"damage_dealt":32007.111328125,"frags":0.71060824394226,"capture_points":0.45665016770363,"dropped_capture_points":2.0577249526978,"planes_killed":1.2519056797028},"4292753392":{"ship_id":4292753392,"wins":0.46952879428864,"damage_dealt":9180.6474609375,"frags":0.5257385969162,"capture_points":0.42997989058495,"dropped_capture_points":2.7973961830139,"planes_killed":0.00033417690428905},"4291770064":{"ship_id":4291770064,"wins":0.46288484334946,"damage_dealt":20910.033203125,"frags":0.5083144903183,"capture_points":0.61298954486847,"dropped_capture_points":2.6720056533813,"planes_killed":0.63197612762451},"4281284304":{"ship_id":4281284304,"wins":0.50753146409988,"damage_dealt":57384.82421875,"frags":0.87232065200806,"capture_points":0.2268174290657,"dropped_capture_points":0.95550882816315,"planes_killed":3.1812968254089},"4292851408":{"ship_id":4292851408,"wins":0.5024933218956,"damage_dealt":37074.6953125,"frags":0.86261510848999,"capture_points":0.24805398285389,"dropped_capture_points":1.5132809877396,"planes_killed":6.6838707923889},"3555636944":{"ship_id":3555636944,"wins":0.57035320997238,"damage_dealt":41847.2421875,"frags":0.93676894903183,"capture_points":0,"dropped_capture_points":0,"planes_killed":2.0414590835571},"4264441840":{"ship_id":4264441840,"wins":0.45099514722824,"damage_dealt":16430.048828125,"frags":0.50936496257782,"capture_points":0.80799180269241,"dropped_capture_points":2.55335521698,"planes_killed":0.2141999900341},"4287510224":{"ship_id":4287510224,"wins":0.48084256052971,"damage_dealt":27977.234375,"frags":0.62787091732025,"capture_points":0.53109759092331,"dropped_capture_points":0.6688591837883,"planes_killed":0.4331274330616},"4290754544":{"ship_id":4290754544,"wins":0.46277719736099,"damage_dealt":23377.509765625,"frags":0.47787865996361,"capture_points":0.087762981653214,"dropped_capture_points":0.81610888242722,"planes_killed":11.153073310852},"4293834192":{"ship_id":4293834192,"wins":0.51636666059494,"damage_dealt":23010.470703125,"frags":0.88609629869461,"capture_points":0.8088019490242,"dropped_capture_points":5.3639154434204,"planes_killed":0.01646813005209},"4286527184":{"ship_id":4286527184,"wins":0.49807155132294,"damage_dealt":25288.439453125,"frags":0.71628284454346,"capture_points":0.5487242937088,"dropped_capture_points":2.6521990299225,"planes_killed":0.1598627269268},"4279154384":{"ship_id":4279154384,"wins":0.47584357857704,"damage_dealt":16365.153320312,"frags":0.61520731449127,"capture_points":0.60201609134674,"dropped_capture_points":4.4364356994629,"planes_killed":0.035235047340393},"4292785968":{"ship_id":4292785968,"wins":0.52037113904953,"damage_dealt":14674.416992188,"frags":0.84994626045227,"capture_points":0.18533332645893,"dropped_capture_points":0.63516169786453,"planes_killed":6.2376857385971e-5},"4280170192":{"ship_id":4280170192,"wins":0.58620691299438,"damage_dealt":15345.862304688,"frags":0.87931036949158,"capture_points":1.3678160905838,"dropped_capture_points":4.9195404052734,"planes_killed":0},"4279219920":{"ship_id":4279219920,"wins":0.49208694696426,"damage_dealt":79023.796875,"frags":1.237321972847,"capture_points":0.16529600322247,"dropped_capture_points":3.9133138656616,"planes_killed":22.65545463562},"4182685488":{"ship_id":4182685488,"wins":0.493243932724,"damage_dealt":27271.353515625,"frags":0.63743996620178,"capture_points":0.0060345153324306,"dropped_capture_points":0.014768753200769,"planes_killed":1.0250433683395},"4255037136":{"ship_id":4255037136,"wins":0.46467468142509,"damage_dealt":31155.099609375,"frags":0.57337117195129,"capture_points":0.34689751267433,"dropped_capture_points":2.0904424190521,"planes_killed":1.6390644311905},"4181636912":{"ship_id":4181636912,"wins":0.50579386949539,"damage_dealt":36072.90234375,"frags":0.68282055854797,"capture_points":0.012051488272846,"dropped_capture_points":0.051826748996973,"planes_killed":1.4525104761124},"4183700944":{"ship_id":4183700944,"wins":0.51602953672409,"damage_dealt":20301.447265625,"frags":0.71119356155396,"capture_points":0.01843904517591,"dropped_capture_points":0.013811847195029,"planes_killed":0.19603800773621},"4180588336":{"ship_id":4180588336,"wins":0.50769966840744,"damage_dealt":45930.7578125,"frags":0.75055509805679,"capture_points":0.030917989090085,"dropped_capture_points":0.14783334732056,"planes_killed":1.4655365943909},"4273911792":{"ship_id":4273911792,"wins":0.48156395554543,"damage_dealt":53287.31640625,"frags":0.81086224317551,"capture_points":0.38113671541214,"dropped_capture_points":2.2883222103119,"planes_killed":4.8028225898743},"4293834544":{"ship_id":4293834544,"wins":0.49174481630325,"damage_dealt":8885.615234375,"frags":0.70324790477753,"capture_points":0.080272294580936,"dropped_capture_points":0.21217910945415,"planes_killed":0.0036505574826151},"4293867504":{"ship_id":4293867504,"wins":0.47524207830429,"damage_dealt":17662.810546875,"frags":0.59320122003555,"capture_points":0.88193660974503,"dropped_capture_points":4.5931978225708,"planes_killed":0.019640145823359},"3769513264":{"ship_id":3769513264,"wins":0.52074003219604,"damage_dealt":23681.662109375,"frags":0.72903996706009,"capture_points":0.0071594417095184,"dropped_capture_points":0.013677516952157,"planes_killed":0.14705194532871},"4277024464":{"ship_id":4277024464,"wins":0.54966104030609,"damage_dealt":29922.33984375,"frags":1.0423370599747,"capture_points":0.14278312027454,"dropped_capture_points":0.093596316874027,"planes_killed":0.0023008289281279},"4290688720":{"ship_id":4290688720,"wins":0.4907740354538,"damage_dealt":21443.482421875,"frags":0.73005795478821,"capture_points":0.75107079744339,"dropped_capture_points":4.7987771034241,"planes_killed":2.154886007309},"4292753104":{"ship_id":4292753104,"wins":0.51494568586349,"damage_dealt":13503.28125,"frags":0.76045894622803,"capture_points":0.69377225637436,"dropped_capture_points":2.3867702484131,"planes_killed":0.0025299144908786},"4288657392":{"ship_id":4288657392,"wins":0.47228679060936,"damage_dealt":32027.70703125,"frags":0.5947328209877,"capture_points":0.21192662417889,"dropped_capture_points":1.8065805435181,"planes_killed":12.462384223938},"4292786160":{"ship_id":4292786160,"wins":0.46855843067169,"damage_dealt":9711.1904296875,"frags":0.41686633229256,"capture_points":0.61553996801376,"dropped_capture_points":5.966287612915,"planes_killed":0.0002320865605725},"4284430032":{"ship_id":4284430032,"wins":0.49145954847336,"damage_dealt":47097.96875,"frags":0.78241211175919,"capture_points":0.24562656879425,"dropped_capture_points":1.0172488689423,"planes_killed":1.2799953222275},"4286494416":{"ship_id":4286494416,"wins":0.50471705198288,"damage_dealt":35171.00390625,"frags":0.77655363082886,"capture_points":0.38664507865906,"dropped_capture_points":1.8615604639053,"planes_killed":2.0774765014648},"4179539760":{"ship_id":4179539760,"wins":0.49690985679626,"damage_dealt":60654.109375,"frags":0.84266096353531,"capture_points":0.0163519307971,"dropped_capture_points":0.14261803030968,"planes_killed":2.3118026256561},"4291704528":{"ship_id":4291704528,"wins":0.49236604571342,"damage_dealt":21284.619140625,"frags":0.79264974594116,"capture_points":0.82577568292618,"dropped_capture_points":1.28300344944,"planes_killed":0.081362120807171},"4276041712":{"ship_id":4276041712,"wins":0.49023562669754,"damage_dealt":60521.5,"frags":0.81944251060486,"capture_points":0.38277718424797,"dropped_capture_points":1.6925464868546,"planes_killed":5.2104725837708},"4279220208":{"ship_id":4279220208,"wins":0.56659376621246,"damage_dealt":122938.859375,"frags":1.7224745750427,"capture_points":0.19586570560932,"dropped_capture_points":2.1930289268494,"planes_killed":22.241962432861},"4289607664":{"ship_id":4289607664,"wins":0.47798517346382,"damage_dealt":17561.3046875,"frags":0.62715280056,"capture_points":0.44180572032928,"dropped_capture_points":1.1330152750015,"planes_killed":0.42930275201797},"4274927600":{"ship_id":4274927600,"wins":0.48380756378174,"damage_dealt":17806.7890625,"frags":0.71286630630493,"capture_points":0.55572903156281,"dropped_capture_points":1.749541759491,"planes_killed":0.015720445662737},"4288624336":{"ship_id":4288624336,"wins":0.49999806284904,"damage_dealt":43621.703125,"frags":0.88851475715637,"capture_points":0.3166811466217,"dropped_capture_points":1.4821939468384,"planes_killed":0.9398313164711},"4182652368":{"ship_id":4182652368,"wins":0.53374767303467,"damage_dealt":37103.78515625,"frags":0.84917390346527,"capture_points":0.085267201066017,"dropped_capture_points":0.20361058413982,"planes_killed":0.72545832395554},"4180555216":{"ship_id":4180555216,"wins":0.55949187278748,"damage_dealt":31422.1015625,"frags":0.96666514873505,"capture_points":0.018552985042334,"dropped_capture_points":0.027523621916771,"planes_killed":0.41133809089661},"4276041424":{"ship_id":4276041424,"wins":0.52375638484955,"damage_dealt":86309.8828125,"frags":0.86914587020874,"capture_points":0.2110887914896,"dropped_capture_points":1.1167989969254,"planes_killed":5.0761866569519},"3768497968":{"ship_id":3768497968,"wins":0.53151720762253,"damage_dealt":16703.125,"frags":0.89476084709167,"capture_points":0,"dropped_capture_points":0,"planes_killed":7.6689400884788e-5},"4292818896":{"ship_id":4292818896,"wins":0.49132812023163,"damage_dealt":38581.73046875,"frags":0.80932784080505,"capture_points":0.51086294651031,"dropped_capture_points":2.1963210105896,"planes_killed":1.7055611610413},"4291737584":{"ship_id":4291737584,"wins":0.51265150308609,"damage_dealt":13162.381835938,"frags":0.74851536750793,"capture_points":1.0853387117386,"dropped_capture_points":7.9745111465454,"planes_killed":0.00054676347645},"4256085712":{"ship_id":4256085712,"wins":0.51617801189423,"damage_dealt":11983.815429688,"frags":0.88629257678986,"capture_points":0.96862757205963,"dropped_capture_points":7.711003780365,"planes_killed":0.009332112967968},"4288559088":{"ship_id":4288559088,"wins":0.48756995797157,"damage_dealt":19911.185546875,"frags":0.66164863109589,"capture_points":0.38923868536949,"dropped_capture_points":0.78198432922363,"planes_killed":0.32376030087471},"4284397008":{"ship_id":4284397008,"wins":0.59825325012207,"damage_dealt":23505.876953125,"frags":1.1091703176498,"capture_points":1.22707426548,"dropped_capture_points":13.84716129303,"planes_killed":0},"3555669712":{"ship_id":3555669712,"wins":0.57258361577988,"damage_dealt":48332.26953125,"frags":1.0680457353592,"capture_points":0,"dropped_capture_points":0,"planes_killed":1.500967502594},"4292851696":{"ship_id":4292851696,"wins":0.46156921982765,"damage_dealt":21037.59375,"frags":0.40915170311928,"capture_points":0.076929539442062,"dropped_capture_points":1.5164833068848,"planes_killed":13.995998382568},"4184749520":{"ship_id":4184749520,"wins":0.50903660058975,"damage_dealt":20120.134765625,"frags":0.75349593162537,"capture_points":0.06822320073843,"dropped_capture_points":0.13170683383942,"planes_killed":0.17915205657482},"4282365936":{"ship_id":4282365936,"wins":0.47331801056862,"damage_dealt":46967.5078125,"frags":0.71830648183823,"capture_points":0.10427645593882,"dropped_capture_points":1.2506062984467,"planes_killed":27.577516555786},"4285445840":{"ship_id":4285445840,"wins":0.51204824447632,"damage_dealt":42242.2734375,"frags":0.84760069847107,"capture_points":0.37564527988434,"dropped_capture_points":2.0849678516388,"planes_killed":2.0687417984009},"4282365648":{"ship_id":4282365648,"wins":0.48905548453331,"damage_dealt":59900.9921875,"frags":1.0054889917374,"capture_points":0.17719039320946,"dropped_capture_points":3.4725511074066,"planes_killed":15.908694267273},"4293867312":{"ship_id":4293867312,"wins":0.33333334326744,"damage_dealt":47393.109375,"frags":1.111111164093,"capture_points":0,"dropped_capture_points":13.777777671814,"planes_killed":0.55555558204651},"4287543280":{"ship_id":4287543280,"wins":0.49591055512428,"damage_dealt":30844.71484375,"frags":0.84339910745621,"capture_points":0.5514662861824,"dropped_capture_points":3.1818056106567,"planes_killed":2.906042098999},"4289607376":{"ship_id":4289607376,"wins":0.4749498963356,"damage_dealt":20338.333984375,"frags":0.57600152492523,"capture_points":0.81533247232437,"dropped_capture_points":0.70073652267456,"planes_killed":0.56654810905457},"4283381456":{"ship_id":4283381456,"wins":0.51551496982574,"damage_dealt":12964.6875,"frags":0.71449911594391,"capture_points":0.98751544952393,"dropped_capture_points":3.3637158870697,"planes_killed":0},"4290655952":{"ship_id":4290655952,"wins":0.49981626868248,"damage_dealt":26826.720703125,"frags":0.90305662155151,"capture_points":0.95347154140472,"dropped_capture_points":1.1497843265533,"planes_killed":0.11331869661808},"4186846672":{"ship_id":4186846672,"wins":0.49038279056549,"damage_dealt":12225.55078125,"frags":0.62605762481689,"capture_points":0.1398436576128,"dropped_capture_points":0.26155284047127,"planes_killed":0.0012192274443805},"4280203248":{"ship_id":4280203248,"wins":0.4759079515934,"damage_dealt":31191.642578125,"frags":0.59089314937592,"capture_points":0.46612244844437,"dropped_capture_points":2.1409313678741,"planes_killed":3.3640120029449},"4247697392":{"ship_id":4247697392,"wins":0.62326872348785,"damage_dealt":42531.140625,"frags":1.3490304946899,"capture_points":0.88365650177002,"dropped_capture_points":6.9501385688782,"planes_killed":0.25484764575958},"4188976592":{"ship_id":4188976592,"wins":0.51687461137772,"damage_dealt":10430.244140625,"frags":0.81734579801559,"capture_points":0.095328889787197,"dropped_capture_points":0.2455480247736,"planes_killed":0.00084729748778045},"4269717488":{"ship_id":4269717488,"wins":0.4744436442852,"damage_dealt":19657.0234375,"frags":0.58517348766327,"capture_points":0.51520311832428,"dropped_capture_points":4.1102132797241,"planes_killed":0.15040400624275},"4285511376":{"ship_id":4285511376,"wins":0.50200510025024,"damage_dealt":42934.97265625,"frags":0.8718563914299,"capture_points":0.1599772721529,"dropped_capture_points":3.0300908088684,"planes_killed":9.7274026870728},"4290721776":{"ship_id":4290721776,"wins":0.48683840036392,"damage_dealt":27189.314453125,"frags":0.71860271692276,"capture_points":0.74586910009384,"dropped_capture_points":3.6231265068054,"planes_killed":0.51523298025131},"4277122768":{"ship_id":4277122768,"wins":0.52040976285934,"damage_dealt":97933.34375,"frags":1.4317626953125,"capture_points":0.26329359412193,"dropped_capture_points":4.6207022666931,"planes_killed":25.154556274414},"4280202960":{"ship_id":4280202960,"wins":0.40000000596046,"damage_dealt":25757.029296875,"frags":0.54285717010498,"capture_points":0,"dropped_capture_points":2.2571427822113,"planes_killed":0.65714287757874},"4292785616":{"ship_id":4292785616,"wins":0.53021615743637,"damage_dealt":16832.44921875,"frags":0.82588958740234,"capture_points":0.47461375594139,"dropped_capture_points":2.9290931224823,"planes_killed":0},"4284463088":{"ship_id":4284463088,"wins":0.46770951151848,"damage_dealt":42765.28515625,"frags":0.7275470495224,"capture_points":0.092292763292789,"dropped_capture_points":1.7809463739395,"planes_killed":17.947797775269},"4282267344":{"ship_id":4282267344,"wins":0.49789351224899,"damage_dealt":54761.546875,"frags":0.82376223802567,"capture_points":0.64457195997238,"dropped_capture_points":0.71425980329514,"planes_killed":0.40821501612663},"4277057520":{"ship_id":4277057520,"wins":0.4621470272541,"damage_dealt":33403.171875,"frags":0.58620339632034,"capture_points":0.51035594940186,"dropped_capture_points":2.5576140880585,"planes_killed":4.8932147026062},"4293867216":{"ship_id":4293867216,"wins":0.48672068119049,"damage_dealt":17365.701171875,"frags":0.64515465497971,"capture_points":0.99146997928619,"dropped_capture_points":4.0451827049255,"planes_killed":0.055872082710266},"4282333168":{"ship_id":4282333168,"wins":0.48037457466125,"damage_dealt":51151.23828125,"frags":0.77452915906906,"capture_points":0.31005719304085,"dropped_capture_points":1.2688862085342,"planes_killed":4.4019017219543},"4286461936":{"ship_id":4286461936,"wins":0.50703746080399,"damage_dealt":26263.830078125,"frags":0.75541549921036,"capture_points":0.41792750358582,"dropped_capture_points":0.79157638549805,"planes_killed":0.30637675523758},"4186879792":{"ship_id":4186879792,"wins":0.4904902279377,"damage_dealt":15572.170898438,"frags":0.65610313415527,"capture_points":0.23056210577488,"dropped_capture_points":0.70989382266998,"planes_killed":0},"4267620048":{"ship_id":4267620048,"wins":0.56769609451294,"damage_dealt":32817.11328125,"frags":1.1899466514587,"capture_points":0.97768026590347,"dropped_capture_points":5.0320897102356,"planes_killed":1.1803220510483},"4281284592":{"ship_id":4281284592,"wins":0.51938199996948,"damage_dealt":32038.33203125,"frags":0.90314656496048,"capture_points":0.94859611988068,"dropped_capture_points":4.8209056854248,"planes_killed":0},"4289640144":{"ship_id":4289640144,"wins":0.46131098270416,"damage_dealt":20093.380859375,"frags":0.55474579334259,"capture_points":0.47441563010216,"dropped_capture_points":2.3597092628479,"planes_killed":0.37398678064346},"4280170480":{"ship_id":4280170480,"wins":0.47194939851761,"damage_dealt":18749.478515625,"frags":0.69936400651932,"capture_points":0.4646797478199,"dropped_capture_points":1.4791560173035,"planes_killed":0.40327444672585},"4284364496":{"ship_id":4284364496,"wins":0.48605459928513,"damage_dealt":38620.859375,"frags":0.68300211429596,"capture_points":0.68985867500305,"dropped_capture_points":0.77824079990387,"planes_killed":0.34508037567139},"4185798096":{"ship_id":4185798096,"wins":0.49030685424805,"damage_dealt":15445.366210938,"frags":0.62646013498306,"capture_points":0.10897959023714,"dropped_capture_points":0.21636413037777,"planes_killed":0.067896746098995},"4281219056":{"ship_id":4281219056,"wins":0.50688892602921,"damage_dealt":46298.609375,"frags":0.84025180339813,"capture_points":0.57574254274368,"dropped_capture_points":0.9680113196373,"planes_killed":0.97797679901123},"4187895248":{"ship_id":4187895248,"wins":0.49087762832642,"damage_dealt":9034.1240234375,"frags":0.60579288005829,"capture_points":0.080421641469002,"dropped_capture_points":0.20948664844036,"planes_killed":0.00037944468203932},"4181603792":{"ship_id":4181603792,"wins":0.52121806144714,"damage_dealt":28608.521484375,"frags":0.7731249332428,"capture_points":0.016832668334246,"dropped_capture_points":0.044563118368387,"planes_killed":0.47679218649864},"4258182864":{"ship_id":4258182864,"wins":0.49692192673683,"damage_dealt":12993.342773438,"frags":0.56344938278198,"capture_points":0.67929142713547,"dropped_capture_points":5.9911632537842,"planes_killed":7.1776434197091e-5},"4272830448":{"ship_id":4272830448,"wins":0.51577967405319,"damage_dealt":36368.69140625,"frags":0.8646759390831,"capture_points":0.58087933063507,"dropped_capture_points":1.0310314893723,"planes_killed":0.67544251680374},"4288657104":{"ship_id":4288657104,"wins":0.51160848140717,"damage_dealt":42630.8203125,"frags":0.9451676607132,"capture_points":0.21757699549198,"dropped_capture_points":2.4586248397827,"planes_killed":7.4511098861694},"4288591856":{"ship_id":4288591856,"wins":0.45406526327133,"damage_dealt":22931.974609375,"frags":0.63379961252213,"capture_points":0.51421225070953,"dropped_capture_points":2.7220969200134,"planes_killed":2.6097500324249},"4288558800":{"ship_id":4288558800,"wins":0.4821991622448,"damage_dealt":21729.326171875,"frags":0.59099590778351,"capture_points":0.62569862604141,"dropped_capture_points":0.83074468374252,"planes_killed":0.48786357045174},"4266538992":{"ship_id":4266538992,"wins":0.46971708536148,"damage_dealt":11930.59375,"frags":0.53524053096771,"capture_points":0.4190699160099,"dropped_capture_points":1.9530692100525,"planes_killed":0.0099149942398071},"4183734064":{"ship_id":4183734064,"wins":0.49475267529488,"damage_dealt":27303.80078125,"frags":0.74871665239334,"capture_points":0.0082841766998172,"dropped_capture_points":0.018642133101821,"planes_killed":0.65558570623398},"4281317360":{"ship_id":4281317360,"wins":0.5076670050621,"damage_dealt":91473.1015625,"frags":1.3835434913635,"capture_points":0.12333177775145,"dropped_capture_points":1.6780213117599,"planes_killed":20.631332397461},"4292818736":{"ship_id":4292818736,"wins":0.49458310008049,"damage_dealt":49375.0546875,"frags":0.72911477088928,"capture_points":0.13192163407803,"dropped_capture_points":0.52681165933609,"planes_killed":1.8101972341537},"4289640432":{"ship_id":4289640432,"wins":0.4901687502861,"damage_dealt":27815.310546875,"frags":0.82094019651413,"capture_points":0.57474219799042,"dropped_capture_points":4.1309590339661,"planes_killed":1.1518355607986},"4259264496":{"ship_id":4259264496,"wins":0.48876741528511,"damage_dealt":39468.45703125,"frags":0.83219093084335,"capture_points":0.3554590344429,"dropped_capture_points":1.6597150564194,"planes_killed":1.0688138008118},"4288624624":{"ship_id":4288624624,"wins":0.47002255916595,"damage_dealt":29196.048828125,"frags":0.66977375745773,"capture_points":0.48569974303246,"dropped_capture_points":2.3473603725433,"planes_killed":0.72276109457016},"4281251536":{"ship_id":4281251536,"wins":0.49260646104813,"damage_dealt":22843.80859375,"frags":0.72023290395737,"capture_points":0.56403440237045,"dropped_capture_points":3.9352245330811,"planes_killed":0.29223653674126},"4269684432":{"ship_id":4269684432,"wins":0.48727235198021,"damage_dealt":14679.861328125,"frags":0.64838409423828,"capture_points":0.66714358329773,"dropped_capture_points":1.7604387998581,"planes_killed":0.018125910311937},"4290689008":{"ship_id":4290689008,"wins":0.50464558601379,"damage_dealt":20325.57421875,"frags":0.75058627128601,"capture_points":0.875792324543,"dropped_capture_points":6.6569604873657,"planes_killed":0.004384093452245},"3554621136":{"ship_id":3554621136,"wins":1,"damage_dealt":15548,"frags":1,"capture_points":0,"dropped_capture_points":0,"planes_killed":4},"4179506640":{"ship_id":4179506640,"wins":0.53261315822601,"damage_dealt":48924.546875,"frags":0.83661127090454,"capture_points":0.080373391509056,"dropped_capture_points":0.17830094695091,"planes_killed":0.98696649074554},"4259231440":{"ship_id":4259231440,"wins":0.51405346393585,"damage_dealt":69867.1171875,"frags":0.92596477270126,"capture_points":0.27620103955269,"dropped_capture_points":1.8662161827087,"planes_killed":2.713700056076},"4248745968":{"ship_id":4248745968,"wins":0.56045067310333,"damage_dealt":36988.48046875,"frags":1.121866106987,"capture_points":0.34049141407013,"dropped_capture_points":0.82540702819824,"planes_killed":0.18764664232731},"4293866960":{"ship_id":4293866960,"wins":0.59622633457184,"damage_dealt":40642.046875,"frags":1.1839680671692,"capture_points":0.18553453683853,"dropped_capture_points":0.39293265342712,"planes_killed":0.031857497990131},"4291737040":{"ship_id":4291737040,"wins":0.5352366566658,"damage_dealt":34966.93359375,"frags":1.0280692577362,"capture_points":0.53413772583008,"dropped_capture_points":3.632979631424,"planes_killed":1.3394631147385},"4293834736":{"ship_id":4293834736,"wins":0.47978937625885,"damage_dealt":9667.21484375,"frags":0.63977980613708,"capture_points":0.6472572684288,"dropped_capture_points":5.7667627334595,"planes_killed":0.0055624567903578},"4267587280":{"ship_id":4267587280,"wins":0.54329973459244,"damage_dealt":25633.357421875,"frags":0.90539002418518,"capture_points":0,"dropped_capture_points":0,"planes_killed":0.0030576402787119}}}');
 			}else{
 				ExpWTR = response;
 			}
@@ -3286,16 +3415,13 @@
 				MembersArray[index]['info']['statistics'][type]['wtr'] = 0;
 				
 				var StatShips = [];
+				
 				StatShips['damage_dealt'] = 0;
 				StatShips['frags'] = 0;
 				StatShips['planes_killed'] = 0;
-				StatShips['capture_points'] = 0;
-				StatShips['dropped_capture_points'] = 0;
 				StatShips['expDamage'] = 0;
 				StatShips['expFrags'] = 0;
 				StatShips['expPlanesKilled'] = 0;
-				StatShips['expCapturePoints'] = 0;
-				StatShips['expDroppedCapturePoints'] = 0;
 				
 				StatShips['actual.wins'] = 0;
 				StatShips['actual.damage_dealt'] = 0;
@@ -3317,13 +3443,9 @@
 					StatShipsClass[typeS]['damage_dealt'] = 0;
 					StatShipsClass[typeS]['frags'] = 0;
 					StatShipsClass[typeS]['planes_killed'] = 0;
-					StatShipsClass[typeS]['capture_points'] = 0;
-					StatShipsClass[typeS]['dropped_capture_points'] = 0;
 					StatShipsClass[typeS]['expDamage'] = 0;
 					StatShipsClass[typeS]['expFrags'] = 0;
 					StatShipsClass[typeS]['expPlanesKilled'] = 0;
-					StatShipsClass[typeS]['expCapturePoints'] = 0;
-					StatShipsClass[typeS]['expDroppedCapturePoints'] = 0;
 					
 					StatShipsClass[typeS]['actual.wins'] = 0;
 					StatShipsClass[typeS]['actual.damage_dealt'] = 0;
@@ -3425,44 +3547,30 @@
 							var damage_dealt = Statistics['damage_dealt'];
 							var frags = Statistics['frags'];
 							var planes_killed = Statistics['planes_killed'];
-							var capture_points = Statistics['capture_points'];
-							var dropped_capture_points = Statistics['dropped_capture_points'];
 							
 							var StatShip = [];
 							StatShip['damage_dealt'] = damage_dealt;
 							StatShip['frags'] = frags;
 							StatShip['planes_killed'] = planes_killed;
-							StatShip['capture_points'] = capture_points;
-							StatShip['dropped_capture_points'] = dropped_capture_points;
 							StatShip['expDamage'] = battles * ExpShips[ship_id]['expDamage'];
 							StatShip['expFrags'] = battles * ExpShips[ship_id]['expFrags'];
 							StatShip['expPlanesKilled'] = battles * ExpShips[ship_id]['expPlanesKilled'];
-							StatShip['expCapturePoints'] = battles * ExpShips[ship_id]['expCapturePoints'];
-							StatShip['expDroppedCapturePoints'] = battles * ExpShips[ship_id]['expDroppedCapturePoints'];
 							
 							MembersArray[index]['ships'][shipI][type]['wr'] = calcWR(StatShip);
 							
 							StatShipsClass[ship_type]['damage_dealt'] += damage_dealt;
 							StatShipsClass[ship_type]['frags'] += frags;
 							StatShipsClass[ship_type]['planes_killed'] += planes_killed;
-							StatShipsClass[ship_type]['capture_points'] += capture_points;
-							StatShipsClass[ship_type]['dropped_capture_points'] += dropped_capture_points;
 							StatShipsClass[ship_type]['expDamage'] += StatShip['expDamage'];
 							StatShipsClass[ship_type]['expFrags'] += StatShip['expFrags'];
 							StatShipsClass[ship_type]['expPlanesKilled'] += StatShip['expPlanesKilled'];
-							StatShipsClass[ship_type]['expCapturePoints'] += StatShip['expCapturePoints'];
-							StatShipsClass[ship_type]['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
 							
 							StatShips['damage_dealt'] += damage_dealt;
 							StatShips['frags'] += frags;
 							StatShips['planes_killed'] += planes_killed;
-							StatShips['capture_points'] += capture_points;
-							StatShips['dropped_capture_points'] += dropped_capture_points;
 							StatShips['expDamage'] += StatShip['expDamage'];
 							StatShips['expFrags'] += StatShip['expFrags'];
 							StatShips['expPlanesKilled'] += StatShip['expPlanesKilled'];
-							StatShips['expCapturePoints'] += StatShip['expCapturePoints'];
-							StatShips['expDroppedCapturePoints'] += StatShip['expDroppedCapturePoints'];
 						}else{
 							MembersArray[index]['ships'][shipI][type]['wr'] = 0;
 						}
@@ -3570,16 +3678,12 @@
 			var rDamage = Stat['damage_dealt'] / Stat['expDamage']; if(isNaN(rDamage)){rDamage = 0;}
 			var rFrags = Stat['frags'] / Stat['expFrags']; if(isNaN(rFrags)){rFrags = 0;}
 			var rPlanesKilled = Stat['planes_killed'] / Stat['expPlanesKilled']; if(isNaN(rPlanesKilled)){rPlanesKilled = 0;}
-			var rCapturePoints = Stat['capture_points'] / Stat['expCapturePoints']; if(isNaN(rCapturePoints)){rCapturePoints = 0;}
-			var rDroppedCapturePoints = Stat['dropped_capture_points'] / Stat['expDroppedCapturePoints']; if(isNaN(rDroppedCapturePoints)){rDroppedCapturePoints = 0;}
 			
 			var rDamagec = Math.max(0, (rDamage - 0.25) / (1 - 0.25));
 			var rFragsc = Math.max(0, Math.min(rDamagec + 0.2, (rFrags - 0.12) / (1 - 0.12)));
 			var rPlanesKilledc = Math.max(0, Math.min(rDamagec + 0.1, (rPlanesKilled - 0.15) / (1 - 0.15)));
-			var rCapturePointsc = Math.max(0, Math.min(rDamagec + 0.1, (rCapturePoints - 0.10) / (1 - 0.10)));
-			var rDroppedCapturePointsc = Math.max(0, Math.min(rDamagec + 0.1, (rDroppedCapturePoints - 0.10) / (1 - 0.10)));
 			
-			var wr = 650 * rDamagec + 150 * rFragsc * rDamagec + 50 * rFragsc * rCapturePointsc + 50 * rFragsc * rDroppedCapturePointsc + 80 * rPlanesKilledc;
+			var wr = 650 * rDamagec + 150 * rFragsc * rDamagec + 80 * rPlanesKilledc;
 			if(isNaN(wr)){wr = 0;}
 			
 			return wr;
@@ -4306,6 +4410,8 @@
 				
 				localizationText['ru']['achieve_counter_1'] = 'количество полученных наград';
 				localizationText['ru']['achieve_counter_2'] = 'частота получения наград, количество боев необходимых для получения награды';
+				
+				localizationText['ru']['to'] = 'до';
 			}
 			
 			{/* English */
@@ -4495,6 +4601,8 @@
 				
 				localizationText['en']['achieve_counter_1'] = 'the number of awards received';
 				localizationText['en']['achieve_counter_2'] = 'the frequency of receiving awards, the number of battles needed for award';
+				
+				localizationText['en']['to'] = 'to';
 			}
 			
 			{/* Français */
@@ -5336,8 +5444,9 @@
 		}
 	
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
-		// the actual Flot code
-			(function($){
+			// Javascript plotting library for jQuery, version 0.8.3.
+			// the actual Flot code
+			(function($) {
 
 				// Cache the prototype hasOwnProperty for faster access
 
