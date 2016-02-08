@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.2.26
+// @version 0.5.2.27
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -42,10 +42,10 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){ /* delIndexedDB('StatPvPMemberArray'); убрать в следующей версии 0.5.2.26 */
+(function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.2.26';
+		var VersionWoWsStatInfo = '0.5.2.27';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -383,7 +383,6 @@
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			checkJson();
 			
-			delIndexedDB('StatPvPMemberArray');
 			getStatSaveMember();
 			
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
@@ -546,7 +545,7 @@
 			
 			var page_header = document.getElementsByClassName("page-header")[0];
 			page_header.outerHTML += '' +
-				'<div style="padding-bottom: 20px;">' +
+				'<div style="padding-bottom: 100px; margin-top: -50px;">' +
 					'<div align="right">' +
 						'<button id="get-settings-button" class="button" style="display: block;">' +
 							'<span class="button_wrapper">' +
@@ -2704,7 +2703,7 @@
 			}
 		}
 		function getClanMembersList(){
-			var table = document.getElementsByClassName("rating-table__players")[0];
+			var table = document.getElementsByClassName("tbl-rating_skeleton")[0];
 			
 			if(table.rows.length <= 1){
 				setTimeout(function(){getClanMembersList();}, 1000);
@@ -2724,8 +2723,8 @@
 					var account_name = player_name.innerHTML.trim();
 					MembersArray[index]['account_name'] = account_name;
 					
-					var epaulettes = row.getElementsByClassName('epaulettes')[0];
-					var epaulettesSplit = epaulettes.getAttribute('class').split(' ');
+					var tbl_rating_epaulettes = row.getElementsByClassName('tbl-rating_epaulettes')[0];
+					var epaulettesSplit = tbl_rating_epaulettes.getAttribute('class').split(' ');
 					for(eS = 0; eS < epaulettesSplit.length; eS++){
 						if(epaulettesSplit[eS].indexOf('js-tooltip-id_js-role_') > -1){
 							var role = epaulettesSplit[eS].replace('js-tooltip-id_js-role_', '');
@@ -2740,14 +2739,14 @@
 					}
 					
 					var colNum = (row.cells.length - 2) - 1;
-					var clan_days = row.cells[colNum].innerHTML.trim();
+					var clan_days = row.cells[colNum].getElementsByClassName('tbl-rating_value')[0].innerHTML.trim();
 					MembersArray[index]['clan_days'] = clan_days;
 				}
 			}
 			
 			if(MembersArray.length > 0){
 				viewClanMemberHistory();
-			}		
+			}
 		}
 		function viewClanMemberHistory(){
 			var oldClanMemberSave = getLocalStorage('ClanMemberSave', true);
