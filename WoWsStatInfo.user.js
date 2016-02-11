@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.2.27
+// @version 0.5.2.28
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -42,10 +42,10 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){
+(function(window){/* delIndexedDB('StatPvPMemberArray-'+login_name); убрать в следующей версии, добавлено в 0.5.2.28 */
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.2.27';
+		var VersionWoWsStatInfo = '0.5.2.28';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -382,8 +382,6 @@
 		/* ===== Check load page ===== */
 		if(window.location.href.indexOf("accounts") > -1 && window.location.href.split('/').length >= 8 && window.location.href.split('/')[6].match(/[0-9]+/) != null){
 			checkJson();
-			
-			getStatSaveMember();
 			
 			lang = window.location.href.split('/')[3].match(/[a-z\s-]+/); if(lang == 'zh-tw'){lang = 'zh-tw';}
 			localizationText = getlocalizationText(lang);
@@ -727,13 +725,18 @@
 			}
 			
 			if(tabContainer != null){
+				var account_tab_background = tabContainer.getElementsByClassName('account-tab-background');
+				for(var atb = 0; atb < account_tab_background.length; atb++){
+					account_tab_background[atb].style.zIndex = '-1';
+				}
+			
 				var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
 				var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
 				
 				var userbar = '';
 				if(login_name == MembersArray[0]['info']['nickname']){
 					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px; padding: 10px;">'+localizationText['generator-userbar']+'</button>';
-					onSaveStatMember();
+					delIndexedDB('StatPvPMemberArray-'+login_name);
 				}
 				userbar += '' +
 					'<br />'+
@@ -1300,6 +1303,130 @@
 						}
 					}
 				}				
+			
+				var account_tab_overview = tabContainer.getElementsByClassName('account-tab-overview')[0];
+				var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
+				if(account_battle_stats != null){
+					var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
+					if(account_delta_stat == null){
+						account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
+					
+						var Keys = Object.keys(MembersArray[0]['statsbydate']['pvp']);
+						var IndexLast = Keys.length - 1;
+						var IndexOld = Keys.length - 2;
+						
+						var battles = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['battles'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['battles'];
+						var wins_percents = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['wins_percents'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['wins_percents'];
+						var avg_xp = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_xp'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_xp'];
+						var avg_damage_dealt = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_damage_dealt'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_damage_dealt'];
+						var kill_dead = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['kill_dead'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['kill_dead'];
+						var avg_frags = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_frags'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_frags'];
+						var avg_planes_killed = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_planes_killed'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_planes_killed'];
+						var avg_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_capture_points'];
+						var avg_dropped_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_dropped_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_dropped_capture_points'];
+						
+						if(login_name == MembersArray[0]['info']['nickname']){
+							var _values = tabContainer.getElementsByClassName('_values')[0];
+							var main_stat = _values.getElementsByTagName('div');
+							main_stat[0].innerHTML += getHTMLDif(battles, 0);
+							main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
+							main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
+							main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
+							main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
+						}
+						
+						if(account_battle_stats != null){
+							var account_table = account_battle_stats.getElementsByClassName('account-table');
+							
+							if(login_name == MembersArray[0]['info']['nickname']){
+								account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
+								account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
+								account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
+								account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
+								//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
+								//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
+							}
+							
+							addStatHover(account_table[0].rows[1], 'battles');
+							addStatHover(account_table[0].rows[2], 'wins_percents');
+							addStatHover(account_table[0].rows[3], 'survived_battles_percents');
+							
+							addStatHover(account_table[1].rows[1], 'avg_xp');
+							addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
+							addStatHover(account_table[1].rows[3], 'avg_frags');
+							addStatHover(account_table[1].rows[4], 'avg_planes_killed');
+							
+							addStatHover(account_table[2].rows[1], 'max_xp');
+							addStatHover(account_table[2].rows[2], 'max_damage_dealt');
+							addStatHover(account_table[2].rows[3], 'max_frags_battle');
+							addStatHover(account_table[2].rows[4], 'max_planes_killed');
+						}
+					}
+				}
+				
+				var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
+				if(account_tab == null){
+					var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
+					if(account_tab_detail_stats != null){
+						var date = [];
+						var value = [];
+						var html_chart = '';
+						var chart_value = ['wins_percents', 'avg_xp', 'avg_damage_dealt', 'kill_dead', 'avg_frags', 'avg_planes_killed'];
+						
+						for(var key in chart_value){
+							var title = chart_value[key];
+							html_chart += '' +
+								'<div class="chart_div">' +
+									'<h3 class="_title">'+localizationText['title_'+title]+'</h3>' +
+									'<div class="userscript-placeholder"><div id="chart_'+title+'" class="chart-placeholder"></div></div>' +
+								'</div>' +
+							'';
+							
+							value[title] = [];
+						}
+						
+						account_tab_detail_stats.outerHTML += '' +
+							'<div class="account-tab-charts tab-container" js-tab-cont-id="account-tab-charts-pvp">' +
+								'<div class="account-main-stats">' +
+									html_chart + 
+								'</div>' +
+							'</div>' +
+						'';
+						
+						var index = 0;
+						for(var key_stat in MembersArray[0]['statsbydate']['pvp']){
+							var d = key_stat.substring(6, 8);
+							var m = key_stat.substring(4, 6);
+							var y = key_stat.substring(2, 4);
+							date.push([index, d+'.'+m]);
+							
+							for(var key in chart_value){
+								var title = chart_value[key];
+								value[title].push([index, parseFloat(MembersArray[0]['statsbydate']['pvp'][key_stat][title].toFixed(2))]);
+							}
+							
+							index++;
+						}
+						
+						for(var key in chart_value){
+							var title = chart_value[key];
+							viewChart(title, date, value[title]);
+						}
+						
+						jQ(tabContainer).find('nav.account-tabs ul').append(''+
+							'<li class="account-tab" js-tab="" js-tab-show="account-tab-charts-pvp">'+
+								'<div class="_title">'+localizationText['charts']+'</div>'+
+								'<div class="_active-feature">'+
+									'<div class="_line"></div>'+
+									'<div class="_shadow"></div>'+
+								'</div>'+
+							'</li>'+
+						'');
+						jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
+							'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-charts-pvp">'+localizationText['charts']+'</li>' +
+						'');
+					}
+				}
 			}
 		}
 		function getHTMLStat(StatArray, type_stat){
@@ -2082,202 +2209,6 @@
 			
 			var userbar_bg_content = document.getElementById("userbar-bg-content");
 			userbar_bg_content.innerHTML = html;
-		}
-		function getStatSaveMember(){
-			var js_cm_menu__user = document.getElementsByClassName('js-cm-menu__user')[0];
-			if(js_cm_menu__user === undefined){console.log('js_cm_menu__user == undefined'); setTimeout(function(){getStatSaveMember();}, 1000); return;}
-			
-			var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
-			var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
-			getIndexedDB('StatPvPMemberArray-'+login_name, updateStatPvPMemberArray, updateStatPvPMemberArray);
-		}
-		function onSaveStatMember(){
-			var today = new Date();
-			
-			var day = today.getDate();
-			var d = ''; if(day < 10){d = '0'+day+'';}else{d = ''+day+'';}
-			
-			var month = today.getMonth() + 1;
-			var m = ''; if(month < 10){m = '0'+month+'';}else{m = ''+month+'';}
-			
-			var year = today.getFullYear();
-			var y = ''+year+'';
-			
-			StatPvPMemberArray[y+''+m+''+d] = MembersArray[0]['info']['statistics']['pvp'];
-			
-			var delKeys = Object.keys(StatPvPMemberArray);
-			var delCount = Object.keys(StatPvPMemberArray).length;
-			for(var i = 0; i < (delCount - 5); i++){
-				delete StatPvPMemberArray[delKeys[i]];
-			}
-			
-			var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
-			var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
-			setIndexedDB('StatPvPMemberArray-'+login_name, JSON.stringify(StatPvPMemberArray), viewStatPvPMemberArray, viewStatPvPMemberArray);
-		}
-		function viewStatPvPMemberArray(response){
-			if(response != null){
-				StatPvPMemberArray = jQ.parseJSON(response);
-				
-				if(Object.keys(StatPvPMemberArray).length < 2){
-					return;
-				}
-				
-				var tabContainer = null;
-				var tab_container = document.getElementsByClassName('tab-container');
-				for(var tc = 0; tc < tab_container.length; tc++){
-					if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
-					tabContainer = tab_container[tc];
-				}
-				
-				if(tabContainer != null){
-					var account_tab_background = tabContainer.getElementsByClassName('account-tab-background');
-					for(var atb = 0; atb < account_tab_background.length; atb++){
-						account_tab_background[atb].style.zIndex = '-1';
-					}
-					
-					var account_tab_overview = tabContainer.getElementsByClassName('account-tab-overview')[0];
-					var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
-					if(account_battle_stats != null){
-						var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
-						if(account_delta_stat == null){
-							account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
-						
-							var Keys = Object.keys(StatPvPMemberArray);
-							var IndexLast = Keys.length - 1;
-							var IndexOld = Keys.length - 2;
-							
-							var battles = StatPvPMemberArray[Keys[IndexLast]]['battles'] - StatPvPMemberArray[Keys[IndexOld]]['battles'];
-							var wins_percents = StatPvPMemberArray[Keys[IndexLast]]['wins_percents'] - StatPvPMemberArray[Keys[IndexOld]]['wins_percents'];
-							var avg_xp = StatPvPMemberArray[Keys[IndexLast]]['avg_xp'] - StatPvPMemberArray[Keys[IndexOld]]['avg_xp'];
-							var avg_damage_dealt = StatPvPMemberArray[Keys[IndexLast]]['avg_damage_dealt'] - StatPvPMemberArray[Keys[IndexOld]]['avg_damage_dealt'];
-							var kill_dead = StatPvPMemberArray[Keys[IndexLast]]['kill_dead'] - StatPvPMemberArray[Keys[IndexOld]]['kill_dead'];
-							var avg_frags = StatPvPMemberArray[Keys[IndexLast]]['avg_frags'] - StatPvPMemberArray[Keys[IndexOld]]['avg_frags'];
-							var avg_planes_killed = StatPvPMemberArray[Keys[IndexLast]]['avg_planes_killed'] - StatPvPMemberArray[Keys[IndexOld]]['avg_planes_killed'];
-							var avg_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_capture_points'];
-							var avg_dropped_capture_points = StatPvPMemberArray[Keys[IndexLast]]['avg_dropped_capture_points'] - StatPvPMemberArray[Keys[IndexOld]]['avg_dropped_capture_points'];
-							var avg_battles_level = StatPvPMemberArray[Keys[IndexLast]]['avg_battles_level'] - StatPvPMemberArray[Keys[IndexOld]]['avg_battles_level'];
-							var wr = StatPvPMemberArray[Keys[IndexLast]]['wr'] - StatPvPMemberArray[Keys[IndexOld]]['wr'];
-							var wtr = StatPvPMemberArray[Keys[IndexLast]]['wtr'] - StatPvPMemberArray[Keys[IndexOld]]['wtr'];
-							
-							var _values = tabContainer.getElementsByClassName('_values')[0];
-							var main_stat = _values.getElementsByTagName('div');
-							main_stat[0].innerHTML += getHTMLDif(battles, 0);
-							main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
-							main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
-							main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
-							main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
-							
-							if(account_battle_stats != null){
-								var account_table = account_battle_stats.getElementsByClassName('account-table');
-								
-								account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
-								account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
-								account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
-								account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
-								//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
-								//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
-								
-								addStatHover(account_table[0].rows[1], 'battles');
-								addStatHover(account_table[0].rows[2], 'wins_percents');
-								addStatHover(account_table[0].rows[3], 'survived_battles_percents');
-								
-								addStatHover(account_table[1].rows[1], 'avg_xp');
-								addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
-								addStatHover(account_table[1].rows[3], 'avg_frags');
-								addStatHover(account_table[1].rows[4], 'avg_planes_killed');
-								
-								addStatHover(account_table[2].rows[1], 'max_xp');
-								addStatHover(account_table[2].rows[2], 'max_damage_dealt');
-								addStatHover(account_table[2].rows[3], 'max_frags_battle');
-								addStatHover(account_table[2].rows[4], 'max_planes_killed');
-							}
-							
-							var main_page_script_block = document.getElementById('main-page-script-block');
-							if(main_page_script_block != null){
-								var account_table = main_page_script_block.getElementsByClassName('account-table');
-								
-								account_table[0].rows[4].cells[1].innerHTML  += getHTMLDif(avg_battles_level, 2);
-								account_table[0].rows[5].cells[1].innerHTML  += getHTMLDif(wr, 2);
-								account_table[0].rows[6].cells[1].innerHTML  += getHTMLDif(wtr, 2);
-							}
-						}
-					}
-					
-					var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
-					if(account_tab == null){					
-						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
-						if(account_tab_detail_stats != null){
-							var date = [];
-							var value = [];
-							var html_chart = '';
-							var chart_value = ['wins_percents', 'avg_xp', 'avg_damage_dealt', 'wr', 'kill_dead', 'avg_battles_level'];
-							
-							for(var key in chart_value){
-								var title = chart_value[key];
-								html_chart += '' +
-									'<div class="chart_div">' +
-										'<h3 class="_title">'+localizationText['title_'+title]+'</h3>' +
-										'<div class="userscript-placeholder"><div id="chart_'+title+'" class="chart-placeholder"></div></div>' +
-									'</div>' +
-								'';
-								
-								value[title] = [];
-							}
-							
-							account_tab_detail_stats.outerHTML += '' +
-								'<div class="account-tab-charts tab-container" js-tab-cont-id="account-tab-charts-pvp">' +
-									'<div class="account-main-stats">' +
-										html_chart + 
-									'</div>' +
-								'</div>' +
-							'';
-							
-							var index = 0;
-							for(var key_stat in StatPvPMemberArray){
-								var d = key_stat.substring(6, 8);
-								var m = key_stat.substring(4, 6);
-								var y = key_stat.substring(2, 4);
-								//date.push([index, d+'.'+m+'.'+y]);
-								date.push([index, d+'.'+m]);
-								
-								for(var key in chart_value){
-									var title = chart_value[key];
-									value[title].push([index, parseFloat(StatPvPMemberArray[key_stat][title].toFixed(2))]);
-								}
-								
-								index++;
-							}
-							
-							for(var key in chart_value){
-								var title = chart_value[key];
-								viewChart(title, date, value[title]);
-							}
-							
-							jQ(tabContainer).find('nav.account-tabs ul').append(''+
-								'<li class="account-tab" js-tab="" js-tab-show="account-tab-charts-pvp">'+
-									'<div class="_title">'+localizationText['charts']+'</div>'+
-									'<div class="_active-feature">'+
-										'<div class="_line"></div>'+
-										'<div class="_shadow"></div>'+
-									'</div>'+
-								'</li>'+
-							'');
-							jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
-								'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-charts-pvp">'+localizationText['charts']+'</li>' +
-							'');
-						}
-					}
-				}
-
-			}
-		}
-		function updateStatPvPMemberArray(response){
-			if(response == null){
-				StatPvPMemberArray = [];
-			}else{
-				StatPvPMemberArray = jQ.parseJSON(response);
-			}
 		}
 		function viewChart(title, date, value){
 			$.plot(
@@ -3233,12 +3164,7 @@
 			
 			MembersArray[index]['achievements'] = response['data'][account_id];
 			
-			if(type == 'profile'){
-				viewMainPageProfile();
-			}else if(type == 'clan'){
-				loadMemberCount++;
-				viewMainPageClan();
-			}
+			getJson(WOWSAPI+'account/statsbydate/?application_id='+application_id+'&account_id='+account_id+'&index='+index+'&type='+type+'&dates='+getDatesList(), doneStatsbydate, errorStatsbydate);
 		}
 		function errorAchievements(url){
 			var vars = getUrlVars(url);
@@ -3257,9 +3183,71 @@
 					false
 				);
 			}else if(type == 'clan'){
+				getJson(WOWSAPI+'account/statsbydate/?application_id='+application_id+'&account_id='+account_id+'&index='+index+'&type='+type+'&dates='+getDatesList(), doneStatsbydate, errorStatsbydate);
+			}
+		}
+		function doneStatsbydate(url, response){
+			if(response.status && response.status == 'error'){
+				errorStatsbydate(url);
+				return;
+			}
+			
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			MembersArray[index]['statsbydate'] = response['data'][account_id];
+			
+			if(type == 'profile'){
+				viewMainPageProfile();
+			}else if(type == 'clan'){
 				loadMemberCount++;
 				viewMainPageClan();
 			}
+		}
+		function errorStatsbydate(url){
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var index = vars['index'];
+			var type = vars['type'];
+			
+			console.log('Error Statsbydate '+account_id);
+			
+			if(type == 'profile'){
+				onShowMessage(
+					localizationText['Box'],
+					localizationText['ErrorAPI'],
+					onCloseMessage,
+					localizationText['Ok'],
+					false
+				);
+			}else if(type == 'clan'){
+				loadMemberCount++;
+				viewMainPageClan();
+			}
+		}
+		function getDatesList(){
+			var DatesList = '';
+		
+			var today = new Date();
+			
+			for(var i = 1; i <= 10; i++){
+				today.setDate(today.getDate() - 1);
+			
+				var day = today.getDate();
+				var d = ''; if(day < 10){d = '0'+day+'';}else{d = ''+day+'';}
+				
+				var month = today.getMonth() + 1;
+				var m = ''; if(month < 10){m = '0'+month+'';}else{m = ''+month+'';}
+				
+				var year = today.getFullYear();
+				var y = ''+year+'';
+				
+				DatesList += y+''+m+''+d+',';
+			}
+			
+			return DatesList;
 		}
 		function calcStat(index){
 			if(MembersArray[index]['info'] == null || MembersArray[index]['ships'] == null){
@@ -3669,6 +3657,70 @@
 				var battle = MembersArray[index]['info']['statistics']['pvp']['battles'];
 				var achievements = MembersArray[index]['achievements']['battle'];
 				MembersArray[index]['achievements']['battle'][key+'_battle'] = (battle / achievements[key]).toFixed(0);
+			}
+			
+			if(MembersArray[index]['statsbydate'] !== undefined && MembersArray[index]['statsbydate'] != null){
+				for(var date in MembersArray[index]['statsbydate']['pvp']){
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_xp'] = MembersArray[index]['statsbydate']['pvp'][date]['xp'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_xp'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_xp'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_damage_dealt'] = MembersArray[index]['statsbydate']['pvp'][date]['damage_dealt'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_damage_dealt'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_damage_dealt'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_frags'] = MembersArray[index]['statsbydate']['pvp'][date]['frags'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_frags'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_frags'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_planes_killed'] = MembersArray[index]['statsbydate']['pvp'][date]['planes_killed'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_planes_killed'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_planes_killed'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_capture_points'] = MembersArray[index]['statsbydate']['pvp'][date]['capture_points'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_capture_points'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_capture_points'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['avg_dropped_capture_points'] = MembersArray[index]['statsbydate']['pvp'][date]['dropped_capture_points'] / MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['avg_dropped_capture_points'])){MembersArray[index]['statsbydate']['pvp'][date]['avg_dropped_capture_points'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['wins_percents'] = (MembersArray[index]['statsbydate']['pvp'][date]['wins']/MembersArray[index]['statsbydate']['pvp'][date]['battles'])*100;
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['wins_percents'])){MembersArray[index]['statsbydate']['pvp'][date]['wins_percents'] = 0;}
+					
+					MembersArray[index]['statsbydate']['pvp'][date]['survived_battles_percents'] = (MembersArray[index]['statsbydate']['pvp'][date]['survived_battles']/MembersArray[index]['statsbydate']['pvp'][date]['battles'])*100;
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['survived_battles_percents'])){MembersArray[index]['statsbydate']['pvp'][date]['survived_battles_percents'] = 0;}
+					
+					if(MembersArray[index]['statsbydate']['pvp'][date]['battles'] == MembersArray[index]['statsbydate']['pvp'][date]['survived_battles']){
+						MembersArray[index]['statsbydate']['pvp'][date]['kill_dead'] = MembersArray[index]['statsbydate']['pvp'][date]['frags']/MembersArray[index]['statsbydate']['pvp'][date]['battles'];
+					}else{
+						MembersArray[index]['statsbydate']['pvp'][date]['kill_dead'] = MembersArray[index]['statsbydate']['pvp'][date]['frags']/(MembersArray[index]['statsbydate']['pvp'][date]['battles']-MembersArray[index]['statsbydate']['pvp'][date]['survived_battles']);
+					}
+					if(isNaN(MembersArray[index]['statsbydate']['pvp'][date]['kill_dead'])){MembersArray[index]['statsbydate']['pvp'][date]['kill_dead'] = 0;}
+				}
+				
+				var today = new Date();
+				
+				var day = today.getDate();
+				var d = ''; if(day < 10){d = '0'+day+'';}else{d = ''+day+'';}
+				
+				var month = today.getMonth() + 1;
+				var m = ''; if(month < 10){m = '0'+month+'';}else{m = ''+month+'';}
+				
+				var year = today.getFullYear();
+				var y = ''+year+'';
+				
+				var lastDate = parseInt(y+''+m+''+d);
+				
+				MembersArray[index]['statsbydate']['pvp'][lastDate]= {};
+				
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['date'] = ''+lastDate+'';
+				
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['battles'] = MembersArray[index]['info']['statistics']['pvp']['battles'];
+				
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_xp'] = MembersArray[index]['info']['statistics']['pvp']['avg_xp'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_damage_dealt'] = MembersArray[index]['info']['statistics']['pvp']['avg_damage_dealt'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_frags'] = MembersArray[index]['info']['statistics']['pvp']['avg_frags'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_planes_killed'] = MembersArray[index]['info']['statistics']['pvp']['avg_planes_killed'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_capture_points'] = MembersArray[index]['info']['statistics']['pvp']['avg_capture_points'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['avg_dropped_capture_points'] = MembersArray[index]['info']['statistics']['pvp']['avg_dropped_capture_points'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['wins_percents'] = MembersArray[index]['info']['statistics']['pvp']['wins_percents'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['survived_battles_percents'] = MembersArray[index]['info']['statistics']['pvp']['survived_battles_percents'];
+				MembersArray[index]['statsbydate']['pvp'][lastDate]['kill_dead'] = MembersArray[index]['info']['statistics']['pvp']['kill_dead'];				
 			}
 			
 			return true;
@@ -4289,6 +4341,8 @@
 				localizationText['ru']['title_kill_dead'] = 'Отношение уничтожил / убит';
 				localizationText['ru']['title_wr'] = 'WR';
 				localizationText['ru']['title_avg_battles_level'] = 'Средний уровень кораблей игрока в боях';
+				localizationText['ru']['title_avg_frags'] = 'Средние Уничтожено кораблей за бой';
+				localizationText['ru']['title_avg_planes_killed'] = 'Средние Уничтожено самолётов за бой';
 
 				localizationText['ru']['stat-table-1'] = 'Общие результаты';
 				localizationText['ru']['battles'] = 'Бои';
@@ -4480,6 +4534,8 @@
 				localizationText['en']['title_kill_dead'] = 'Kill / Death Ratio';
 				localizationText['en']['title_wr'] = 'WR';
 				localizationText['en']['title_avg_battles_level'] = 'Average tier of warships used by player';
+				localizationText['en']['title_avg_frags'] = 'Average Destroyed ships for battle';
+				localizationText['en']['title_avg_planes_killed'] = 'Average Destroyed aircraft for battle';
 
 				localizationText['en']['stat-table-1'] = 'Overall Results';
 				localizationText['en']['battles'] = 'Battles';
@@ -4622,6 +4678,8 @@
 				localizationText['fr']['title_kill_dead'] = 'Taux des tués/morts';
 				localizationText['fr']['title_wr'] = 'WR';
 				localizationText['fr']['title_avg_battles_level'] = 'Niveau moyen de navires de guerre utilisée par le joueur';
+				localizationText['fr']['title_avg_frags'] = 'Navires détruits moyennes pour la bataille';
+				localizationText['fr']['title_avg_planes_killed'] = 'Avions détruits moyenne pour la lutte';
 
 				localizationText['fr']['stat-table-1'] = 'Résultats généraux';
 				localizationText['fr']['battles'] = 'Batailles';
@@ -4681,6 +4739,8 @@
 				localizationText['de']['title_kill_dead'] = 'Verhältnis Abschüsse/Verluste';
 				localizationText['de']['title_wr'] = 'WR';
 				localizationText['de']['title_avg_battles_level'] = 'Durchschnittliche Tier von Kriegsschiffen durch Spieler verwendet';
+				localizationText['de']['title_avg_frags'] = 'Durchschnittlich zerstörte Schiffe zum Kampf';
+				localizationText['de']['title_avg_planes_killed'] = 'Durchschnittlich zerstörte Flugzeug für den Kampf';
 
 				localizationText['de']['stat-table-1'] = 'Gesamtergebnisse';
 				localizationText['de']['battles'] = 'Gefechte';
@@ -4740,6 +4800,8 @@
 				localizationText['tr']['title_kill_dead'] = 'Yok Etme/Ölüm Oranı';
 				localizationText['tr']['title_wr'] = 'WR';
 				localizationText['tr']['title_avg_battles_level'] = 'Oyuncu tarafından kullanılan savaş gemilerinin ortalama katmanlı';
+				localizationText['tr']['title_avg_frags'] = 'Savaş için ortalama yıkılan gemiler';
+				localizationText['tr']['title_avg_planes_killed'] = 'Mücadele için ortalama tahrip uçaklar';
 
 				localizationText['tr']['stat-table-1'] = 'Genel Sonuçlar';
 				localizationText['tr']['battles'] = 'Savaşlar';
@@ -4799,6 +4861,8 @@
 				localizationText['es']['title_kill_dead'] = 'Tasa muertos/muertes';
 				localizationText['es']['title_wr'] = 'WR';
 				localizationText['es']['title_avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
+				localizationText['es']['title_avg_frags'] = 'Promedio de barcos destruidos para la batalla';
+				localizationText['es']['title_avg_planes_killed'] = 'Aviones promedio destruido por la lucha';
 
 				localizationText['es']['stat-table-1'] = 'Resultados generales';
 				localizationText['es']['battles'] = 'Batallas';
@@ -4858,6 +4922,8 @@
 				localizationText['es-mx']['title_kill_dead'] = 'Radio de Destrucción / Muerte';
 				localizationText['es-mx']['title_wr'] = 'WR';
 				localizationText['es-mx']['title_avg_battles_level'] = 'Niveles promedio de los buques de guerra utilizado por jugador';
+				localizationText['es-mx']['title_avg_frags'] = 'Promedio de barcos destruidos para la batalla';
+				localizationText['es-mx']['title_avg_planes_killed'] = 'Aviones promedio destruido por la lucha';
 
 				localizationText['es-mx']['stat-table-1'] = 'Resultados en General';
 				localizationText['es-mx']['battles'] = 'Batallas';
@@ -4917,6 +4983,8 @@
 				localizationText['pt-br']['title_kill_dead'] = 'Taxa de Morte/Destruição';
 				localizationText['pt-br']['title_wr'] = 'WR';
 				localizationText['pt-br']['title_avg_battles_level'] = 'Nível médio de navios de guerra usados por jogador';
+				localizationText['pt-br']['title_avg_frags'] = 'Navios médios destruído por batalha';
+				localizationText['pt-br']['title_avg_planes_killed'] = 'Aeronaves média destruído para a luta';
 
 				localizationText['pt-br']['stat-table-1'] = 'Resultados Gerais';
 				localizationText['pt-br']['battles'] = 'Batalhas';
@@ -4976,6 +5044,8 @@
 				localizationText['cs']['title_kill_dead'] = 'Poměr Zabití/Smrtí';
 				localizationText['cs']['title_wr'] = 'WR';
 				localizationText['cs']['title_avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
+				localizationText['cs']['title_avg_frags'] = 'Průměrné Zničené lodě pro boj';
+				localizationText['cs']['title_avg_planes_killed'] = 'Průměrná Zničená letadla pro boj';
 
 				localizationText['cs']['stat-table-1'] = 'Celkové výsledky';
 				localizationText['cs']['battles'] = 'Bitvy';
@@ -5035,6 +5105,8 @@
 				localizationText['pl']['title_kill_dead'] = 'Stosunek zniszczonych przeciwników/własnych zniszczeń';
 				localizationText['pl']['title_wr'] = 'WR';
 				localizationText['pl']['title_avg_battles_level'] = 'Průměrná vrstva válečných lodí používaný přehrávačem';
+				localizationText['pl']['title_avg_frags'] = 'Średnie Zniszczone statki do boju';
+				localizationText['pl']['title_avg_planes_killed'] = 'Średnia Zniszczony samolot do walki';
 
 				localizationText['pl']['stat-table-1'] = 'Ogólne wyniki';
 				localizationText['pl']['battles'] = 'Bitwy';
@@ -5094,6 +5166,8 @@
 				localizationText['ja']['title_kill_dead'] = 'キル/デス比';
 				localizationText['ja']['title_wr'] = 'WR';
 				localizationText['ja']['title_avg_battles_level'] = 'プレイヤーが使用する軍艦の平均ティア';
+				localizationText['ja']['title_avg_frags'] = '戦いの平均破壊された船';
+				localizationText['ja']['title_avg_planes_killed'] = '戦いの平均破壊された航空機';
 
 				localizationText['ja']['stat-table-1'] = '総合結果';
 				localizationText['ja']['battles'] = '戦闘数';
@@ -5153,6 +5227,8 @@
 				localizationText['th']['title_kill_dead'] = 'อัตราสังหาร/เสียชีวิต';
 				localizationText['th']['title_wr'] = 'WR';
 				localizationText['th']['title_avg_battles_level'] = 'ชั้นเฉลี่ยของเรือรบที่ใช้โดยผู้เล่น';
+				localizationText['th']['title_avg_frags'] = 'เรือถูกทำลายเฉลี่ยสำหรับการต่อสู้';
+				localizationText['th']['title_avg_planes_killed'] = 'เครื่องบินถูกทำลายเฉลี่ยสำหรับการต่อสู้';
 
 				localizationText['th']['stat-table-1'] = 'ผลรวม';
 				localizationText['th']['battles'] = 'การรบ';
@@ -5215,6 +5291,8 @@
 				localizationText['vi']['title_kill_dead'] = 'Tỷ lệ Tiêu diệt/Bị Tiêu diệt';
 				localizationText['vi']['title_wr'] = 'WR';
 				localizationText['vi']['title_avg_battles_level'] = 'Tier trung bình của các tàu chiến được sử dụng bởi người chơi';
+				localizationText['vi']['title_avg_frags'] = 'Tàu Trung bình bị phá hủy trong trận chiến';
+				localizationText['vi']['title_avg_planes_killed'] = 'Máy bay bị phá hủy trung bình cho cuộc chiến';
 
 				localizationText['vi']['stat-table-1'] = 'Kết quả Tổng quan';
 				localizationText['vi']['battles'] = 'Số trận';
@@ -5320,6 +5398,8 @@
 				localizationText['zh-tw']['title_kill_dead'] = '擊毀/死亡比';
 				localizationText['zh-tw']['title_wr'] = 'WR';
 				localizationText['zh-tw']['title_avg_battles_level'] = '玩家所用艦艇的平均階級';
+				localizationText['zh-tw']['title_avg_frags'] = '平均打掉船舶战斗';
+				localizationText['zh-tw']['title_avg_planes_killed'] = '为争平均架被毁飞机';
 
 				localizationText['zh-tw']['stat-table-1'] = '整體成績';
 				localizationText['zh-tw']['battles'] = '戰鬥數';
