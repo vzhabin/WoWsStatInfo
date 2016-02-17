@@ -33,6 +33,6 @@
     "description" : "Расширенная статистика и функционал на сайте World of Warships.",
     "name" : "WoWsStatInfo", 
     "permissions" : ["http://*/*", "unlimitedStorage"],
-    "version" : "0.5.2.28",
-	"version_name": "0.5.2.28"
+    "version" : "0.5.3.28",
+	"version_name": "0.5.3.28"
 }

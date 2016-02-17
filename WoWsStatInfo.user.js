@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.2.28
+// @version 0.5.3.28
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -42,10 +42,10 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){/* delIndexedDB('StatPvPMemberArray-'+login_name); убрать в следующей версии, добавлено в 0.5.2.28 */
+(function(window){/* delIndexedDB('StatPvPMemberArray-'+login_name); убрать в следующей версии, добавлено в 0.5.3.28 */
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.2.28';
+		var VersionWoWsStatInfo = '0.5.3.28';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
