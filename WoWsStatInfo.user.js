@@ -474,6 +474,16 @@
 			jQ('#userscriptwowsstatinfo').click(function(){onViewBlock(this);});
 			jQ('._item').click(function(){
 				setTimeout(function(){viewMainPageProfile();}, 1000);
+				
+				var pvp_solo_div_charts = document.getElementById('pvp_solo_div_charts');
+				if(pvp_solo_div_charts != null){
+					jQ(pvp_solo_div_charts).hide();
+					
+					jQ('._container_type').hide();
+					jQ('.dynamic-template').show();
+					jQ('.button-stat').css('background-color', '#303b41');
+					jQ('._diactive').removeClass('_diactive');
+				}
 			});
 			jQ('.account-tabs').click(function(){
 				setTimeout(function(){viewMainPageProfile();}, 1000);
@@ -705,6 +715,8 @@
 			}			
 		}
 		function viewMainPageProfile(){
+			console.log('...function viewMainPageProfile...');
+			
 			if(Encyclopedia == null){console.log('Encyclopedia == null'); setTimeout(function(){viewMainPageProfile();}, 1000);return;}
 			
 			if(MembersArray[0]['info']['hidden_profile']){
@@ -717,19 +729,24 @@
 				return;
 			}
 			
-			var tabContainer = null;
-			var tab_container = document.getElementsByClassName('tab-container');
-			for(var tc = 0; tc < tab_container.length; tc++){
-				if(tab_container[tc].getAttribute('js-tab-cont-id') != 'pvp'){continue;}
-				tabContainer = tab_container[tc];
+			var container = null;
+			var account_tabs__game_mode_tabs_menu = document.getElementsByClassName('account-tabs__game-mode-tabs-menu')[0];
+			if(account_tabs__game_mode_tabs_menu != null){
+				var dropdown_select__html = account_tabs__game_mode_tabs_menu.getElementsByClassName('dropdown-select__html')[0];
+				if(dropdown_select__html != null){
+					var wows_pvp = dropdown_select__html.getElementsByClassName('wows-pvp')[0];
+					if(wows_pvp != null){
+						container = document.getElementsByClassName('account-tabs-containers')[0];
+					}
+				}
 			}
 			
-			if(tabContainer != null){
-				var account_tab_background = tabContainer.getElementsByClassName('account-tab-background');
+			if(container != null){
+				var account_tab_background = container.getElementsByClassName('account-tab-background');
 				for(var atb = 0; atb < account_tab_background.length; atb++){
 					account_tab_background[atb].style.zIndex = '-1';
 				}
-			
+				
 				var cm_user_menu_link_cutted_text = document.getElementsByClassName('cm-user-menu-link_cutted-text')[0];
 				var login_name = null; if(cm_user_menu_link_cutted_text != null){login_name = cm_user_menu_link_cutted_text.textContent;}
 				
@@ -748,8 +765,9 @@
 				'';
 				
 				var main_page_script_block = document.getElementById('main-page-script-block');
-				var account_main_stats_mobile = tabContainer.getElementsByClassName('account-main-stats-mobile')[0];
-				if(main_page_script_block == null && account_main_stats_mobile != null){
+				var account_tab_overview = container.getElementsByClassName('account-tab-overview')[0];
+				var account_main_stats_mobile = container.getElementsByClassName('account-main-stats-mobile')[0];
+				if(main_page_script_block == null && account_main_stats_mobile != null && account_tab_overview != null){
 					account_main_stats_mobile.outerHTML += '' +
 						'<hr />' +
 						'<table id="main-page-script-block" style="width: 100%;">' +
@@ -856,7 +874,7 @@
 						getJson(WoWsStatInfoHref+'bg/bg.php?'+Math.floor(Math.random()*100000001), doneUserBarBG, errorUserBarBG);
 					});
 					
-					var _values = tabContainer.getElementsByClassName('_values')[0];
+					var _values = account_tab_overview.getElementsByClassName('_values')[0];
 					var main_stat = _values.getElementsByTagName('div');
 					main_stat[0].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['battles'], 'battles', 'main');
 					addStatHover(main_stat[0], 'battles');
@@ -874,7 +892,7 @@
 					main_stat[4].style.color = findColorASC(MembersArray[0]['info']['statistics']['pvp']['kill_dead'], 'kill_dead', 'main');
 					addStatHover(main_stat[4], 'kill_dead');
 					
-					var account_battle_stats = tabContainer.getElementsByClassName('account-battle-stats')[0];
+					var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
 					if(account_battle_stats != null){
 						var account_table = account_battle_stats.getElementsByClassName('account-table');
 						
@@ -940,126 +958,71 @@
 					}
 				}
 				
-				var ships_detail_stats = tabContainer.getElementsByClassName('ships-detail-stats')[0];
-				if(ships_detail_stats != null){
-					for(var i = 0; i < ships_detail_stats.rows.length; i++){
-						var row = ships_detail_stats.rows[i];
+				if(account_tab_overview != null){
+					var account_main_stats = account_tab_overview.getElementsByClassName('account-main-stats')[0];
+					var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
+					if(account_battle_stats != null && account_main_stats != null){
+						var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
+						if(account_delta_stat == null){
+							account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
 						
-						if(i == 0 && row.cells.length < 6){
-							var th = document.createElement('th');
-							th.setAttribute('class', '_value');
-							th.innerHTML = '<span>'+localizationText['wr']+'</span>';
-							row.appendChild(th);
+							var Keys = Object.keys(MembersArray[0]['statsbydate']['pvp']);
+							var IndexLast = Keys.length - 1;
+							var IndexOld = Keys.length - 2;
 							
-							th = document.createElement('th');
-							th.setAttribute('class', '_value');
-							th.innerHTML = '<span>'+localizationText['wtr']+'</span>';
-							row.appendChild(th);
+							var battles = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['battles'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['battles'];
+							var wins_percents = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['wins_percents'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['wins_percents'];
+							var avg_xp = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_xp'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_xp'];
+							var avg_damage_dealt = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_damage_dealt'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_damage_dealt'];
+							var kill_dead = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['kill_dead'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['kill_dead'];
+							var avg_frags = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_frags'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_frags'];
+							var avg_planes_killed = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_planes_killed'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_planes_killed'];
+							var avg_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_capture_points'];
+							var avg_dropped_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_dropped_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_dropped_capture_points'];
 							
-							continue;
-						}
-						
-						if(row.getAttribute('class') == null){
-							var _icon = row.getElementsByClassName('_icon')[0];
-							var div_icon = _icon.getElementsByTagName('div')[0];
-							var ship_class = div_icon.getAttribute('class').split('-')[1];
+							if(login_name == MembersArray[0]['info']['nickname']){
+								var _values = account_main_stats.getElementsByClassName('_values')[0];
+								var main_stat = _values.getElementsByTagName('div');
+								main_stat[0].innerHTML += getHTMLDif(battles, 0);
+								main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
+								main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
+								main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
+								main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
+							}
 							
-							if(row.cells.length < 6){
-								for(var t = 0; t < typeShip.length; t++){
-									var type = typeShip[t].toLowerCase();
-									if(ship_class == type){
-										ship_class = typeShip[t];
-									}
+							if(account_battle_stats != null){
+								var account_table = account_battle_stats.getElementsByClassName('account-table');
+								
+								if(login_name == MembersArray[0]['info']['nickname']){
+									account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
+									account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
+									account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
+									account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
+									//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
+									//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
 								}
-							
-								var td = document.createElement('td');
-								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class]).toFixed(0))+'</span>';
-								row.appendChild(td);
 								
-								td = document.createElement('td');
-								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class]).toFixed(0))+'</span>';
-								row.appendChild(td);
+								addStatHover(account_table[0].rows[1], 'battles');
+								addStatHover(account_table[0].rows[2], 'wins_percents');
+								addStatHover(account_table[0].rows[3], 'survived_battles_percents');
+								
+								addStatHover(account_table[1].rows[1], 'avg_xp');
+								addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
+								addStatHover(account_table[1].rows[3], 'avg_frags');
+								addStatHover(account_table[1].rows[4], 'avg_planes_killed');
+								
+								addStatHover(account_table[2].rows[1], 'max_xp');
+								addStatHover(account_table[2].rows[2], 'max_damage_dealt');
+								addStatHover(account_table[2].rows[3], 'max_frags_battle');
+								addStatHover(account_table[2].rows[4], 'max_planes_killed');
 							}
-							
-							var battles = htmlParseMemberStatistic(row.cells[2]);
-							if(battles > 0){
-								var wins = htmlParseMemberStatistic(row.cells[3]);
-								var avg_xp = htmlParseMemberStatistic(row.cells[4]);
-								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
-								
-								row.cells[3].setAttribute('style', 'white-space: nowrap;');
-								row.cells[3].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
-								
-								row.cells[4].setAttribute('style', 'white-space: nowrap;');
-								row.cells[4].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
-							}
-							
-							continue;
-						}
-						
-						if(row.getAttribute('class').indexOf('_expandable') > -1){
-							var ship_id = row.getAttribute('js-has-extension').split('-')[0];
-							
-							if(row.cells.length < 5){
-								var name_text = row.cells[0].getElementsByClassName('_text')[0];
-								var is_premium = Encyclopedia[ship_id]['is_premium'];
-								if(is_premium){
-									name_text.setAttribute('style', 'color: #ffab34;');
-								}
-							
-								var td = document.createElement('td');
-								td.setAttribute('id', 'wr-'+ship_id);
-								td.innerHTML = '<span>0</span>';
-								row.appendChild(td);
-								
-								td = document.createElement('td');
-								td.setAttribute('id', 'wtr-'+ship_id);
-								td.innerHTML = '<span>0</span>';
-								row.appendChild(td);
-							}
-							
-							var battles = htmlParseMemberStatistic(row.cells[1]);
-							if(battles > 0){
-								var wins = htmlParseMemberStatistic(row.cells[2]);
-								var avg_xp = htmlParseMemberStatistic(row.cells[3]);
-								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
-								
-								row.cells[2].setAttribute('style', 'white-space: nowrap;');
-								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
-								
-								row.cells[3].setAttribute('style', 'white-space: nowrap;');
-								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
-							}
-							
-							continue;
-						}
-						
-						if(row.getAttribute('class').indexOf('_ship-entry-stat') > -1){
-							row.cells[0].setAttribute('colspan', '7');
-							
-							continue;
-						}
-					}
-					
-					for(var shipI = 0; shipI < MembersArray[0]['ships'].length; shipI++){
-						var ship_id = MembersArray[0]['ships'][shipI]['ship_id'];
-						var wr_cell = document.getElementById('wr-'+ship_id);
-						if(wr_cell != null){
-							wr_cell.setAttribute('style', 'white-space: nowrap;');
-							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
-						}
-						
-						var wtr_cell = document.getElementById('wtr-'+ship_id);
-						if(wtr_cell != null){
-							wtr_cell.setAttribute('style', 'white-space: nowrap;');
-							wtr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wtr'], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wtr']).toFixed(0))+'</span>';
 						}
 					}
 				}
-			
-				var achieves_block = tabContainer.getElementsByClassName('achieves-block')[0];
+				
+				var achieves_block = container.getElementsByClassName('achieves-block')[0];
 				if(achieves_block != null){
-					var achieve_item = tabContainer.getElementsByClassName('achieve-item');
+					var achieve_item = container.getElementsByClassName('achieve-item');
 					for(var i = 0; i < achieve_item.length; i++){
 						var item = achieve_item[i];
 						var js_tooltip_show = item.getAttribute('js-tooltip-show');
@@ -1068,21 +1031,22 @@
 							_counter.setAttribute('style', 'left: 70%; background-color: #F7882E; min-width: 3em;');
 							
 							var battlesAchievement = 0;
-							if(MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle'] === undefined){
+							if(MembersArray[0]['achievements']['battle'][js_tooltip_show.toUpperCase()+'_battle'] === undefined){
 								battlesAchievement = 'Error';
 							}else{
-								battlesAchievement = MembersArray[0]['achievements']['battle'][js_tooltip_show+'_battle'];
+								battlesAchievement = MembersArray[0]['achievements']['battle'][js_tooltip_show.toUpperCase()+'_battle'];
 							}
 							
 							item.innerHTML += '<div class="_counter" style="left: 20%; background-color: #AAAAAA; min-width: 3em;">'+battlesAchievement+'</div>';
 						}
 					}
 					
-					var achieve_counter = tabContainer.getElementsByClassName('achieve-counter')[0];
-					if(achieve_counter == null){
+					var achieves_block = container.getElementsByClassName('achieves-block')[0];
+					var achieve_counter = container.getElementsByClassName('achieve-counter')[0];
+					if(achieve_counter == null && achieves_block != null){
 						achieves_block.outerHTML += '' +
-							'<div class="achieve-counter">' +
-								'<div style="width: initial; height: initial; float: initial;" class="achieve-item _big tooltip-target tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left">' +
+							'<div class="achieve-counter" style="margin-left: 10px;">' +
+								'<div style="width: initial; height: initial; float: initial; font-size: 14px; color: #FFF;" class="achieve-item _big tooltip-target tooltip-enabled tooltip-element-attached-top tooltip-element-attached-left tooltip-target-attached-bottom tooltip-target-attached-left">' +
 									'<div class="_counter" style="position: relative; background-color: #F7882E; min-width: 3em; left: 0; float: left;">12</div>' +
 									'<div> - '+localizationText['achieve_counter_1']+'</div>' +
 									'<div class="_counter" style="position: relative; background-color: #AAAAAA; min-width: 3em; left: 0; float: left;">31</div>' +
@@ -1093,16 +1057,74 @@
 					}
 				}
 				
+				var account_tabs_wrapper = document.getElementsByClassName('account-tabs-wrapper')[0];
+				if(account_tabs_wrapper != null){
+					var pvp_solo_div_charts = document.getElementById('pvp_solo_div_charts');
+					if(pvp_solo_div_charts == null){
+						var div = document.createElement('div');
+						div.setAttribute('id', 'pvp_solo_div_charts');
+						div.setAttribute('style', 'text-align: right;');
+						div.innerHTML += '' +
+							'<div style="text-align: right;">' +
+								'<button class="btn btn-lg btn-turqoise button-stat" id="pvp_solo" style="margin: 5px; padding: 10px; background-color: #303b41;">' +
+									localizationText['pvp_solo'] +
+								'</button>' +
+								'<button class="btn btn-lg btn-turqoise button-stat" id="pvp_div" style="margin: 5px; padding: 10px; background-color: #303b41;">' +
+									localizationText['pvp_div'] +
+								'</button>' +
+								'<button class="btn btn-lg btn-turqoise button-stat" id="charts" style="margin: 5px; padding: 10px; background-color: #303b41;">' +
+									localizationText['charts'] +
+								'</button>' +
+							'</div>' +
+						'';
+						account_tabs_wrapper.insertBefore(div, account_tabs_wrapper.firstChild);
+						
+						jQ('.button-stat').click(function(){
+							jQ('._container_type').hide();
+							jQ('.button-stat').css('background-color', '#303b41');
+							var tab_content = document.getElementsByClassName('tab-content')[0];
+							var li = tab_content.getElementsByTagName('li');
+							for(var i = 0; i < li.length; i++){
+								if(li[i].getAttribute('class') == 'account-tab _active'){
+									jQ(li[i]).removeClass('_active');
+									jQ(li[i]).addClass('_diactive');
+									jQ('.dynamic-template').hide();
+								}
+							}
+							jQ('._container_'+jQ(this).attr('id')).show();
+							jQ(this).css('background-color', '#099');
+						});
+						jQ('.account-tab').click(function(){
+							if(jQ(this).attr('class') == 'account-tab _diactive'){
+								jQ(this).addClass('_active');
+							}
+							jQ('.dynamic-template').show();
+							jQ('._container_type').hide();
+							jQ('.button-stat').css('background-color', '#303b41');
+							jQ('._diactive').removeClass('_diactive');
+						});
+					}else{
+						jQ(pvp_solo_div_charts).show();
+					}
+				}
+				
 				var typeStatAdd = ["pvp_div", "pvp_solo"];
-				for(var i = 0; i < typeStatAdd.length; i++){
-					var type = typeStatAdd[i];
+				var _container = document.getElementsByClassName('_container')[0];
+				if(_container != null){
+					var _container_solo_div_charts = document.getElementsByClassName('_container_solo_div_charts')[0];
+					if(_container_solo_div_charts == null){
+						var div = document.createElement('div');
+						div.setAttribute('class', '_container_solo_div_charts');
+						_container.insertBefore(div, _container.firstChild);
+						_container_solo_div_charts = document.getElementsByClassName('_container_solo_div_charts')[0];
+					}
 					
-					var account_tab = tabContainer.getElementsByClassName('account-tab-'+type)[0];
-					if(account_tab == null){
-						var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
-						if(account_tab_detail_stats != null){
-							account_tab_detail_stats.outerHTML += '' +
-								'<div class="account-tab-'+type+' tab-container" js-tab-cont-id="account-tab-'+type+'-pvp">' +
+					for(var i = 0; i < typeStatAdd.length; i++){
+						var type = typeStatAdd[i];
+						var _container_type = _container_solo_div_charts.getElementsByClassName('_container_'+type)[0];
+						if(_container_type == null){
+							_container_solo_div_charts.innerHTML += '' +
+								'<div class="_container_type _container_'+type+' tab-container">' +
 									'<div class="account-main-stats">' +
 										'<div class="_bg-for-average-exp"></div>' +
 										'<div class="account-main-stats-table">' +
@@ -1263,111 +1285,11 @@
 									'</div>' +
 								'</div>' +
 							'';
-							
-							jQ(tabContainer).find('nav.account-tabs ul').append(''+
-								'<li class="account-tab" js-tab="" js-tab-show="account-tab-'+type+'-pvp">'+
-									'<div class="_title">'+localizationText[type]+'</div>'+
-									'<div class="_active-feature">'+
-										'<div class="_line"></div>'+
-										'<div class="_shadow"></div>'+
-									'</div>'+
-								'</li>'+
-							'');
-							jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
-								'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-'+type+'-pvp">'+localizationText[type]+'</li>' +
-							'');
-							
-							jQ('.ships-class-'+type).click(function(){
-								if(jQ(this).attr('open-active') == 'true'){
-									jQ(this).removeClass('_active-btn');
-									jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
-									jQ(this).attr('open-active', 'false');
-								}else{
-									jQ(this).addClass('_active-btn');
-									jQ('.'+jQ(this).attr('open-block')).addClass('_active');
-									jQ(this).attr('open-active', 'true');
-								}								
-							});
-							
-							jQ('.ship-stat-'+type).click(function(){
-								if(jQ(this).attr('open-active') == 'true'){
-									jQ(this).removeClass('_active-btn');
-									jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
-									jQ(this).attr('open-active', 'false');
-								}else{
-									jQ(this).addClass('_active-btn');
-									jQ('.'+jQ(this).attr('open-block')).addClass('_active');
-									jQ(this).attr('open-active', 'true');
-								}								
-							});
 						}
 					}
-				}				
-			
-				var account_tab_overview = tabContainer.getElementsByClassName('account-tab-overview')[0];
-				var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
-				if(account_battle_stats != null){
-					var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
-					if(account_delta_stat == null){
-						account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
 					
-						var Keys = Object.keys(MembersArray[0]['statsbydate']['pvp']);
-						var IndexLast = Keys.length - 1;
-						var IndexOld = Keys.length - 2;
-						
-						var battles = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['battles'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['battles'];
-						var wins_percents = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['wins_percents'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['wins_percents'];
-						var avg_xp = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_xp'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_xp'];
-						var avg_damage_dealt = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_damage_dealt'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_damage_dealt'];
-						var kill_dead = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['kill_dead'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['kill_dead'];
-						var avg_frags = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_frags'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_frags'];
-						var avg_planes_killed = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_planes_killed'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_planes_killed'];
-						var avg_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_capture_points'];
-						var avg_dropped_capture_points = MembersArray[0]['statsbydate']['pvp'][Keys[IndexLast]]['avg_dropped_capture_points'] - MembersArray[0]['statsbydate']['pvp'][Keys[IndexOld]]['avg_dropped_capture_points'];
-						
-						if(login_name == MembersArray[0]['info']['nickname']){
-							var _values = tabContainer.getElementsByClassName('_values')[0];
-							var main_stat = _values.getElementsByTagName('div');
-							main_stat[0].innerHTML += getHTMLDif(battles, 0);
-							main_stat[1].innerHTML += getHTMLDif(wins_percents, 2);
-							main_stat[2].innerHTML += getHTMLDif(avg_xp, 2);
-							main_stat[3].innerHTML += getHTMLDif(avg_damage_dealt, 0);
-							main_stat[4].innerHTML += getHTMLDif(kill_dead, 2);
-						}
-						
-						if(account_battle_stats != null){
-							var account_table = account_battle_stats.getElementsByClassName('account-table');
-							
-							if(login_name == MembersArray[0]['info']['nickname']){
-								account_table[1].rows[1].cells[1].innerHTML  += getHTMLDif(avg_xp, 2);
-								account_table[1].rows[2].cells[1].innerHTML  += getHTMLDif(avg_damage_dealt, 2);
-								account_table[1].rows[3].cells[1].innerHTML  += getHTMLDif(avg_frags, 2);
-								account_table[1].rows[4].cells[1].innerHTML  += getHTMLDif(avg_planes_killed, 2);
-								//account_table[1].rows[5].cells[1].innerHTML  += getHTMLDif(avg_capture_points, 2);
-								//account_table[1].rows[6].cells[1].innerHTML  += getHTMLDif(avg_dropped_capture_points, 2);
-							}
-							
-							addStatHover(account_table[0].rows[1], 'battles');
-							addStatHover(account_table[0].rows[2], 'wins_percents');
-							addStatHover(account_table[0].rows[3], 'survived_battles_percents');
-							
-							addStatHover(account_table[1].rows[1], 'avg_xp');
-							addStatHover(account_table[1].rows[2], 'avg_damage_dealt');
-							addStatHover(account_table[1].rows[3], 'avg_frags');
-							addStatHover(account_table[1].rows[4], 'avg_planes_killed');
-							
-							addStatHover(account_table[2].rows[1], 'max_xp');
-							addStatHover(account_table[2].rows[2], 'max_damage_dealt');
-							addStatHover(account_table[2].rows[3], 'max_frags_battle');
-							addStatHover(account_table[2].rows[4], 'max_planes_killed');
-						}
-					}
-				}
-				
-				var account_tab = tabContainer.getElementsByClassName('account-tab-charts')[0];
-				if(account_tab == null){
-					var account_tab_detail_stats = tabContainer.getElementsByClassName('account-tab-detail-stats')[0];
-					if(account_tab_detail_stats != null){
+					var _container_charts = _container_solo_div_charts.getElementsByClassName('_container_charts')[0];
+					if(_container_charts == null){
 						var date = [];
 						var value = [];
 						var html_chart = '';
@@ -1385,8 +1307,8 @@
 							value[title] = [];
 						}
 						
-						account_tab_detail_stats.outerHTML += '' +
-							'<div class="account-tab-charts tab-container" js-tab-cont-id="account-tab-charts-pvp">' +
+						_container_solo_div_charts.innerHTML += '' +
+							'<div class="_container_type _container_charts tab-container" js-tab-cont-id="account-tab-charts-pvp">' +
 								'<div class="account-main-stats">' +
 									html_chart + 
 								'</div>' +
@@ -1413,7 +1335,7 @@
 							viewChart(title, date, value[title]);
 						}
 						
-						jQ(tabContainer).find('nav.account-tabs ul').append(''+
+						jQ(container).find('nav.account-tabs ul').append(''+
 							'<li class="account-tab" js-tab="" js-tab-show="account-tab-charts-pvp">'+
 								'<div class="_title">'+localizationText['charts']+'</div>'+
 								'<div class="_active-feature">'+
@@ -1422,9 +1344,156 @@
 								'</div>'+
 							'</li>'+
 						'');
-						jQ(tabContainer).find('div.account-tabs-mobile ul').append(''+
+						jQ(container).find('div.account-tabs-mobile ul').append(''+
 							'<li class="_item" js-dropdown-item="" js-tab="" js-tab-show="account-tab-charts-pvp">'+localizationText['charts']+'</li>' +
 						'');
+					}
+				}
+				
+				for(var i = 0; i < typeStatAdd.length; i++){
+					var type = typeStatAdd[i];
+					jQ('.ships-class-'+type).click(function(){
+						if(jQ(this).attr('open-active') == 'true'){
+							jQ(this).removeClass('_active-btn');
+							jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
+							jQ(this).attr('open-active', 'false');
+						}else{
+							jQ(this).addClass('_active-btn');
+							jQ('.'+jQ(this).attr('open-block')).addClass('_active');
+							jQ(this).attr('open-active', 'true');
+						}								
+					});
+					
+					jQ('.ship-stat-'+type).click(function(){
+						if(jQ(this).attr('open-active') == 'true'){
+							jQ(this).removeClass('_active-btn');
+							jQ('.'+jQ(this).attr('open-block')).removeClass('_active');
+							jQ(this).attr('open-active', 'false');
+						}else{
+							jQ(this).addClass('_active-btn');
+							jQ('.'+jQ(this).attr('open-block')).addClass('_active');
+							jQ(this).attr('open-active', 'true');
+						}								
+					});
+				}
+				
+				var ships_detail_stats = container.getElementsByClassName('ships-detail-stats')[0];
+				if(ships_detail_stats != null){
+					for(var i = 0; i < ships_detail_stats.rows.length; i++){
+						var row = ships_detail_stats.rows[i];
+						
+						if(i == 0 && row.cells.length < 6){
+							var th = document.createElement('th');
+							th.setAttribute('class', '_value');
+							th.innerHTML = '<span>'+localizationText['wr']+'</span>';
+							row.appendChild(th);
+							
+							th = document.createElement('th');
+							th.setAttribute('class', '_value');
+							th.innerHTML = '<span>'+localizationText['wtr']+'</span>';
+							row.appendChild(th);
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class') == null){
+							var _icon = row.getElementsByClassName('_icon')[0];
+							var div_icon = _icon.getElementsByTagName('div')[0];
+							var ship_class = div_icon.getAttribute('class').split('-')[1];
+							
+							if(row.cells.length < 6){
+								for(var t = 0; t < typeShip.length; t++){
+									var type = typeShip[t].toLowerCase();
+									if(ship_class == type){
+										ship_class = typeShip[t];
+									}
+								}
+							
+								var td = document.createElement('td');
+								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wr_'+ship_class]).toFixed(0))+'</span>';
+								row.appendChild(td);
+								
+								td = document.createElement('td');
+								td.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['info']['statistics']['pvp']['wtr_'+ship_class]).toFixed(0))+'</span>';
+								row.appendChild(td);
+							}
+							
+							var battles = htmlParseMemberStatistic(row.cells[2]);
+							if(battles > 0){
+								var wins = htmlParseMemberStatistic(row.cells[3]);
+								var avg_xp = htmlParseMemberStatistic(row.cells[4]);
+								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+								
+								row.cells[3].setAttribute('style', 'white-space: nowrap;');
+								row.cells[3].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								
+								row.cells[4].setAttribute('style', 'white-space: nowrap;');
+								row.cells[4].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
+							}
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class').indexOf('_expandable') > -1){
+							if(row.cells.length < 5){
+								var src = row.cells[0].getElementsByClassName('_icon-ships')[0].src;
+								var src_split = src.split('/');
+								var img_name = src_split[src_split.length - 1];
+								var ship_id = getImgNameToShipId(img_name);
+							
+								var name_text = row.cells[0].getElementsByClassName('_text')[0];
+								var is_premium = Encyclopedia[ship_id]['is_premium'];
+								if(is_premium){
+									name_text.setAttribute('style', 'color: #ffab34;');
+								}
+							
+								var td = document.createElement('td');
+								td.setAttribute('id', 'wr-'+ship_id);
+								td.innerHTML = '<span>0</span>';
+								row.appendChild(td);
+								
+								td = document.createElement('td');
+								td.setAttribute('id', 'wtr-'+ship_id);
+								td.innerHTML = '<span>0</span>';
+								row.appendChild(td);
+							}
+							
+							var battles = htmlParseMemberStatistic(row.cells[1]);
+							if(battles > 0){
+								var wins = htmlParseMemberStatistic(row.cells[2]);
+								var avg_xp = htmlParseMemberStatistic(row.cells[3]);
+								var wins_percents = (wins/battles)*100; if(isNaN(wins_percents)){wins_percents = 0;}
+								
+								row.cells[2].setAttribute('style', 'white-space: nowrap;');
+								row.cells[2].innerHTML = valueFormat(wins)+' <span style="color:'+findColorASC(wins_percents, 'wins_percents', 'main')+';">('+valueFormat((wins_percents).toFixed(0))+'%)</span>';							
+								
+								row.cells[3].setAttribute('style', 'white-space: nowrap;');
+								row.cells[3].innerHTML = ' <span style="color:'+findColorASC(avg_xp, 'avg_xp', 'main')+';">'+valueFormat(avg_xp)+'</span>';
+							}
+							
+							continue;
+						}
+						
+						if(row.getAttribute('class').indexOf('_ship-entry-stat') > -1){
+							row.cells[0].setAttribute('colspan', '7');
+							
+							continue;
+						}
+					}
+					
+					for(var shipI = 0; shipI < MembersArray[0]['ships'].length; shipI++){
+						var ship_id = MembersArray[0]['ships'][shipI]['ship_id'];
+						var wr_cell = document.getElementById('wr-'+ship_id);
+						if(wr_cell != null){
+							wr_cell.setAttribute('style', 'white-space: nowrap;');
+							wr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wr'], 'wr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wr']).toFixed(0))+'</span>';
+						}
+						
+						var wtr_cell = document.getElementById('wtr-'+ship_id);
+						if(wtr_cell != null){
+							wtr_cell.setAttribute('style', 'white-space: nowrap;');
+							wtr_cell.innerHTML = '<span style="color:'+findColorASC(MembersArray[0]['ships'][shipI]['pvp']['wtr'], 'wtr', 'main')+';">'+valueFormat((MembersArray[0]['ships'][shipI]['pvp']['wtr']).toFixed(0))+'</span>';
+						}
 					}
 				}
 			}
@@ -3028,6 +3097,16 @@
 		}
 		
 		/* ===== UserScript function ===== */
+		function getImgNameToShipId(img_name){
+			var ShipId = null;
+			for(ship_id in Encyclopedia){
+				if(Encyclopedia[ship_id]['images']['small'].indexOf(img_name) > -1){
+					ShipId = ''+ship_id+'';
+					break;
+				}
+			}
+			return ShipId;
+		}
 		function checkJson(){
 			var date = new Date();
 			var d = date.getDate();
@@ -3250,6 +3329,7 @@
 			return DatesList;
 		}
 		function calcStat(index){
+			
 			if(MembersArray[index]['info'] == null || MembersArray[index]['ships'] == null){
 				MembersArray[index]['info'] = [];
 				MembersArray[index]['info']['last_battle_time'] = 0;
