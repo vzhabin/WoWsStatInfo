@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.3.28
+// @version 0.5.3.29
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -42,10 +42,10 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-(function(window){/* delIndexedDB('StatPvPMemberArray-'+login_name); убрать в следующей версии, добавлено в 0.5.3.28 */
+(function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.3.28';
+		var VersionWoWsStatInfo = '0.5.3.29';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -753,7 +753,6 @@
 				var userbar = '';
 				if(login_name == MembersArray[0]['info']['nickname']){
 					userbar += '<button class="btn btn-lg btn-turqoise" id="generator-userbar" style="margin: 5px; padding: 10px;">'+localizationText['generator-userbar']+'</button>';
-					delIndexedDB('StatPvPMemberArray-'+login_name);
 				}
 				userbar += '' +
 					'<br />'+
@@ -963,10 +962,12 @@
 					var account_battle_stats = account_tab_overview.getElementsByClassName('account-battle-stats')[0];
 					if(account_battle_stats != null && account_main_stats != null){
 						var account_delta_stat = account_battle_stats.getElementsByClassName('account-delta-stat')[0];
-						if(account_delta_stat == null){
-							account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
 						
-							var Keys = Object.keys(MembersArray[0]['statsbydate']['pvp']);
+						var Keys = Object.keys(MembersArray[0]['statsbydate']['pvp']);
+						
+						if(account_delta_stat == null && Keys.length > 1){
+							account_battle_stats.innerHTML += '<div class="account-delta-stat"></div>';
+							
 							var IndexLast = Keys.length - 1;
 							var IndexOld = Keys.length - 2;
 							
@@ -3785,6 +3786,8 @@
 				var y = ''+year+'';
 				
 				var lastDate = parseInt(y+''+m+''+d);
+				
+				if(MembersArray[index]['statsbydate']['pvp'] == null){MembersArray[index]['statsbydate']['pvp'] = {};}
 				
 				MembersArray[index]['statsbydate']['pvp'][lastDate]= {};
 				
