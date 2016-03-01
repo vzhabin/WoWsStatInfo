@@ -407,7 +407,12 @@
 			if(VersionWoWsStatInfo != data['version']){
 				onShowMessage(
 					localizationText['Box'],
-					localizationText['NewVersion']+' WoWsStatInfo '+data['version']+'<br />'+localizationText['NewUpdate']+'.', 
+					localizationText['NewVersion']+' WoWsStatInfo '+data['version']+'<br />'+localizationText['NewUpdate']+'.' +
+					'<br /><br />' +
+					localizationText['userscript-topic']+'<br />'+
+					'<a target="_blank" href="'+WoWsStatInfoLink+'">' +
+						WoWsStatInfoLinkName +
+					'</a>',
 					onCloseMessage,
 					localizationText['Ok'],
 					false
