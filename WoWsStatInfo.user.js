@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.3.29
+// @version 0.5.5.30
 // @creator Vov_chiK
 // @include http://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -45,7 +45,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.3.29';
+		var VersionWoWsStatInfo = '0.5.5.30';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -55,10 +55,10 @@
 		
 		
 		var WoWsStatInfoLinkNameLoc = [];
-		WoWsStatInfoLinkNameLoc['ru'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
-		WoWsStatInfoLinkNameLoc['asia'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
-		WoWsStatInfoLinkNameLoc['na'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
-		WoWsStatInfoLinkNameLoc['eu'] = '['+VersionWoWsStatInfo.substring(0, 5)+'] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
+		WoWsStatInfoLinkNameLoc['ru'] = '[ALL] [WoWsStatInfo] Расширенная статистика на оф. сайте.';
+		WoWsStatInfoLinkNameLoc['asia'] = '[ALL] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
+		WoWsStatInfoLinkNameLoc['na'] = '[ALL] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
+		WoWsStatInfoLinkNameLoc['eu'] = '[ALL] [WoWsStatInfo] Extended stat-info for official WoWS profile.';
 		
 		var lang = 'ru';
 		var realm = 'ru';
@@ -2213,6 +2213,7 @@
 			);
 		}
 		function updateUserBarBG(){
+			console.log('===============');
 			var html = '';
 			
 			var userbar_bg_filtr_types = document.getElementById("userbar-bg-filtr-types");
@@ -2245,11 +2246,12 @@
 					}
 				}else{
 					if(types == 'all'){
-						if(img.length > 1 && MembersArray[0]['clan'] != null){
-							for(var i_id = 1; i_id < img.length; i_id++){
-								if(MembersArray[0]['clan'] == null){break;}
-								if(img[i_id] == MembersArray[0]['clan']['clan_id']){
-									imgbgview = true;
+						if(img.length > 1){
+							if(MembersArray[0]['clan'] !== null){
+								for(var i_id = 1; i_id < img.length; i_id++){
+									if(img[i_id] == MembersArray[0]['clan']['clan_id']){
+										imgbgview = true;
+									}
 								}
 							}
 						}else{
