@@ -4,22 +4,18 @@
         {
             "js":[ "WoWsStatInfo.user.js" ], 
             "matches":[	
-				"http://worldofwarships.ru/ru/community/accounts/*",
+				"https://worldofwarships.ru/ru/community/accounts/*",
 				"http://forum.worldofwarships.ru/index.php?/topic/*",
 				"http://forum.worldofwarships.ru/index.php?/user/*",
-				"http://ru.wargaming.net/clans/*/players*",
-				"http://worldofwarships.eu/*/community/accounts/*",
+				"https://worldofwarships.eu/*/community/accounts/*",
 				"http://forum.worldofwarships.eu/index.php?/topic/*",
 				"http://forum.worldofwarships.eu/index.php?/user/*",
-				"http://eu.wargaming.net/clans/*/players*",
-				"http://worldofwarships.com/*/community/accounts/*",
+				"https://worldofwarships.com/*/community/accounts/*",
 				"http://forum.worldofwarships.com/index.php?/topic/*",
 				"http://forum.worldofwarships.com/index.php?/user/*",
-				"http://na.wargaming.net/clans/*/players*",
-				"http://worldofwarships.asia/*/community/accounts/*",
+				"https://worldofwarships.asia/*/community/accounts/*",
 				"http://forum.worldofwarships.asia/index.php?/topic/*",
-				"http://forum.worldofwarships.asia/index.php?/user/*",
-				"http://asia.wargaming.net/clans/*/players*"
+				"http://forum.worldofwarships.asia/index.php?/user/*"
 			], 
             "run_at":"document_end",
 			"all_frames": true
@@ -32,7 +28,7 @@
 	},	
     "description" : "Расширенная статистика и функционал на сайте World of Warships.",
     "name" : "WoWsStatInfo", 
-    "permissions" : ["http://*/*", "unlimitedStorage"],
-    "version" : "0.5.6.30",
-	"version_name": "0.5.6.30"
+    "permissions" : ["https://*/*", "unlimitedStorage"],
+    "version" : "0.5.16.31",
+	"version_name": "0.5.16.31"
 }
