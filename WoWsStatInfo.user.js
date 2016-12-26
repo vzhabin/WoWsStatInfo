@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.5.16.31
+// @version 0.5.16.32
 // @creator Vov_chiK
 // @include https://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -37,7 +37,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.5.16.31';
+		var VersionWoWsStatInfo = '0.5.16.32';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -72,9 +72,9 @@
 		var WoWsStatInfoLink = WoWsStatInfoLinkLoc[realm];
 		var WoWsStatInfoLinkName = WoWsStatInfoLinkNameLoc[realm];
 		
-		var WGAPI = '//api.worldoftanks.'+realm_host+'/wgn/';
-		var WOWSAPI = '//api.worldofwarships.'+realm_host+'/wows/';
-		var WoWsStatInfoHref = '//vzhabin.ru/US_WoWsStatInfo/';
+		var WGAPI = 'https://api.worldoftanks.'+realm_host+'/wgn/';
+		var WOWSAPI = 'https://api.worldofwarships.'+realm_host+'/wows/';
+		var WoWsStatInfoHref = 'https://vzhabin.ru/US_WoWsStatInfo/';
 	
 		var Process = 0;
 		var MaxProcess = 3;
@@ -125,14 +125,9 @@
 		
 		/* ===== Flot: Attractive JavaScript plotting for jQuery ===== */
 		if(window.location.host == 'worldofwarships.'+realm_host){
-			// var ScriptChart = document.createElement("script");
-			// ScriptChart.setAttribute("src", "//www.flotcharts.org/javascript/jquery.flot.min.js");
-			// document.head.appendChild(ScriptChart);
-			jQ.getJSON('http://www.flotcharts.org/javascript/jquery.flot.min.js').done(function(result){
-				console.log(result);
-			}).fail(function(jqxhr, textStatus, error){
-				
-			});
+			var ScriptChart = document.createElement("script");
+			ScriptChart.setAttribute("src", "https://www.flotcharts.org/javascript/jquery.flot.min.js");
+			document.head.appendChild(ScriptChart);
 		}
 		
 		/* ===== Message UserScript ===== */
