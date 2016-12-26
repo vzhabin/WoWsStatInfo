@@ -125,9 +125,14 @@
 		
 		/* ===== Flot: Attractive JavaScript plotting for jQuery ===== */
 		if(window.location.host == 'worldofwarships.'+realm_host){
-			var ScriptChart = document.createElement("script");
-			ScriptChart.setAttribute("src", "//www.flotcharts.org/javascript/jquery.flot.min.js");
-			document.head.appendChild(ScriptChart);
+			// var ScriptChart = document.createElement("script");
+			// ScriptChart.setAttribute("src", "//www.flotcharts.org/javascript/jquery.flot.min.js");
+			// document.head.appendChild(ScriptChart);
+			jQ.getJSON('http://www.flotcharts.org/javascript/jquery.flot.min.js').done(function(result){
+				console.log(result);
+			}).fail(function(jqxhr, textStatus, error){
+				
+			});
 		}
 		
 		/* ===== Message UserScript ===== */
@@ -1332,11 +1337,16 @@
 			var max_frags_ship = '';
 			var max_planes_killed_ship = '';
 			if(type_stat == 'main'){
+				var max_xp_ship_name = StatArray['max_xp_ship_id']; if(Encyclopedia[''+StatArray['max_xp_ship_id']+'']){max_xp_ship_name = Encyclopedia[''+StatArray['max_xp_ship_id']+'']['name'];}
+				var max_damage_dealt_ship_name = StatArray['max_damage_dealt_ship_id']; if(Encyclopedia[''+StatArray['max_damage_dealt_ship_id']+'']){max_damage_dealt_ship = Encyclopedia[''+StatArray['max_damage_dealt_ship_id']+'']['name'];}
+				var max_frags_ship_name = StatArray['max_frags_ship_id']; if(Encyclopedia[''+StatArray['max_frags_ship_id']+'']){max_frags_ship_name = Encyclopedia[''+StatArray['max_frags_ship_id']+'']['name'];}
+				var max_planes_killed_ship_name = StatArray['max_planes_killed_ship_id']; if(Encyclopedia[''+StatArray['max_planes_killed_ship_id']+'']){max_planes_killed_ship_name = Encyclopedia[''+StatArray['max_planes_killed_ship_id']+'']['name'];}
+				
 				battles_percents = '<small>('+valueFormat((StatArray['battles_percents']).toFixed(2))+'%)</small>';
-				max_xp_ship = '<small> ('+Encyclopedia[''+StatArray['max_xp_ship_id']+'']['name']+')</small>';
-				max_damage_dealt_ship = '<small> ('+Encyclopedia[''+StatArray['max_damage_dealt_ship_id']+'']['name']+')</small>';
-				max_frags_ship = '<small> ('+Encyclopedia[''+StatArray['max_frags_ship_id']+'']['name']+')</small>';
-				max_planes_killed_ship = '<small> ('+Encyclopedia[''+StatArray['max_planes_killed_ship_id']+'']['name']+')</small>';
+				max_xp_ship = '<small> ('+max_xp_ship_name+')</small>';
+				max_damage_dealt_ship = '<small> ('+max_damage_dealt_ship_name+')</small>';
+				max_frags_ship = '<small> ('+max_frags_ship_name+')</small>';
+				max_planes_killed_ship = '<small> ('+max_planes_killed_ship_name+')</small>';
 			}
 			
 			html = ''+
@@ -7800,4 +7810,3 @@
 		addJQuery(WoWsStatInfo);
 	}
 })(window);
-
