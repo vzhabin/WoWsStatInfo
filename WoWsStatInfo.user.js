@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.6.0.33
+// @version 0.6.5.34
 // @creator Vov_chiK
 // @include https://worldofwarships.ru/ru/community/accounts/*
 // @include http://forum.worldofwarships.ru/index.php?/topic/*
@@ -37,7 +37,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.6.0.33';
+		var VersionWoWsStatInfo = '0.6.5.34';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
@@ -72,7 +72,6 @@
 		var WoWsStatInfoLink = WoWsStatInfoLinkLoc[realm];
 		var WoWsStatInfoLinkName = WoWsStatInfoLinkNameLoc[realm];
 		
-		var WGAPI = 'https://api.worldoftanks.'+realm_host+'/wgn/';
 		var WOWSAPI = 'https://api.worldofwarships.'+realm_host+'/wows/';
 		var WoWsStatInfoHref = 'https://vzhabin.ru/US_WoWsStatInfo/';
 	
@@ -82,6 +81,7 @@
 		var MembersArray = [];
 		var StatPvPMemberArray = [];
 		var Encyclopedia = null;
+		var Glossary = null;
 		
 		var typeStat = ["pvp", "pve", "pvp_solo", "pvp_div", "pvp_div2", "pvp_div3"];
 		var typeShip = ["Battleship", "AirCarrier", "Cruiser", "Destroyer"];
@@ -372,11 +372,6 @@
 					'.b-statistic_item{color: #606061;font-size: 11px;margin: 0;padding: 0;line-height: 125%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;word-wrap: normal;}' +
 					'.b-statistic_value{color: #babcbf;}' +
 				'</style>' +
-				'<div id="wowsstatinfo-profile-clan">' +
-					'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
-						'<img src="//'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' + 
-					'</div>' +
-				'</div>' +
 				getUserScriptDeveloperBlock() +
 				'' +
 			'';
@@ -387,7 +382,8 @@
 			
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
 			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
-			getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneClanInfo, errorClanInfo);
+			getJson(WOWSAPI+'clans/glossary/?application_id='+application_id+'&language='+language, doneGlossary, errorGlossary);
+			getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=profile', doneClanPlayer, errorClanPlayer);
 			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve,statistics.pvp_solo,statistics.pvp_div2,statistics.pvp_div3&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
 			
 			jQ('#userscriptwowsstatinfo').click(function(){onViewBlock(this);});
@@ -415,15 +411,7 @@
 				var user_id = reputation__wrp.getAttribute('id').split('_')[1];
 				var ipsList_data = document.getElementsByClassName('ipsList_data')[0];
 				
-				// var profile = '' +
-					// '<li class="clear clearfix">' +
-						// '<span class="row_title">'+localizationText['profile-wows']+':</span>' +
-						// '<span class="row_data"><a href="http://worldofwarships.'+realm_host+'/community/accounts/'+user_id+'-/" target="_black">'+nickname.innerHTML+'</a></span>' +
-					// '</li>' +
-				// '';
-				
 				ipsList_data.innerHTML += '' +
-					// profile +
 					'<li class="clear clearfix">' +
 						'<span class="row_title">'+localizationText['profile-clan']+':</span>' +
 						'<span class="row_data member_'+user_id+'"></span>' +
@@ -431,7 +419,8 @@
 				'';
 				
 				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
-				getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id, doneForumClanInfo, errorForumClanInfo);
+				MembersArray[0] = [];
+				getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id+'&type=forum&index=0', doneClanPlayer, errorClanPlayer);
 			}
 		}
 		function ForumTopicPage(){
@@ -449,7 +438,8 @@
 						ForumTopicMembers['member_'+account_id] = account_id;
 						
 						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
-						getJson(WGAPI+'clans/membersinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id, doneForumClanInfo, errorForumClanInfo);
+						MembersArray[i] = [];
+						getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=forum&index='+i, doneClanPlayer, errorClanPlayer);
 					}
 					basic_info[i].innerHTML += '' +
 						'<li class="member_'+account_id+' desc lighter" style="min-height: 50px;">' +
@@ -462,114 +452,113 @@
 		}
 		
 		/* ===== ForumTopicPage function ===== */
-		function doneForumClanInfo(url, response){
-			if(response.status && response.status == "error"){
-				errorForumClanInfo();
-				return;
-			}
-
-			var vars = getUrlVars(url);
-			var account_id = vars['account_id'];
-			
-			var clansInfo = response['data'][account_id];
-			if(clansInfo != null){
-				var icon = clansInfo['clan']['emblems']['x32']['portal'];
-				if(icon === undefined){
-					for(var key in clansInfo['clan']['emblems']['x32']){
-						if(key != 'wot'){
-							icon = clansInfo['clan']['emblems']['x32'][key];
-						}
-					}					
-				}
-				
+		function doneForumClanInfo(clan_id, index){
+			if(MembersArray[index]['clan'] != null){
 				var br_line = '';
 				if(window.location.href.indexOf("/topic/") > -1){
 					br_line = '<br />';
 				}
-			
+				
 				var html = '' +
 					br_line +
 					'<span>' +
-						'<a align="center" href="https://'+realm+'.wargaming.net/clans/'+clansInfo['clan']['clan_id']+'/" title="'+clansInfo['clan']['tag']+'" rel="home" target="_blank">' +
-							'<img src="'+icon+'" alt="'+clansInfo['clan']['tag']+'">' +
+						'<a align="center" href="http://vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">' +
+							'<img src="http://vzhabin.ru/US_WoWsStatInfo/style/emblem_35x35.png" alt="'+MembersArray[index]['clan']['tag']+'" />' +
 						'</a>' +
-						'<a align="center" href="https://'+realm+'.wargaming.net/clans/'+clansInfo['clan']['clan_id']+'/" title="'+clansInfo['clan']['tag']+'" rel="home" target="_blank">['+clansInfo['clan']['tag']+']</a>' +
+						'<a align="center" href="http://vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">['+MembersArray[index]['clan']['tag']+']</a>' +
 					'</span>' +
 				'';
-				jQ('.member_'+account_id).html(html);
+				jQ('.member_'+MembersArray[index]['clan']['account_id']).html(html);
 			}else{
-				jQ('.member_'+account_id).html('');
+				jQ('.member_'+MembersArray[index]['clan']['account_id']).html('');
 			}
-		}
-		function errorForumClanInfo(url){
-			jQ('.member_'+account_id).html('');
 		}
 		
 		/* ===== MemberProfilePage function ===== */
-		function doneClanInfo(url, response){
+		function doneClanPlayer(url, response){
 			if(response.status && response.status == "error"){
-				errorClanInfo();
+				errorClanPlayer(url);
 				return;
 			}
 			
 			var vars = getUrlVars(url);
 			var account_id = vars['account_id'];
+			var language = vars['language'];
+			var type = vars['type'];
 			
-			if(response['data'][account_id] == null){errorClanInfo(); return;}
+			if(response['data'][account_id] == null){errorClanPlayer(url); return;}
 			
-			MembersArray[0]['clan'] = response['data'][account_id]['clan'];
-			MembersArray[0]['clan']['account_id'] = response['data'][account_id]['account_id'];
-			MembersArray[0]['clan']['role_i18n'] = response['data'][account_id]['role_i18n'];
-			MembersArray[0]['clan']['joined_at'] = response['data'][account_id]['joined_at'];
-			MembersArray[0]['clan']['role'] = response['data'][account_id]['role'];
-			MembersArray[0]['clan']['account_name'] = response['data'][account_id]['account_name'];		
+			var index = 0;
+			if(type == 'forum'){index = vars['index'];}
 			
-			viewMemberClan();
+			MembersArray[index]['clan'] = response['data'][account_id];	
+			
+			if(MembersArray[index]['clan'] != null){
+				getJson(WOWSAPI+'clans/info/?application_id='+application_id+'&language='+language+'&clan_id='+MembersArray[index]['clan']['clan_id']+'&type='+type+'&index='+index, doneClanInfo, errorClanInfo);
+			}
+		}
+		function errorClanPlayer(url){
+			var index = 0;
+			var vars = getUrlVars(url);
+			var account_id = vars['account_id'];
+			var type = vars['type'];
+			if(type == 'forum'){index = vars['index'];}
+			
+			MembersArray[index]['clan'] = null;
+			
+			if(type == 'forum'){
+				jQ('.member_'+account_id).html('');
+			}
+		}		
+		function doneClanInfo(url, response){
+			if(response.status && response.status == "error"){
+				errorClanInfo(url);
+				return;
+			}
+			
+			var index = 0;
+			var vars = getUrlVars(url);
+			var clan_id = vars['clan_id'];
+			var type = vars['type'];
+			if(type == 'forum'){index = vars['index'];}
+			
+			if(response['data'][clan_id] == null){errorClanInfo(); return;}
+			
+			var account_id = MembersArray[index]['clan']['account_id'];
+			var account_name = MembersArray[index]['clan']['account_name'];
+			var joined_at = MembersArray[index]['clan']['joined_at'];
+			var role = MembersArray[index]['clan']['role'];
+			
+			MembersArray[index]['clan'] = response['data'][clan_id];
+			MembersArray[index]['clan']['account_id'] = account_id;
+			MembersArray[index]['clan']['account_name'] = account_name;
+			MembersArray[index]['clan']['joined_at'] = joined_at;
+			MembersArray[index]['clan']['role'] = role;
+			
+			if(type == 'profile'){
+				//_clan-post
+				viewMemberClan();
+			}else if(type == 'forum'){
+				doneForumClanInfo(clan_id, index);
+			}
 		}
 		function errorClanInfo(url){
-			MembersArray[0]['clan'] = null;
+			var index = 0;
+			var vars = getUrlVars(url);
+			var type = vars['type'];
+			if(type == 'forum'){index = vars['index'];}
 			
-			viewMemberClan();
+			if(type == 'forum'){
+				jQ('.member_'+MembersArray[index]['clan']['account_id']).html('');
+			}
 		}
 		function viewMemberClan(){
-			var wowsstatinfo_profile_clan = document.getElementById('wowsstatinfo-profile-clan');
-		
 			if(MembersArray[0]['clan'] != null){
-				var day = dateDiffInDays(MembersArray[0]['clan']['joined_at'] * 1000, new Date().getTime());
+				var _clan_name = document.getElementsByClassName('_clan-name')[0];
+				_clan_name.innerHTML = '<a href="'+WoWsStatInfoHref+'clans.php?realm_search='+realm+'&clan='+MembersArray[0]['clan']['clan_id']+'" target="_blank">'+_clan_name.innerHTML+' <img src="'+WoWsStatInfoHref+'style/external-links.png"/></a>';
 				
-				var icon = MembersArray[0]['clan']['emblems']['x32']['portal'];
-				if(icon === undefined){
-					for(var key in MembersArray[0]['clan']['emblems']['x32']){
-						if(key != 'wot'){
-							icon = MembersArray[0]['clan']['emblems']['x32'][key];
-						}
-					}					
-				}
-				icon = icon.replace('http://', 'https://');
-				
-				wowsstatinfo_profile_clan.innerHTML = '' +
-					'<div class="b-profile-clan b-profile-clan__points js-tooltip" id="js-profile-clan">' +
-						'<div class="b-profile-clan_photo">' +
-							'<div style="background: '+MembersArray[0]['clan']['color']+';" class="b-profile-clan_color"><!-- --></div>' +
-							'<a class="b-profile-clan_link" href="https://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clan']['clan_id']+'/" target="_blank">' +
-								'<img alt="'+MembersArray[0]['clan']['name']+'" src="'+icon+'" width="32" height="32">' +
-							'</a>' +
-						'</div>' +
-						'<div class="b-profile-clan_text">' +
-							'<div class="b-profile-clan_text-wrpr">' +
-								'<a class="b-link-clan" href="https://'+realm+'.wargaming.net/clans/'+MembersArray[0]['clan']['clan_id']+'/" target="_blank">' +
-									'<span class="b-link-clan_tag" style="color: '+MembersArray[0]['clan']['color']+';">['+MembersArray[0]['clan']['tag']+']</span>&nbsp;'+MembersArray[0]['clan']['name']+'' +
-								'</a>' +
-							'</div>' +
-							'<div class="b-statistic">' +
-								'<p class="b-statistic_item">'+localizationText['role']+': <span class="b-statistic_value">'+MembersArray[0]['clan']['role_i18n']+'</span></p>' +
-								'<p class="b-statistic_item">'+localizationText['clan-day']+': <span class="b-statistic_value">'+day+'</span></p>' +
-							'</div>' +
-						'</div>' +
-					'</div>' +
-				'';
-			}else{
-				wowsstatinfo_profile_clan.innerHTML = '';
+				var _clan_post = document.getElementsByClassName('_clan-post')[0];
+				MembersArray[0]['clan']['role_i18n'] = _clan_post.innerHTML;
 			}			
 		}
 		function viewMainPageProfile(){
@@ -2926,6 +2915,19 @@
 			if(isNaN(wr)){wr = 0;}
 			
 			return wr;
+		}
+		function doneGlossary(url, response){
+			if(response.status && response.status == "error"){
+				errorGlossary();
+				return;
+			}
+			
+			Glossary = response['data'];
+		}
+		function errorGlossary(url){
+			Glossary = null;
+			
+			console.log('Get Glossary Error');
 		}
 		function doneEncyclopedia(url, response){
 			if(response.status && response.status == "error"){
