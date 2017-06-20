@@ -5,45 +5,49 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.6.5.35
+// @version 0.6.6.36
 // @creator Vov_chiK
 // @include https://worldofwarships.ru/ru/community/accounts/*
-// @include http://forum.worldofwarships.ru/index.php?/topic/*
-// @include http://forum.worldofwarships.ru/index.php?/user/*
+// @include https://forum.worldofwarships.ru/topic/*
+// @include https://forum.worldofwarships.ru/profile/*
 // @include https://worldofwarships.eu/*/community/accounts/*
 // @include http://forum.worldofwarships.eu/index.php?/topic/*
 // @include http://forum.worldofwarships.eu/index.php?/user/*
+// @include https://forum.worldofwarships.eu/topic/*
+// @include https://forum.worldofwarships.eu/profile/*
 // @include https://worldofwarships.com/*/community/accounts/*
-// @include http://forum.worldofwarships.com/index.php?/topic/*
-// @include http://forum.worldofwarships.com/index.php?/user/*
+// @include https://forum.worldofwarships.com/topic/*
+// @include https://forum.worldofwarships.com/profile/*
 // @include https://worldofwarships.asia/*/community/accounts/*
-// @include http://forum.worldofwarships.asia/index.php?/topic/*
-// @include http://forum.worldofwarships.asia/index.php?/user/*
+// @include https://forum.worldofwarships.asia/topic/*
+// @include https://forum.worldofwarships.asia/profile/*
 // @match https://worldofwarships.ru/ru/community/accounts/*
-// @match http://forum.worldofwarships.ru/index.php?/topic/*
-// @match http://forum.worldofwarships.ru/index.php?/user/*
+// @match https://forum.worldofwarships.ru/topic/*
+// @match https://forum.worldofwarships.ru/profile/*
 // @match https://worldofwarships.eu/*/community/accounts/*
 // @match http://forum.worldofwarships.eu/index.php?/topic/*
 // @match http://forum.worldofwarships.eu/index.php?/user/*
+// @match https://forum.worldofwarships.eu/topic/*
+// @match https://forum.worldofwarships.eu/profile/*
 // @match https://worldofwarships.com/*/community/accounts/*
-// @match http://forum.worldofwarships.com/index.php?/topic/*
-// @match http://forum.worldofwarships.com/index.php?/user/*
+// @match https://forum.worldofwarships.com/topic/*
+// @match https://forum.worldofwarships.com/profile/*
 // @match https://worldofwarships.asia/*/community/accounts/*
-// @match http://forum.worldofwarships.asia/index.php?/topic/*
-// @match http://forum.worldofwarships.asia/index.php?/user/*
+// @match https://forum.worldofwarships.asia/topic/*
+// @match https://forum.worldofwarships.asia/profile/*
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.6.5.35';
+		var VersionWoWsStatInfo = '0.6.6.36';
 		
 		var WoWsStatInfoLinkLoc = [];
-		WoWsStatInfoLinkLoc['ru'] = 'http://forum.worldofwarships.ru/index.php?/topic/19158-';
-		WoWsStatInfoLinkLoc['asia'] = 'http://forum.worldofwarships.asia/index.php?/topic/8950-';
-		WoWsStatInfoLinkLoc['na'] = 'http://forum.worldofwarships.com/index.php?/topic/47436-';
-		WoWsStatInfoLinkLoc['eu'] = 'http://forum.worldofwarships.eu/index.php?/topic/14650-';
+		WoWsStatInfoLinkLoc['ru'] = 'https://forum.worldofwarships.ru/topic/19158-WoWsStatInfo';
+		WoWsStatInfoLinkLoc['asia'] = 'https://forum.worldofwarships.asia/topic/8950-WoWsStatInfo';
+		WoWsStatInfoLinkLoc['na'] = 'https://forum.worldofwarships.com/topic/47436-WoWsStatInfo';
+		WoWsStatInfoLinkLoc['eu'] = 'https://forum.worldofwarships.eu/topic/14650-WoWsStatInfo';
 		
 		
 		var WoWsStatInfoLinkNameLoc = [];
@@ -122,13 +126,6 @@
 			StyleWoWsStatInfoAdd.textContent = StyleWoWsStatInfo.toString();
 			document.head.appendChild(StyleWoWsStatInfoAdd);
 		}
-		
-		/* ===== Flot: Attractive JavaScript plotting for jQuery ===== */
-		// if(window.location.host == 'worldofwarships.'+realm_host){
-			// var ScriptChart = document.createElement("script");
-			// ScriptChart.setAttribute("src", "http://www.flotcharts.org/javascript/jquery.flot.min.js");
-			// document.head.appendChild(ScriptChart);
-		// }
 		
 		/* ===== Message UserScript ===== */
 		if(window.location.host != 'forum.worldofwarships.'+realm_host){
@@ -310,7 +307,8 @@
 			getJson(WoWsStatInfoHref+'version.php?random='+Math.floor(Math.random()*100000001), doneLastVersion, errorLastVersion);
 			var account_id = window.location.href.split('/')[6].match(/[0-9]+/);
 			MemberProfilePage();
-		}else if(window.location.host == 'forum.worldofwarships.'+realm_host && window.location.href.indexOf("/user/") > -1){
+		}else if(window.location.host == 'forum.worldofwarships.'+realm_host && 
+			(window.location.href.indexOf("/user/") > -1 || window.location.href.indexOf("/profile/") > -1)){ /* Скоректировать после обновления EU форума */
 			ForumUserPage();
 		}else if(window.location.host == 'forum.worldofwarships.'+realm_host && window.location.href.indexOf("/topic/") > -1){
 			ForumTopicPage();
@@ -351,13 +349,16 @@
 			var _nick = document.getElementsByClassName('_nick')[0];
 			nickname = _nick.textContent;
 			
+			var account_href = window.location.href.split('/')[6].split('-');
+			var account_id = account_href[0];
+			
 			var row = document.getElementsByClassName('row')[2];
 			var div = document.createElement('div');
 			div.setAttribute('id', 'userscript-block-list');
 			div.setAttribute('style', 'padding: 0px 15px 20px 130px;');
 			div.innerHTML = '' +
 				'<div id="userscript-forum-link">' +
-					'<a target="_blank" href="http://forum.worldofwarships.'+realm_host+'/index.php?/user/dn-'+nickname+'-/">'+localizationText['forum-profile']+'</a>' +
+					'<a target="_blank" href="https://forum.worldofwarships.'+realm_host+'/index.php?/user/'+account_id+'-'+nickname+'/">'+localizationText['forum-profile']+'</a>' +
 				'</div>' +
 				'<style>' +
 					'.b-profile-clan{max-width: 400px; padding-right: 100px;margin-bottom: 14px;padding-top: 5px;position: relative;}' +
@@ -376,9 +377,6 @@
 				'' +
 			'';
 			row.insertBefore(div, row.firstChild);
-			
-			var account_href = window.location.href.split('/')[6].split('-');
-			var account_id = account_href[0];
 			
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
 			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
@@ -405,7 +403,7 @@
 			});
 		}
 		function ForumUserPage(){
-			var nickname = document.getElementsByClassName('nickname')[0];
+			/* START - Удалить после обновления EU форума */
 			var reputation__wrp = document.getElementsByClassName('reputation__wrp')[0];
 			if(undefined !== reputation__wrp){
 				var user_id = reputation__wrp.getAttribute('id').split('_')[1];
@@ -422,9 +420,38 @@
 				MembersArray[0] = [];
 				getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+user_id+'&type=forum&index=0', doneClanPlayer, errorClanPlayer);
 			}
+			/* END - Удалить после обновления EU форума */
+			
+			var elProfileHeader = document.getElementById('elProfileHeader');
+			if(undefined !== elProfileHeader){
+				var linkParse = elProfileHeader.getAttribute('data-url').split('/');
+				var accountParse = linkParse[4].split('-');
+				var account_id = accountParse[0];
+				
+				var elProfileStats = document.getElementById('elProfileStats');
+				if(undefined !== elProfileStats){
+					var ipsList_inline = elProfileStats.getElementsByClassName('ipsList_inline')[0];
+					if(undefined !== ipsList_inline){
+						ipsList_inline.innerHTML += '' +
+							'<li>' +
+								'<h4 class="ipsType_minorHeading">'+localizationText['profile-clan']+'</h4>' +
+								'<span class="member_'+account_id+'">' +
+									'<img style="width: 32px; height: 32px;" src="//'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' +
+								'</span>' +
+							'</li>' +
+						'';
+					}
+				}
+				
+				var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
+				MembersArray[0] = [];
+				getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=forum&index=0', doneClanPlayer, errorClanPlayer);
+			}
 		}
 		function ForumTopicPage(){
 			var ForumTopicMembers = [];
+			
+			/* START - Удалить после обновления EU форума */
 			var basic_info = document.getElementsByClassName('basic_info');
 			for(var i = 0; i < basic_info.length; i++){
 				var ipsUserPhotoLink = basic_info[i].getElementsByClassName('ipsUserPhotoLink')[0];
@@ -448,6 +475,29 @@
 						'</li>' +
 					'';
 				}
+			}
+			/* END - Удалить после обновления EU форума */
+			
+			var cAuthorPane_info = document.getElementsByClassName('cAuthorPane_info');
+			for(var i = 0; i < cAuthorPane_info.length; i++){
+				var ipsUserPhoto = cAuthorPane_info[i].getElementsByClassName('ipsUserPhoto')[0];
+				if(ipsUserPhoto === undefined){continue;}
+				var linkParse = ipsUserPhoto.href.split('/');
+				var accountParse = linkParse[4].split('-');
+				var account_id = accountParse[0];
+				if(ForumTopicMembers['member_'+account_id] === undefined){
+					ForumTopicMembers['member_'+account_id] = account_id;
+					
+					var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
+					MembersArray[i] = [];
+					getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=forum&index='+i, doneClanPlayer, errorClanPlayer);
+				}
+				cAuthorPane_info[i].innerHTML += '' +
+					'<li class="member_'+account_id+' desc lighter" style="min-height: 50px;">' +
+						'<img style="width: 32px; height: 32px;" src="//'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' +
+						localizationText['search-clan-forum'] +
+					'</li>' +
+				'';
 			}
 		}
 		
