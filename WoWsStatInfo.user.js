@@ -512,10 +512,10 @@
 				var html = '' +
 					br_line +
 					'<span>' +
-						'<a align="center" href="http://vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">' +
-							'<img src="http://vzhabin.ru/US_WoWsStatInfo/style/emblem_35x35.png" alt="'+MembersArray[index]['clan']['tag']+'" />' +
+						'<a align="center" href="//vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">' +
+							'<img src="//vzhabin.ru/US_WoWsStatInfo/style/emblem_35x35.png" alt="'+MembersArray[index]['clan']['tag']+'" />' +
 						'</a>' +
-						'<a align="center" href="http://vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">['+MembersArray[index]['clan']['tag']+']</a>' +
+						'<a align="center" href="//vzhabin.ru/US_WoWsStatInfo/clans.php?realm_search='+realm+'&clan='+MembersArray[index]['clan']['clan_id']+'" title="'+MembersArray[index]['clan']['tag']+'" rel="home" target="_blank">['+MembersArray[index]['clan']['tag']+']</a>' +
 					'</span>' +
 				'';
 				jQ('.member_'+MembersArray[index]['clan']['account_id']).html(html);
@@ -715,7 +715,7 @@
 											'<tr id="info-stat-pvp-wr">' +
 												'<td class="_name">' +
 													'<span>'+
-														'<a target="_blank" href="http://vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
+														'<a target="_blank" href="//vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
 															localizationText['wr']+
 														'</a>' +
 													'</span>' +
@@ -1101,7 +1101,7 @@
 														'<tr>' +
 															'<td class="_name">' +
 																'<span>' +
-																	'<a target="_blank" href="http://vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
+																	'<a target="_blank" href="//vzhabin.ru/US_WoWsStatInfo/?realm_search='+realm+'&nickname='+MembersArray[0]['info']['nickname']+'">'+
 																		localizationText['wr'] +
 																	'</a>' +
 																'</span>' +
