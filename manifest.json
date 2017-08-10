@@ -31,6 +31,6 @@
     "description" : "Расширенная статистика и функционал на сайте World of Warships.",
     "name" : "WoWsStatInfo", 
     "permissions" : ["https://*/*", "unlimitedStorage"],
-    "version" : "0.6.6.36",
-	"version_name": "0.6.6.36"
+    "version" : "0.6.9.37",
+	"version_name": "0.6.9.37"
 }

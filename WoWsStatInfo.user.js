@@ -5,7 +5,7 @@
 // @copyright 2015+, Vov_chiK
 // @license GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @namespace http://forum.walkure.pro/
-// @version 0.6.6.36
+// @version 0.6.9.37
 // @creator Vov_chiK
 // @include https://worldofwarships.ru/ru/community/accounts/*
 // @include https://forum.worldofwarships.ru/topic/*
@@ -41,7 +41,7 @@
 (function(window){
 	/* ===== Main function ===== */
 	function WoWsStatInfo(){
-		var VersionWoWsStatInfo = '0.6.6.36';
+		var VersionWoWsStatInfo = '0.6.9.37';
 		
 		var WoWsStatInfoLinkLoc = [];
 		WoWsStatInfoLinkLoc['ru'] = 'https://forum.worldofwarships.ru/topic/19158-WoWsStatInfo';
@@ -84,6 +84,8 @@
 		
 		var MembersArray = [];
 		var StatPvPMemberArray = [];
+		var page = 1;
+		var page_total = 0;
 		var Encyclopedia = null;
 		var Glossary = null;
 		
@@ -379,7 +381,7 @@
 			row.insertBefore(div, row.firstChild);
 			
 			var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
-			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type', doneEncyclopedia, errorEncyclopedia);
+			getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type&page_no='+page, doneEncyclopedia, errorEncyclopedia);
 			getJson(WOWSAPI+'clans/glossary/?application_id='+application_id+'&language='+language, doneGlossary, errorGlossary);
 			getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=profile', doneClanPlayer, errorClanPlayer);
 			getJson(WOWSAPI+'account/info/?application_id='+application_id+'&extra=statistics.pve,statistics.pvp_solo,statistics.pvp_div2,statistics.pvp_div3&account_id='+account_id+'&index=0&type=profile', doneAccountInfo, errorAccountInfo);
@@ -451,32 +453,13 @@
 		function ForumTopicPage(){
 			var ForumTopicMembers = [];
 			
-			/* START - Удалить после обновления EU форума */
-			var basic_info = document.getElementsByClassName('basic_info');
-			for(var i = 0; i < basic_info.length; i++){
-				var ipsUserPhotoLink = basic_info[i].getElementsByClassName('ipsUserPhotoLink')[0];
-				if(undefined === ipsUserPhotoLink){continue;}
-				if(ipsUserPhotoLink.id == null){continue;}
-				if(ipsUserPhotoLink.id.indexOf('anonymous_element') > -1){
-					var linkParse = ipsUserPhotoLink.href.split('/');
-					var accountParse = linkParse[5].split('-');
-					var account_id = accountParse[accountParse.length - 1];
-					if(ForumTopicMembers['member_'+account_id] === undefined){
-						ForumTopicMembers['member_'+account_id] = account_id;
-						
-						var language = lang; if(language == 'zh-tw'){language = 'zh-cn';}else if(language == 'ja' || language == 'es-mx' || language == 'pt-br'){language = 'en';}
-						MembersArray[i] = [];
-						getJson(WOWSAPI+'clans/accountinfo/?application_id='+application_id+'&language='+language+'&account_id='+account_id+'&type=forum&index='+i, doneClanPlayer, errorClanPlayer);
-					}
-					basic_info[i].innerHTML += '' +
-						'<li class="member_'+account_id+' desc lighter" style="min-height: 50px;">' +
-							'<img style="width: 32px; height: 32px;" src="//'+realm+'.wargaming.net/clans/static/0.1.0.1/images/processing/loader.gif" />' +
-							localizationText['search-clan-forum'] +
-						'</li>' +
-					'';
-				}
+			var ipsPagination = document.getElementsByClassName('ipsPagination')[0];
+			if(!ipsPagination.getAttribute('wowsstatinfo')){
+				ipsPagination.setAttribute('wowsstatinfo', 'ok');
+			}else{
+				setTimeout(function(){ForumTopicPage();}, 1000);
+				return;
 			}
-			/* END - Удалить после обновления EU форума */
 			
 			var cAuthorPane_info = document.getElementsByClassName('cAuthorPane_info');
 			for(var i = 0; i < cAuthorPane_info.length; i++){
@@ -499,6 +482,8 @@
 					'</li>' +
 				'';
 			}
+			
+			setTimeout(function(){ForumTopicPage();}, 1000);
 		}
 		
 		/* ===== ForumTopicPage function ===== */
@@ -614,7 +599,7 @@
 		function viewMainPageProfile(){
 			console.log('...function viewMainPageProfile...');
 			
-			if(Encyclopedia == null){console.log('Encyclopedia == null'); setTimeout(function(){viewMainPageProfile();}, 1000);return;}
+			if(Encyclopedia == null && page != page_total){console.log('Encyclopedia == null'); setTimeout(function(){viewMainPageProfile();}, 1000);return;}
 			
 			if(MembersArray[0]['info']['hidden_profile']){
 				console.log(MembersArray[0]['info']['account_id']+' hidden profile!!!');
@@ -2985,10 +2970,24 @@
 				return;
 			}
 			
-			Encyclopedia = response['data'];
+			var vars = getUrlVars(url);
+			var page_no = vars['page_no'];
+			
+			if(Encyclopedia == null){
+				Encyclopedia = response['data'];
+			}else{
+				Encyclopedia = Object.assign(Encyclopedia, response['data']);
+			}
 			
 			Encyclopedia['null'] = [];
 			Encyclopedia['null']['name'] = '';
+			
+			page = response['meta']['page'];
+			page_total = response['meta']['page_total'];
+			if(page < page_total){
+				var page_json = page + 1;
+				getJson(WOWSAPI+'encyclopedia/ships/?application_id='+application_id+'&fields=name,images,tier,nation,is_premium,images,type&page_no='+page_json, doneEncyclopedia, errorEncyclopedia);
+			}
 		}
 		function errorEncyclopedia(url){
 			Encyclopedia = null;
